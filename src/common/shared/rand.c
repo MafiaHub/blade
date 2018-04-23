@@ -2,7 +2,7 @@
  * KISS PRNG (c) 2011 Shinobu
  *
  * This file was optained from zuttobenkyou.wordpress.com
- * and modified by the Yamagi Quake II developers.
+ * and modified by the Blade Engine developers.
  *
  * LICENSE: Public domain
  *

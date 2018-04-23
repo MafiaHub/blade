@@ -64,7 +64,7 @@
 #define MAX_SCRAPS 1
 #define BLOCK_WIDTH 128
 #define BLOCK_HEIGHT 128
-#define REF_VERSION "Yamagi Quake II OpenGL Refresher"
+#define REF_VERSION "Blade Engine OpenGL Refresher"
 #define BACKFACE_EPSILON 0.01
 #define LIGHTMAP_BYTES 4
 #define MAX_LIGHTMAPS 128

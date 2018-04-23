@@ -86,7 +86,7 @@ Qcommon_Buildstring(void)
 	const char* versionString;
 
 
-	versionString = va("Yamagi Quake II v%s", YQ2VERSION);
+	versionString = va("Blade Engine v%s", YQ2VERSION);
 	verLen = strlen(versionString);
 
 	printf("\n%s\n", versionString);
@@ -321,7 +321,7 @@ Qcommon_Init(int argc, char **argv)
 	}
 #endif
 
-	Com_Printf("==== Yamagi Quake II Initialized ====\n\n");
+	Com_Printf("==== Blade Engine Initialized ====\n\n");
 	Com_Printf("*************************************\n\n");
 
 	// Call the main loop

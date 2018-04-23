@@ -623,6 +623,10 @@ ClientObituary(edict_t *self, edict_t *inflictor /* unused */,
 		{
 			switch (mod)
 			{
+				case MOD_MK23:
+					message = "was ventilated by";
+					message2= "'s Mark 23 Pistol";
+					break;
 				case MOD_BLASTER:
 					message = "was blasted by";
 					break;
@@ -987,7 +991,7 @@ InitClientPersistant(gclient_t *client)
 
 	memset(&client->pers, 0, sizeof(client->pers));
 
-	item = FindItem("Blaster");
+	item = FindItem("Pistol");
 	client->pers.selected_item = ITEM_INDEX(item);
 	client->pers.inventory[client->pers.selected_item] = 1;
 
@@ -1650,6 +1654,7 @@ PutClientInServer(edict_t *ent)
 	int i;
 	client_persistant_t saved;
 	client_respawn_t resp;
+	gitem_t *item;
 
 	/* find a spawn point do it before setting
 	   health back up, so farthest ranging
@@ -1808,6 +1813,13 @@ PutClientInServer(edict_t *ent)
 	}
 
 	gi.linkentity(ent);
+
+	/* TEMP */
+	item = FindItem("bullets");
+	Add_Ammo(ent, item, 48);
+	client->pers.mags[WEAP_PISTOL].uses_mags = true;
+	client->pers.mags[WEAP_PISTOL].max_mag_size = 12;
+	client->pers.mags[WEAP_PISTOL].cur_mag_size = client->pers.mags[WEAP_PISTOL].max_mag_size;
 
 	/* force the current weapon up */
 	client->newweapon = client->pers.weapon;

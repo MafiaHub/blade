@@ -596,6 +596,29 @@ Grenade_Explode(edict_t *ent)
 }
 
 void
+Grenade_Die(edict_t *self, edict_t *inflictor, edict_t *attacker,
+			int damage, vec3_t point)
+{
+	if (!self)
+	{
+		return;
+	}
+
+	G_FreeEdict(self);
+}
+
+void
+Grenade_Die2(edict_t *self)
+{
+	if (!self)
+	{
+		return;
+	}
+
+	G_FreeEdict(self);
+}
+
+void
 Grenade_Touch(edict_t *ent, edict_t *other, cplane_t *plane /* unused */, csurface_t *surf)
 {
 	if (!ent || !other) /* plane is unused, surf can be NULL */
@@ -1224,4 +1247,50 @@ fire_bfg(edict_t *self, vec3_t start, vec3_t dir, int damage,
 	}
 
 	gi.linkentity(bfg);
+}
+
+void fire_flare(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius)
+{
+	if (!self)
+	{
+		return;
+	}
+
+	edict_t *grenade;
+	vec3_t dir;
+	vec3_t forward, right, up;
+
+	vectoangles(aimdir, dir);
+	AngleVectors(dir, forward, right, up);
+
+	grenade = G_Spawn();
+	VectorCopy(start, grenade->s.origin);
+	VectorScale(aimdir, speed, grenade->velocity);
+	VectorMA(grenade->velocity, 200 + crandom() * 10.0, up, grenade->velocity);
+	VectorMA(grenade->velocity, crandom() * 10.0, right, grenade->velocity);
+	VectorSet(grenade->avelocity, 300, 300, 300);
+	grenade->movetype = MOVETYPE_BOUNCE;
+	grenade->clipmask = MASK_SHOT;
+	grenade->solid = SOLID_BBOX;
+	grenade->s.effects |= EF_BLASTER;
+	grenade->s.renderfx |= RF_SHELL_GREEN;
+	VectorClear(grenade->mins);
+	VectorClear(grenade->maxs);
+	grenade->s.modelindex = gi.modelindex("models/objects/grenade/tris.md2");
+	grenade->owner = self;
+	grenade->touch = Grenade_Touch;
+	grenade->nextthink = level.time + timer + 35;
+	grenade->think = Grenade_Die2;
+	grenade->dmg = damage;
+	grenade->dmg_radius = damage_radius;
+	grenade->classname = "grenade";
+	VectorSet(grenade->mins, -3, -3, 0);
+	VectorSet(grenade->maxs, 3, 3, 6);
+	grenade->mass = 2;
+	grenade->health = 10;
+	grenade->die = Grenade_Die;
+	grenade->takedamage = DAMAGE_YES;
+	grenade->monsterinfo.aiflags = AI_NOSTEP;
+
+	gi.linkentity(grenade);
 }

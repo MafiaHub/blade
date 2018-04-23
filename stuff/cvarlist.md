@@ -1,4 +1,4 @@
-Yamagi Quake II Console Variables
+Blade Engine Console Variables
 =================================
 
 This lists explains most console variables (cvars) added by Yamagi
@@ -117,7 +117,7 @@ Graphics (all renderers):
   is omitted. If set to `1` the gun is only drawn if the FOV is equal
   or smaller than 90. This was the default with Vanilla Quake II. If set
   to `2` the gun is drawn regardless of the FOV. This is the default
-  in Yamagi Quake II.
+  in Blade Engine.
 
 * **fov**: Sets the field of view.
 

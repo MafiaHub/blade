@@ -1646,7 +1646,7 @@ static const char *idcredits[] = {
 	"Marty Stratton",
 	"Henk Hartong",
 	"",
-	"+YAMAGI QUAKE II BY",
+	"+Blade Engine BY",
 	"Yamagi Burmeister",
 	"Daniel Gibson",
 	"Sander van Dijk",

@@ -1619,7 +1619,7 @@ R_InitContext(void* win)
 #endif
 
 	/* Window title - set here so we can display renderer name in it */
-	snprintf(title, sizeof(title), "Yamagi Quake II %s - Soft Render", YQ2VERSION);
+	snprintf(title, sizeof(title), "Blade Engine %s - Soft Render", YQ2VERSION);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetWindowTitle(window, title);
 #else
@@ -1639,7 +1639,7 @@ static qboolean CreateSDLWindow(int flags, int w, int h)
 		return 0;
 
 	// TODO: support fullscreen on different displays with SDL_WINDOWPOS_UNDEFINED_DISPLAY(displaynum)
-	window = SDL_CreateWindow("Yamagi Quake II", windowPos, windowPos, w, h, flags);
+	window = SDL_CreateWindow("Blade Engine", windowPos, windowPos, w, h, flags);
 
 	if (r_vsync->value)
 	{

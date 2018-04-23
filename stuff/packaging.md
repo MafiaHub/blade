@@ -3,11 +3,11 @@
 Our 7.00 release caused some trouble for package maintainers
 (see https://github.com/yquake2/yquake2/issues/214), so we decided to finally
 properly document how we think it should be done and what assumptions
-Yamagi Quake II makes regarding binary locations etc.
+Blade Engine makes regarding binary locations etc.
 
 ## Where you should put the executables
 
-Yamagi Quake II expects all binaries (executables and libs) to be in the same directory
+Blade Engine expects all binaries (executables and libs) to be in the same directory
 (or, in the case of game.so/.dll/dylib, in the mod-specific subdirectory).
 
 So the binary directory should look somehow like this *(on Unix-like systems;
@@ -38,7 +38,7 @@ You can **just symlink the executables to a directory in your $PATH**, like /usr
  then executes `./quake2`*)
 
 We want all binaries to be in the same directory to ensure that people don't accidentally
-update only parts of their Yamagi Quake II installtion, so they'd end up with a new
+update only parts of their Blade Engine installtion, so they'd end up with a new
 quake2 executable and old render libraries (`ref_*.so`) and report weird bugs.
 
 ## The SYSTEMWIDE and SYSTEMDIR options
@@ -61,6 +61,6 @@ You *can* also put the binaries in there, but in that case please put all of the
 
 ## Alternative startup config
 
-Yamagi Quake II has support for an alternative startup config.  
+Blade Engine has support for an alternative startup config.  
 It may be a good idea to install it, since it sets some global options to sane defaults.  
 Copy yq2.cfg to the baseq2/ subdirectory in the gamedata (`SYSTEMDIR`) directory.

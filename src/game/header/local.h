@@ -95,7 +95,10 @@ typedef enum
 	WEAPON_READY,
 	WEAPON_ACTIVATING,
 	WEAPON_DROPPING,
-	WEAPON_FIRING
+	WEAPON_FIRING,
+
+	WEAPON_END_MAG,
+	WEAPON_RELOADING,
 } weaponstate_t;
 
 typedef enum
@@ -105,7 +108,8 @@ typedef enum
 	AMMO_ROCKETS,
 	AMMO_GRENADES,
 	AMMO_CELLS,
-	AMMO_SLUGS
+	AMMO_SLUGS,
+	AMMO_FLARE
 } ammo_t;
 
 /* deadflag */
@@ -224,6 +228,7 @@ typedef struct
 #define WEAP_HYPERBLASTER 9
 #define WEAP_RAILGUN 10
 #define WEAP_BFG 11
+#define WEAP_PISTOL 12
 
 typedef struct gitem_s
 {
@@ -479,6 +484,7 @@ extern int lastgibframe;
 #define MOD_TRIGGER_HURT 31
 #define MOD_HIT 32
 #define MOD_TARGET_BLASTER 33
+#define MOD_MK23 34
 #define MOD_FRIENDLY_FIRE 0x8000000
 
 extern int meansOfDeath;
@@ -576,6 +582,7 @@ extern gitem_t itemlist[];
 
 /* g_cmds.c */
 void Cmd_Help_f(edict_t *ent);
+void Cmd_Reload_f(edict_t *ent);
 
 /* g_items.c */
 void PrecacheItem(gitem_t *it);
@@ -790,6 +797,14 @@ void GetChaseTarget(edict_t *ent);
 #define ANIM_DEATH 5
 #define ANIM_REVERSE 6
 
+/* holds ammo information for more advanced weapons */
+typedef struct
+{
+	qboolean uses_mags;
+	int max_mag_size;
+	int cur_mag_size;
+} ammo_mag_t;
+
 /* client data that stays across multiple level loads */
 typedef struct
 {
@@ -808,6 +823,7 @@ typedef struct
 
 	int selected_item;
 	int inventory[MAX_ITEMS];
+	ammo_mag_t mags[MAX_ITEMS];
 
 	/* ammo capacities */
 	int max_bullets;

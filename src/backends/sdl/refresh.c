@@ -203,7 +203,7 @@ static qboolean CreateSDLWindow(int flags, int w, int h)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	int windowPos = SDL_WINDOWPOS_UNDEFINED;
 	// TODO: support fullscreen on different displays with SDL_WINDOWPOS_UNDEFINED_DISPLAY(displaynum)
-	window = SDL_CreateWindow("Yamagi Quake II", windowPos, windowPos, w, h, flags);
+	window = SDL_CreateWindow("Blade Engine", windowPos, windowPos, w, h, flags);
 
 	return window != NULL;
 #else

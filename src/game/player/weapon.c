@@ -31,6 +31,9 @@
 #define FRAME_IDLE_FIRST (FRAME_FIRE_LAST + 1)
 #define FRAME_DEACTIVATE_FIRST (FRAME_IDLE_LAST + 1)
 
+#define FRAME_RELOAD_FIRST (FRAME_DEACTIVATE_LAST + 1)
+#define FRAME_LASTRD_FIRST (FRAME_RELOAD_LAST + 1)
+
 #define GRENADE_TIMER 3.0
 #define GRENADE_MINSPEED 400
 #define GRENADE_MAXSPEED 800
@@ -453,7 +456,9 @@ Drop_Weapon(edict_t *ent, gitem_t *item)
  */
 void
 Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
-		int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames,
+		int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, 
+		int FRAME_RELOAD_LAST, int FRAME_LASTRD_LAST,
+		int *pause_frames,
 		int *fire_frames, void (*fire)(edict_t *ent))
 {
 	int n;
@@ -466,6 +471,44 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 	if (ent->deadflag || (ent->s.modelindex != 255)) /* VWep animations screw up corpses */
 	{
 		return;
+	}
+
+	if (ent->client->weaponstate == WEAPON_RELOADING)
+	{
+		if(ent->client->ps.gunframe < FRAME_RELOAD_FIRST || ent->client->ps.gunframe > FRAME_RELOAD_LAST)
+			ent->client->ps.gunframe = FRAME_RELOAD_FIRST;
+		else if(ent->client->ps.gunframe < FRAME_RELOAD_LAST)
+		{
+			ent->client->ps.gunframe++;
+			if(stricmp(ent->client->pers.weapon->pickup_name, "Pistol") == 0)
+			{
+				if(ent->client->ps.gunframe == 48)
+					gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/mk23_clipout.wav"), 1, ATTN_NORM, 0);
+				else if(ent->client->ps.gunframe == 54)
+					gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/mk23_clipin.wav"), 1, ATTN_NORM, 0);				
+			}
+		}
+		else
+		{
+			ent->client->ps.gunframe = FRAME_IDLE_FIRST;
+			ent->client->weaponstate = WEAPON_READY;
+			if(stricmp(ent->client->pers.weapon->pickup_name, "Pistol") == 0)
+			{
+				if(ent->client->pers.inventory[ent->client->ammo_index] >= ent->client->pers.mags[ent->client->pers.weapon->weapmodel].max_mag_size)
+					ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size = ent->client->pers.mags[ent->client->pers.weapon->weapmodel].max_mag_size;
+				else
+					ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size = ent->client->pers.inventory[ent->client->ammo_index];
+			}
+		
+		}
+	}
+
+	if (ent->client->weaponstate == WEAPON_END_MAG)
+	{
+		if(ent->client->ps.gunframe < FRAME_LASTRD_LAST)
+			ent->client->ps.gunframe++;
+		else
+			ent->client->ps.gunframe = FRAME_LASTRD_LAST;
 	}
 
 	if (ent->client->weaponstate == WEAPON_DROPPING)
@@ -885,7 +928,7 @@ Weapon_GrenadeLauncher(edict_t *ent)
 	static int pause_frames[] = {34, 51, 59, 0};
 	static int fire_frames[] = {6, 0};
 
-	Weapon_Generic(ent, 5, 16, 59, 64, pause_frames,
+	Weapon_Generic(ent, 5, 16, 59, 64, 0, 0, pause_frames,
 			fire_frames, weapon_grenadelauncher_fire);
 }
 
@@ -948,7 +991,7 @@ Weapon_RocketLauncher(edict_t *ent)
 	static int pause_frames[] = {25, 33, 42, 50, 0};
 	static int fire_frames[] = {5, 0};
 
-	Weapon_Generic(ent, 4, 12, 50, 54, pause_frames,
+	Weapon_Generic(ent, 4, 12, 50, 54, 0, 0, pause_frames,
 			fire_frames, Weapon_RocketLauncher_Fire);
 }
 
@@ -1036,7 +1079,7 @@ Weapon_Blaster(edict_t *ent)
 		return;
 	}
 
-	Weapon_Generic(ent, 4, 8, 52, 55, pause_frames,
+	Weapon_Generic(ent, 4, 8, 52, 55, 0, 0, pause_frames,
 			fire_frames, Weapon_Blaster_Fire);
 }
 
@@ -1147,7 +1190,7 @@ Weapon_HyperBlaster(edict_t *ent)
 		return;
 	}
 
-	Weapon_Generic(ent, 5, 20, 49, 53, pause_frames,
+	Weapon_Generic(ent, 5, 20, 49, 53, 0, 0, pause_frames,
 			fire_frames, Weapon_HyperBlaster_Fire);
 }
 
@@ -1273,7 +1316,7 @@ Weapon_Machinegun(edict_t *ent)
 		return;
 	}
 
-	Weapon_Generic(ent, 3, 5, 45, 49, pause_frames,
+	Weapon_Generic(ent, 3, 5, 45, 49, 0, 0, pause_frames,
 			fire_frames, Machinegun_Fire);
 }
 
@@ -1441,7 +1484,7 @@ Weapon_Chaingun(edict_t *ent)
 		return;
 	}
 
-	Weapon_Generic(ent, 4, 31, 61, 64, pause_frames, fire_frames, Chaingun_Fire);
+	Weapon_Generic(ent, 4, 31, 61, 64, 0, 0, pause_frames, fire_frames, Chaingun_Fire);
 }
 
 /* ====================================================================== */
@@ -1521,7 +1564,7 @@ Weapon_Shotgun(edict_t *ent)
 		return;
 	}
 
-	Weapon_Generic(ent, 7, 18, 36, 39, pause_frames,
+	Weapon_Generic(ent, 7, 18, 36, 39, 0, 0, pause_frames,
 			fire_frames, weapon_shotgun_fire);
 }
 
@@ -1593,7 +1636,7 @@ Weapon_SuperShotgun(edict_t *ent)
 		return;
 	}
 
-	Weapon_Generic(ent, 6, 17, 57, 61, pause_frames,
+	Weapon_Generic(ent, 6, 17, 57, 61, 0, 0, pause_frames,
 			fire_frames, weapon_supershotgun_fire);
 }
 
@@ -1668,7 +1711,7 @@ Weapon_Railgun(edict_t *ent)
 		return;
 	}
 
-	Weapon_Generic(ent, 3, 18, 56, 61, pause_frames,
+	Weapon_Generic(ent, 3, 18, 56, 61, 0, 0, pause_frames,
 			fire_frames, weapon_railgun_fire);
 }
 
@@ -1759,6 +1802,82 @@ Weapon_BFG(edict_t *ent)
 		return;
 	}
 
-	Weapon_Generic(ent, 8, 32, 55, 58, pause_frames,
+	Weapon_Generic(ent, 8, 32, 55, 58, 0, 0, pause_frames,
 			fire_frames, weapon_bfg_fire);
+}
+
+
+/* Mk23 Pistol code */
+void Pistol_Fire(edict_t *ent)
+{
+	int i;
+	vec3_t start;
+	vec3_t forward, right;
+	vec3_t angles;
+	int damage = 15;
+	int kick = 30;
+	vec3_t offset;
+
+	ent->client->ps.gunframe++;
+
+	if (!(ent->client->buttons & BUTTON_ATTACK)) 
+	{
+		return;
+	}
+
+	if (ent->client->pers.inventory[ent->client->ammo_index] < 1)
+	{
+		ent->client->ps.gunframe = 6;
+		if (level.time >= ent->pain_debounce_time)
+		{
+			gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
+			ent->pain_debounce_time = level.time + 1;
+		}
+		NoAmmoWeaponChange(ent);
+		return;
+	}
+
+	for (i=1 ; i<3 ; i++)
+	{
+		ent->client->kick_origin[i] = crandom() * 0.35;
+		ent->client->kick_angles[i] = crandom() * 0.7;
+	}
+	ent->client->kick_origin[0] = crandom() * 0.35;
+	ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.5;
+
+	VectorAdd(ent->client->v_angle, ent->client->kick_angles, angles);
+	AngleVectors(angles, forward, right, NULL);
+	VectorSet(offset, 0, 8, ent->viewheight-8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+
+	if (ent->client->pers.inventory[ent->client->ammo_index] == 1 || (ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size == 1))
+	{
+		ent->client->ps.gunframe = 64;
+		ent->client->weaponstate = WEAPON_END_MAG;
+		fire_bullet(ent, start, forward,damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MK23);
+		ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size--;	
+	}
+	else
+	{
+		fire_bullet(ent, start, forward,damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MK23);
+		ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size--;
+	}
+
+	gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/mk23_fire.wav"), 1, ATTN_NORM, 0);
+
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent-g_edicts);
+	gi.WriteByte(MZ_MACHINEGUN | is_silenced);
+	gi.multicast(ent->s.origin, PNOISE_WEAPON);
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	ent->client->pers.inventory[ent->client->ammo_index] -= ent->client->pers.weapon->quantity;
+}
+
+void Weapon_Pistol(edict_t *ent)
+{
+	static int pause_frames[] = {13, 32, 42};
+	static int fire_frames[] = {10, 0};
+
+	Weapon_Generic(ent, 9, 14, 39, 42, 63, 68, pause_frames, fire_frames, Pistol_Fire);
 }

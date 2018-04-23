@@ -34,6 +34,7 @@ void Use_Weapon(edict_t *ent, gitem_t *inv);
 void Drop_Weapon(edict_t *ent, gitem_t *inv);
 
 void Weapon_Blaster(edict_t *ent);
+void Weapon_Pistol(edict_t *ent);
 void Weapon_Shotgun(edict_t *ent);
 void Weapon_SuperShotgun(edict_t *ent);
 void Weapon_Machinegun(edict_t *ent);
@@ -2033,6 +2034,28 @@ gitem_t itemlist[] = {
 		NULL,
 		0,
 		"sprites/s_bfg1.sp2 sprites/s_bfg2.sp2 sprites/s_bfg3.sp2 weapons/bfg__f1y.wav weapons/bfg__l1a.wav weapons/bfg__x1b.wav weapons/bfg_hum.wav"
+	},
+
+	/* SOCOM Mk23 Pistol */
+	{
+		"weapon_mk23",
+		NULL,
+		Use_Weapon,
+		NULL,
+		Weapon_Pistol,
+		"misc/w_pkup.wav",
+		NULL, EF_ROTATE,
+		"models/weapons/v_mk23/tris.md2",
+		"w_mk23",
+		"Pistol",
+		0,
+		1,
+		"Bullets",
+		IT_WEAPON,
+		WEAP_PISTOL,
+		NULL,
+		0,
+		""
 	},
 
 	/* QUAKED ammo_shells (.3 .3 1) (-16 -16 -16) (16 16 16) */

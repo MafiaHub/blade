@@ -47,7 +47,7 @@ printBacktrace(int sig)
 	size = backtrace(array, 15);
 	strings = backtrace_symbols(array, size);
 
-	printf("Product:      Yamagi Quake II\n");
+	printf("Product:      Blade Engine\n");
 	printf("Version:      %s\n", YQ2VERSION);
 	printf("Platform:     %s\n", YQ2OSTYPE);
 	printf("Architecture: %s\n", YQ2ARCH);
@@ -68,7 +68,7 @@ printBacktrace(int sig)
 void
 printBacktrace(int sig)
 {
-	printf("Product:      Yamagi Quake II\n");
+	printf("Product:      Blade Engine\n");
 	printf("Version:      %s\n", YQ2VERSION);
 	printf("Platform:     %s\n", YQ2OSTYPE);
 	printf("Architecture: %s\n", YQ2ARCH);
@@ -84,7 +84,7 @@ void
 signalhandler(int sig)
 {
 	printf("\n=======================================================\n");
-	printf("\nYamagi Quake II crashed! This should not happen...\n");
+	printf("\nBlade Engine crashed! This should not happen...\n");
 	printf("\nMake sure that you're using the last version. It can\n");
 	printf("be found at http://www.yamagi.org/quake2. If you do,\n");
 	printf("send a bug report to quake2@yamagi.org and include:\n\n");
