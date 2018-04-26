@@ -383,6 +383,7 @@ void
 Use_Weapon(edict_t *ent, gitem_t *item)
 {
 	int ammo_index;
+	int weap_index;
 	gitem_t *ammo_item;
 
 	if (!ent || !item)
@@ -400,15 +401,16 @@ Use_Weapon(edict_t *ent, gitem_t *item)
 	{
 		ammo_item = FindItem(item->ammo);
 		ammo_index = ITEM_INDEX(ammo_item);
+		weap_index = ITEM_INDEX(item);
 
-		if (!ent->client->pers.inventory[ammo_index])
+		if (!ent->client->pers.inventory[ammo_index] && !ent->client->pers.mags[weap_index].uses_mags)
 		{
 			gi.cprintf(ent, PRINT_HIGH, "No %s for %s.\n",
 					ammo_item->pickup_name, item->pickup_name);
 			return;
 		}
 
-		if (ent->client->pers.inventory[ammo_index] < item->quantity)
+		if (ent->client->pers.inventory[ammo_index] < item->quantity && ent->client->pers.mags[weap_index].cur_mag_size < item->quantity)
 		{
 			gi.cprintf(ent, PRINT_HIGH, "Not enough %s for %s.\n",
 					ammo_item->pickup_name, item->pickup_name);
