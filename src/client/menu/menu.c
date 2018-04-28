@@ -634,7 +634,7 @@ M_Main_Draw(void)
     xoffset = (320/2);
     c = (sizeof(titles)/sizeof(titles[0]));
 
-    if (last_slide_time + 400 < cl.time)
+    if (last_slide_time + 100 < cl.time)
     {
         last_slide_time = cl.time;
         slide_amt++;
@@ -647,7 +647,7 @@ M_Main_Draw(void)
         k = xoffset - wsize/2;
 
         if (cls.state == ca_disconnected)
-            j += sinf(slide_amt) * 3;
+            j += sinf(slide_amt) * 1;
 
         if (i != m_main_cursor)
         {
@@ -4368,27 +4368,11 @@ M_Quit_Key(int key)
     return NULL;
 }
 
-#define QUIT_FRAMES 22
-
 static void
 M_Quit_Draw(void)
 {
-    static int last_quit_time;
-    static int quit_counter = 0;
-    static char quit_name[8] = "quit0";
-
-    if (last_quit_time + 100 < cl.time)
-    {
-        last_quit_time = cl.time;
-
-        if (++quit_counter >= QUIT_FRAMES)
-            quit_counter = 0;
-
-        sprintf(quit_name, "quit%d", quit_counter);
-    }
-
     Draw_StretchPic(0, 0, viddef.width,
-                    viddef.height, quit_name);
+                    viddef.height, "quit");
 }
 
 static void

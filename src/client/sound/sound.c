@@ -153,7 +153,7 @@ S_LoadSound(sfx_t *s)
 		{
 			if (!SDL_Cache(s, &info, data + info.dataofs))
 			{
-				//Com_Printf("Pansen!\n");
+				Com_Printf("Pansen!\n");
 				FS_FreeFile(data);
 				return NULL;
 			}
