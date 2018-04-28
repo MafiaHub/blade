@@ -4417,6 +4417,8 @@ M_Init(void)
     }
 }
 
+#define MENU_FRAMES 1
+
 void
 M_Draw(void)
 {
@@ -4437,7 +4439,21 @@ M_Draw(void)
     /* else render bg image if in main menu */
     else
     {
-        Draw_StretchPic(0, 0, viddef.width, viddef.height, "menuback");
+        static int menu_index = 0;
+        static int last_menu_time = 0;
+        static char menu_name[10] = "menuback0";
+
+        if (last_menu_time + 250 < cl.time)
+        {
+            last_menu_time = cl.time;
+
+            if (++menu_index >= MENU_FRAMES)
+                menu_index = 0;
+
+            sprintf(menu_name, "menuback%d", menu_index);
+        }
+
+        Draw_StretchPic(0, 0, viddef.width, viddef.height, menu_name);
     }
 
     m_drawfunc();
