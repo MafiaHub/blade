@@ -301,9 +301,8 @@ Qcommon_Init(int argc, char **argv)
 	{
 		if (!dedicated->value)
 		{
-			// Start demo loop...
+			// Start main menu
 			Cbuf_AddText("start_menu\n");
-
 		}
 		else
 		{

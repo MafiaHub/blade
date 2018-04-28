@@ -609,6 +609,9 @@ M_Main_Draw(void)
     int i,j,k,c;
     int xoffset;
     int wsize;
+    static int slideup;
+    static int slidecnt;
+    static int last_slide_time;
     char *names[] =
     {
         "m_main_game",
@@ -632,12 +635,25 @@ M_Main_Draw(void)
     xoffset = (320/2);
     c = (sizeof(titles)/sizeof(titles[0]));
 
+    if (last_slide_time + 2500 < cl.time)
+    {
+        last_slide_time = cl.time;
+        slideup = (int)roundf(sinf((float)slidecnt++ * 90));
+        
+        if (slidecnt > 3)
+        {
+            slidecnt=0;
+        }
+    }
+
     for (i = 0; names[i] != 0; i++)
     {
-        j = 240/2 - (c * 40 / 4) + i * 40;
+        j = 240/2 - (c * 20 / 4) + i * 20;
         wsize = strlen(titles[i]) * 8;
-
         k = xoffset - wsize/2;
+
+        if (cls.servername[0] == 0)
+            j += 2 * /* (i % 2 == 0 ? -1 : 1) * */ (slideup);
 
         if (i != m_main_cursor)
         {
@@ -648,18 +664,6 @@ M_Main_Draw(void)
             M_PrintWhite(k, j, titles[i]);
         }
     }
-
-    // strcpy(litname, names[m_main_cursor]);
-    // strcat(litname, "_sel");
-    // Draw_PicScaled(xoffset * scale, (ystart + m_main_cursor * 40 + 13) * scale, litname, scale);
-
-    // M_DrawCursor(xoffset - 25, ystart + m_main_cursor * 40 + 11,
-    //              (int)(cls.realtime / 100) % NUM_CURSOR_FRAMES);
-
-    // Draw_GetPicSize(&w, &h, "m_main_plaque");
-    // Draw_PicScaled((xoffset - 30 - w) * scale, ystart * scale, "m_main_plaque", scale);
-
-    // Draw_PicScaled((xoffset - 30 - w) * scale, (ystart + h + 5) * scale, "m_main_logo", scale);
 }
 
 const char *
@@ -4424,18 +4428,17 @@ M_Draw(void)
     /* repaint everything next frame */
     SCR_DirtyScreen();
 
-    /* dim everything behind it down */
-    if (cl.cinematictime > 0)
+    /* dim everything behind it down if game runs already */
+    if (cls.servername[0] != 0)
     {
-        //Draw_Fill(0, 0, viddef.width, viddef.height, 0);
+        Draw_FadeScreen();
     }
 
+    /* else render bg image if in main menu */
     else
     {
-        //Draw_FadeScreen();
+        Draw_StretchPic(0, 0, viddef.width, viddef.height, "menuback");
     }
-
-    Draw_StretchPic(0, 0, viddef.width, viddef.height, "conback"); // TODO: Use separate bg for menu
 
     m_drawfunc();
 
