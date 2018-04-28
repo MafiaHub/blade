@@ -928,7 +928,7 @@ SDL_Cache(sfx_t *sfx, wavinfo_t *info, byte *data)
 
 	if ((info->samples == 0) || (len == 0))
 	{
-		Com_Printf("WARNING: Zero length sound encountered: %s\n", sfx->name);
+		//Com_Printf("WARNING: Zero length sound encountered: %s\n", sfx->name);
 		return false;
 	}
 
