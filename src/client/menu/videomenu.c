@@ -73,10 +73,6 @@ GetRenderer(void)
 	{
 		return 1;
 	}
-	else if (Q_stricmp(vid_renderer->string, "soft") == 0)
-	{
-		return 2;
-	}
 	else
 	{
 		return 3;
@@ -161,11 +157,6 @@ ApplyChanges(void *unused)
 			Cvar_Set("vid_renderer", "gl3");
 			restart = true;
 		}
-		else if (s_renderer_list.curvalue == 2)
-		{
-			Cvar_Set("vid_renderer", "soft");
-			restart = true;
-		}
 	}
 
 	/* custom mode */
@@ -241,7 +232,6 @@ VID_MenuInit(void)
 	static const char *renderers[] = {
 			"[OpenGL 1.4]",
 			"[OpenGL 3.2]",
-			"[Software  ]",
 			"[Custom    ]",
 			0
 	};
