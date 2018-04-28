@@ -4057,7 +4057,7 @@ M_Quit_Draw(void)
 {
     static int last_quit_time;
     static int quit_counter = 0;
-    static char quit_name[13] = "quit0";
+    static char quit_name[13] = "quit/quit0";
 
     if (last_quit_time + 100 < cl.time)
     {
@@ -4133,7 +4133,7 @@ M_Draw(void)
     {
         static int menu_index = 0;
         static int last_menu_time = 0;
-        static char menu_name[10] = "menuback0";
+        static char menu_name[19] = "menuback/menuback0";
 
         if (last_menu_time + 250 < cl.time)
         {
@@ -4142,7 +4142,7 @@ M_Draw(void)
             if (++menu_index >= MENU_FRAMES)
                 menu_index = 0;
 
-            sprintf(menu_name, "menuback%d", menu_index);
+            sprintf(menu_name, "menuback/menuback%d", menu_index);
         }
 
         Draw_StretchPic(0, 0, viddef.width, viddef.height, menu_name);
