@@ -652,7 +652,7 @@ M_Main_Draw(void)
         wsize = strlen(titles[i]) * 8;
         k = xoffset - wsize/2;
 
-        if (cls.servername[0] == 0)
+        if (cls.state == ca_disconnected)
             j += 2 * /* (i % 2 == 0 ? -1 : 1) * */ (slideup);
 
         if (i != m_main_cursor)
@@ -4429,7 +4429,7 @@ M_Draw(void)
     SCR_DirtyScreen();
 
     /* dim everything behind it down if game runs already */
-    if (cls.servername[0] != 0)
+    if (cls.state != ca_disconnected)
     {
         Draw_FadeScreen();
     }
