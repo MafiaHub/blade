@@ -410,10 +410,10 @@ M_DrawCharacter(int cx, int cy, int num)
 }
 
 static void
-M_Print(int x, int y, char *str)
+M_Print_Internal_Scale(int x, int y, int w, int h, int color, char *str)
 {
     int cx, cy;
-	float scale = SCR_GetMenuScale();
+    float scale = SCR_GetMenuScale();
 
     cx = x;
     cy = y;
@@ -426,11 +426,29 @@ M_Print(int x, int y, char *str)
         }
         else
         {
-            M_DrawCharacter(cx * scale, cy * scale, (*str) + 128);
+            M_DrawCharacter(cx * scale * w, cy * scale * h, (*str) + color);
             cx += 8;
         }
         str++;
     }
+}
+
+static void
+M_Print_Internal(int x, int y, int color, char *str)
+{
+    M_Print_Internal_Scale(x, y, 1, 1, color, str);
+}
+
+static void
+M_Print(int x, int y, char *str)
+{
+    M_Print_Internal(x, y, 128, str);
+}
+
+static void
+M_PrintWhite(int x, int y, char *str)
+{
+    M_Print_Internal(x, y, 0, str);
 }
 
 void
@@ -447,30 +465,30 @@ M_DrawPic(int x, int y, char *pic)
  * x,y. The pic will extend to the left of x,
  * and both above and below y.
  */
-static void
-M_DrawCursor(int x, int y, int f)
-{
-    char cursorname[80];
-    static qboolean cached;
-	float scale = SCR_GetMenuScale();
+// static void
+// M_DrawCursor(int x, int y, int f)
+// {
+//     char cursorname[80];
+//     static qboolean cached;
+// 	float scale = SCR_GetMenuScale();
 
-    if (!cached)
-    {
-        int i;
+//     if (!cached)
+//     {
+//         int i;
 
-        for (i = 0; i < NUM_CURSOR_FRAMES; i++)
-        {
-            Com_sprintf(cursorname, sizeof(cursorname), "m_cursor%d", i);
+//         for (i = 0; i < NUM_CURSOR_FRAMES; i++)
+//         {
+//             Com_sprintf(cursorname, sizeof(cursorname), "m_cursor%d", i);
 
-            Draw_FindPic(cursorname);
-        }
+//             Draw_FindPic(cursorname);
+//         }
 
-        cached = true;
-    }
+//         cached = true;
+//     }
 
-    Com_sprintf(cursorname, sizeof(cursorname), "m_cursor%d", f);
-    Draw_PicScaled(x * scale, y * scale, cursorname, scale);
-}
+//     Com_sprintf(cursorname, sizeof(cursorname), "m_cursor%d", f);
+//     Draw_PicScaled(x * scale, y * scale, cursorname, scale);
+// }
 
 static void
 M_DrawTextBox(int x, int y, int width, int lines)
@@ -588,14 +606,9 @@ M_Popup(void)
 static void
 M_Main_Draw(void)
 {
-    int i;
-    int w, h;
-    int ystart;
+    int i,j,k,c;
     int xoffset;
-    int widest = -1;
-    int totalheight = 0;
-    char litname[80];
-	float scale = SCR_GetMenuScale();
+    int wsize;
     char *names[] =
     {
         "m_main_game",
@@ -606,40 +619,47 @@ M_Main_Draw(void)
         0
     };
 
+    char *titles[] =
+    {
+        "Play game", // m_main_game
+        "Play multiplayer", // m_main_multiplayer
+        "Options", // m_main_options
+        "Video settings", // m_main_video
+        "Quit game", // m_main_quit
+        0
+    };
+
+    xoffset = (320/2);
+    c = (sizeof(titles)/sizeof(titles[0]));
+
     for (i = 0; names[i] != 0; i++)
     {
-        Draw_GetPicSize(&w, &h, names[i]);
+        j = 240/2 - (c * 40 / 4) + i * 40;
+        wsize = strlen(titles[i]) * 8;
 
-        if (w > widest)
-        {
-            widest = w;
-        }
+        k = xoffset - wsize/2;
 
-        totalheight += (h + 12);
-    }
-
-    ystart = (viddef.height / (2 * scale) - 110);
-    xoffset = (viddef.width / scale - widest + 70) / 2;
-
-    for (i = 0; names[i] != 0; i++)
-    {
         if (i != m_main_cursor)
         {
-            Draw_PicScaled(xoffset * scale, (ystart + i * 40 + 13) * scale, names[i], scale);
+            M_Print(k, j, titles[i]);
+        }
+        else 
+        {
+            M_PrintWhite(k, j, titles[i]);
         }
     }
 
-    strcpy(litname, names[m_main_cursor]);
-    strcat(litname, "_sel");
-    Draw_PicScaled(xoffset * scale, (ystart + m_main_cursor * 40 + 13) * scale, litname, scale);
+    // strcpy(litname, names[m_main_cursor]);
+    // strcat(litname, "_sel");
+    // Draw_PicScaled(xoffset * scale, (ystart + m_main_cursor * 40 + 13) * scale, litname, scale);
 
-    M_DrawCursor(xoffset - 25, ystart + m_main_cursor * 40 + 11,
-                 (int)(cls.realtime / 100) % NUM_CURSOR_FRAMES);
+    // M_DrawCursor(xoffset - 25, ystart + m_main_cursor * 40 + 11,
+    //              (int)(cls.realtime / 100) % NUM_CURSOR_FRAMES);
 
-    Draw_GetPicSize(&w, &h, "m_main_plaque");
-    Draw_PicScaled((xoffset - 30 - w) * scale, ystart * scale, "m_main_plaque", scale);
+    // Draw_GetPicSize(&w, &h, "m_main_plaque");
+    // Draw_PicScaled((xoffset - 30 - w) * scale, ystart * scale, "m_main_plaque", scale);
 
-    Draw_PicScaled((xoffset - 30 - w) * scale, (ystart + h + 5) * scale, "m_main_logo", scale);
+    // Draw_PicScaled((xoffset - 30 - w) * scale, (ystart + h + 5) * scale, "m_main_logo", scale);
 }
 
 const char *
@@ -1168,7 +1188,7 @@ static void
 ControlsResetDefaultsFunc(void *unused)
 {
     Cbuf_AddText("exec default.cfg\n");
-    Cbuf_AddText("exec yq2.cfg\n");
+    Cbuf_AddText("exec BDE.cfg\n");
     Cbuf_Execute();
 
     ControlsSetMenuItemValues();
@@ -4353,11 +4373,8 @@ M_Quit_Key(int key)
 static void
 M_Quit_Draw(void)
 {
-    int w, h;
-	float scale = SCR_GetMenuScale();
-
-    Draw_GetPicSize(&w, &h, "quit");
-    Draw_PicScaled((viddef.width - w * scale) / 2, (viddef.height - h * scale) / 2, "quit", scale);
+    Draw_StretchPic(0, 0, viddef.width,
+                    viddef.height, "quit");
 }
 
 static void
@@ -4410,13 +4427,15 @@ M_Draw(void)
     /* dim everything behind it down */
     if (cl.cinematictime > 0)
     {
-        Draw_Fill(0, 0, viddef.width, viddef.height, 0);
+        //Draw_Fill(0, 0, viddef.width, viddef.height, 0);
     }
 
     else
     {
-        Draw_FadeScreen();
+        //Draw_FadeScreen();
     }
+
+    Draw_StretchPic(0, 0, viddef.width, viddef.height, "conback"); // TODO: Use separate bg for menu
 
     m_drawfunc();
 

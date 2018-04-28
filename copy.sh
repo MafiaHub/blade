@@ -1,0 +1,1 @@
+cp -R release/* ../

@@ -1619,7 +1619,7 @@ R_InitContext(void* win)
 #endif
 
 	/* Window title - set here so we can display renderer name in it */
-	snprintf(title, sizeof(title), "Blade Engine %s - Soft Render", YQ2VERSION);
+	snprintf(title, sizeof(title), "Blade Engine %s - Soft Render", BDEVERSION);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetWindowTitle(window, title);
 #else

@@ -21,7 +21,7 @@
  * =======================================================================
  *
  * Header file to the low level "qal" API implementation. This source file
- * was taken from Q2Pro and modified by the YQ2 authors.
+ * was taken from Q2Pro and modified by the BDE authors.
  *
  * =======================================================================
  */

@@ -434,7 +434,7 @@ GL3_Init(void)
 	Swap_Init(); // FIXME: for fucks sake, this doesn't have to be done at runtime!
 
 	R_Printf(PRINT_ALL, "Refresh: " REF_VERSION "\n");
-	R_Printf(PRINT_ALL, "Client: " YQ2VERSION "\n\n");
+	R_Printf(PRINT_ALL, "Client: " BDEVERSION "\n\n");
 
 	/* Options */
 	R_Printf(PRINT_ALL, "Refresher build options:\n");

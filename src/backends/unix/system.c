@@ -231,7 +231,7 @@ Sys_Nanosleep(int nanosec)
 
 /* ================================================================ */
 
-/* The musthave and canhave arguments are unused in YQ2. We
+/* The musthave and canhave arguments are unused in BDE. We
    can't remove them since Sys_FindFirst() and Sys_FindNext()
    are defined in shared.h and may be used in custom game DLLs. */
 

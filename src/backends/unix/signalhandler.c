@@ -48,9 +48,9 @@ printBacktrace(int sig)
 	strings = backtrace_symbols(array, size);
 
 	printf("Product:      Blade Engine\n");
-	printf("Version:      %s\n", YQ2VERSION);
-	printf("Platform:     %s\n", YQ2OSTYPE);
-	printf("Architecture: %s\n", YQ2ARCH);
+	printf("Version:      %s\n", BDEVERSION);
+	printf("Platform:     %s\n", BDEOSTYPE);
+	printf("Architecture: %s\n", BDEARCH);
 	printf("Compiler:     %s\n", __VERSION__);
 	printf("Signal:       %i\n", sig);
 	printf("\nBacktrace:\n");
@@ -69,9 +69,9 @@ void
 printBacktrace(int sig)
 {
 	printf("Product:      Blade Engine\n");
-	printf("Version:      %s\n", YQ2VERSION);
-	printf("Platform:     %s\n", YQ2OSTYPE);
-	printf("Architecture: %s\n", YQ2ARCH);
+	printf("Version:      %s\n", BDEVERSION);
+	printf("Platform:     %s\n", BDEOSTYPE);
+	printf("Architecture: %s\n", BDEARCH);
 	printf("Compiler:     %s\n", __VERSION__);
 	printf("Signal:       %i\n", sig);
 	printf("\nBacktrace:\n");
@@ -95,7 +95,7 @@ signalhandler(int sig)
 	printf("   data. They're necessary to analyze the backtrace:\n\n");
 	printf("    - quake2 (the executable / binary)\n\n");
 	printf("    - game.so (the game.so of the mod you were playing\n");
-	printf("      when the game crashed. baseq2/game.so for the\n");
+	printf("      when the game crashed. baseb/game.so for the\n");
 	printf("      main game)\n\n");
 	printf(" - Any other data which you think might be useful\n");
 	printf("\nThank you very much for your help, making Yamagi Quake\n");

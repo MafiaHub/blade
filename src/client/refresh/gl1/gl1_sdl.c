@@ -453,7 +453,7 @@ int RI_InitContext(void* win)
 	InitGamma();
 
 	/* Window title - set here so we can display renderer name in it */
-	snprintf(title, sizeof(title), "Blade Engine %s - OpenGL 1.x", YQ2VERSION);
+	snprintf(title, sizeof(title), "Blade Engine %s - OpenGL 1.x", BDEVERSION);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetWindowTitle(window, title);
 #else

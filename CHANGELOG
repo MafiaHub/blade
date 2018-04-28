@@ -237,7 +237,7 @@ Quake II 3.00 to 4.00
 - All open bugs were fixed.
 - Fix spawnpoint selection if single player maps are loaded via
   console.
-- Rename ~/.quake2 to ~/.yq2 to ease parallel installation with other
+- Rename ~/.quake2 to ~/.BDE to ease parallel installation with other
   Quake II clients.
 - The client does no longer crash if the menu is opened while
   connecting to remote server.

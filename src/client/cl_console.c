@@ -78,7 +78,7 @@ Con_ToggleConsole_f(void)
 	if (cls.state == ca_disconnected)
 	{
 		/* start the demo loop again */
-		Cbuf_AddText("d1\n");
+		Cbuf_AddText("menu_main\n");
 		return;
 	}
 
@@ -616,7 +616,7 @@ Con_DrawConsole(float frac)
 	SCR_AddDirtyPoint(0, 0);
 	SCR_AddDirtyPoint(viddef.width - 1, lines - 1);
 
-	Com_sprintf(version, sizeof(version), "Blade Engine v%s", YQ2VERSION);
+	Com_sprintf(version, sizeof(version), "Blade Engine v%s", BDEVERSION);
 
 	verLen = strlen(version);
 

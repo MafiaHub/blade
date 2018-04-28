@@ -86,7 +86,7 @@ Qcommon_Buildstring(void)
 	const char* versionString;
 
 
-	versionString = va("Blade Engine v%s", YQ2VERSION);
+	versionString = va("Blade Engine v%s", BDEVERSION);
 	verLen = strlen(versionString);
 
 	printf("\n%s\n", versionString);
@@ -129,8 +129,8 @@ Qcommon_Buildstring(void)
 #endif
 #endif
 
-	printf("Platform: %s\n", YQ2OSTYPE);
-	printf("Architecture: %s\n", YQ2ARCH);
+	printf("Platform: %s\n", BDEOSTYPE);
+	printf("Architecture: %s\n", BDEARCH);
 }
 
 #ifndef DEDICATED_ONLY
@@ -184,7 +184,7 @@ Qcommon_Mainloop(void)
 void Qcommon_ExecConfigs(qboolean gameStartUp)
 {
 	Cbuf_AddText("exec default.cfg\n");
-	Cbuf_AddText("exec yq2.cfg\n");
+	Cbuf_AddText("exec BDE.cfg\n");
 	Cbuf_AddText("exec config.cfg\n");
 	if(gameStartUp)
 	{
@@ -265,7 +265,7 @@ Qcommon_Init(int argc, char **argv)
 	timescale = Cvar_Get("timescale", "1", 0);
 
 	char *s;
-	s = va("%s %s %s %s", YQ2VERSION, YQ2ARCH, BUILD_DATE, YQ2OSTYPE);
+	s = va("%s %s %s %s", BDEVERSION, BDEARCH, BUILD_DATE, BDEOSTYPE);
 	Cvar_Get("version", s, CVAR_SERVERINFO | CVAR_NOSET);
 	busywait = Cvar_Get("busywait", "1", CVAR_ARCHIVE);
 
@@ -302,7 +302,8 @@ Qcommon_Init(int argc, char **argv)
 		if (!dedicated->value)
 		{
 			// Start demo loop...
-			Cbuf_AddText("d1\n");
+			Cbuf_AddText("start_menu\n");
+
 		}
 		else
 		{

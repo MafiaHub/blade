@@ -1,8 +1,9 @@
-Yamagi Quake II contains software developed by multiple individuals,
+Blade Engine contains software developed by multiple individuals,
 projects and organisations. Following is a list of this software and
 copys for each license:
 
 - Quake II: GPLv2
+- Yamagi Quake 2
 - Info-ZIP (unzip): Info-ZIP License
 - Cocoa SDL entry points
 - stb_image.h, stb_image_write.h

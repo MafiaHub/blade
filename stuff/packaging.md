@@ -29,7 +29,7 @@ Yamagi Quake2 will get the directory the `quake2` executable is in from the syst
 and then look in that directory (and nowhere else!) for `ref_*.so`.  
 It will look for `game.so` there first, but if it's not found in the binary directory,
 it will look for it in all directories that are also searched for game
-data (SYSTEMDIR, basedir, $HOME/.yq2/). This is for better compatibility with mods that
+data (SYSTEMDIR, basedir, $HOME/.BDE/). This is for better compatibility with mods that
 might ship their own game.so.
 
 You can **just symlink the executables to a directory in your $PATH**, like /usr/bin/.  
@@ -63,4 +63,4 @@ You *can* also put the binaries in there, but in that case please put all of the
 
 Blade Engine has support for an alternative startup config.  
 It may be a good idea to install it, since it sets some global options to sane defaults.  
-Copy yq2.cfg to the baseq2/ subdirectory in the gamedata (`SYSTEMDIR`) directory.
+Copy BDE.cfg to the baseq2/ subdirectory in the gamedata (`SYSTEMDIR`) directory.

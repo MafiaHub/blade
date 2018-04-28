@@ -941,9 +941,9 @@ Cmd_ExecuteString(char *text)
 		return; /* no tokens */
 	}
 
-	if(Cmd_Argc() > 1 && Q_strcasecmp(cmd_argv[0], "exec") == 0 && Q_strcasecmp(cmd_argv[1], "yq2.cfg") == 0)
+	if(Cmd_Argc() > 1 && Q_strcasecmp(cmd_argv[0], "exec") == 0 && Q_strcasecmp(cmd_argv[1], "BDE.cfg") == 0)
 	{
-		/* exec yq2.cfg is done directly after exec default.cfg, see Qcommon_Init() */
+		/* exec BDE.cfg is done directly after exec default.cfg, see Qcommon_Init() */
 		doneWithDefaultCfg = true;
 	}
 

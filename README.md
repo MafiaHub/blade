@@ -157,7 +157,7 @@ is searched at:
 
 - A global directory specified by the package.
 - The same directory as the quake2 executable.
-- In $HOME/.yq2
+- In $HOME/.BDE
 - The directory given with the *+set basedir /path/to/quake2_installation/*
   commandline argument.
 

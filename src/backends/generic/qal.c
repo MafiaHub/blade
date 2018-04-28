@@ -25,7 +25,7 @@
  * OpenAL library and connects the "qal" funtion pointers to the
  * OpenAL functions. It shopuld work on Windows and unixoid Systems,
  * other platforms may need an own implementation. This source file
- * was taken from Q2Pro and modified by the YQ2 authors.
+ * was taken from Q2Pro and modified by the BDE authors.
  *
  * =======================================================================
  */

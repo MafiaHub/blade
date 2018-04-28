@@ -32,15 +32,15 @@
 #include "shared.h"
 #include "crc.h"
 
-#define YQ2VERSION "7.21pre"
-#define BASEDIRNAME "baseq2"
+#define BDEVERSION "0.1a"
+#define BASEDIRNAME "baseb"
 
-#ifndef YQ2OSTYPE
-#error YQ2OSTYPE should be defined by the build system
+#ifndef BDEOSTYPE
+#error BDEOSTYPE should be defined by the build system
 #endif
 
-#ifndef YQ2ARCH
-#error YQ2ARCH should be defined by the build system
+#ifndef BDEARCH
+#error BDEARCH should be defined by the build system
 #endif
 
 #ifndef BUILD_DATE
@@ -50,7 +50,7 @@
 #ifdef _WIN32
  #define CFGDIR "YamagiQ2"
 #else
- #define CFGDIR ".yq2"
+ #define CFGDIR ".BDE"
 #endif
 
 #ifdef _WIN32

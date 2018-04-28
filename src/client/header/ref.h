@@ -218,7 +218,7 @@ typedef struct
 	void	(IMPORT *FS_FreeFile) (void *buf);
 
 	// gamedir will be the current directory that generated
-	// files should be stored to, ie: "f:\quake\id1"
+	// files should be stored to, ie: "f:\quake\id1" // toto je este z Quake 1 :D :D
 	char	*(IMPORT *FS_Gamedir) (void);
 
 	cvar_t	*(IMPORT *Cvar_Get) (char *name, char *value, int flags);

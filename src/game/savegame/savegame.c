@@ -71,7 +71,7 @@
  * load older savegames. This should be bumped if the files
  * in tables/ are changed, otherwise strange things may happen.
  */
-#define SAVEGAMEVER "YQ2-2"
+#define SAVEGAMEVER "BDE-2"
 
 #ifndef BUILD_DATE
 #define BUILD_DATE __DATE__
@@ -82,17 +82,17 @@
  * created on other systems or architectures. This will
  * crash q2 in spectacular ways
  */
-#ifndef YQ2OSTYPE
-#error YQ2OSTYPE should be defined by the build system
+#ifndef BDEOSTYPE
+#error BDEOSTYPE should be defined by the build system
 #endif
 
-#ifndef YQ2ARCH
-#error YQ2ARCH should be defined by the build system
+#ifndef BDEARCH
+#error BDEARCH should be defined by the build system
 #endif
 
 /*
  * Older operating systen and architecture detection
- * macros, implemented by savegame version YQ2-1.
+ * macros, implemented by savegame version BDE-1.
  */
 #if defined(__APPLE__)
 #define OSTYPE_1 "MacOS X"
@@ -787,8 +787,8 @@ WriteGame(const char *filename, qboolean autosave)
 
 	Q_strlcpy(str_ver, SAVEGAMEVER, sizeof(str_ver) - 1);
 	Q_strlcpy(str_game, GAMEVERSION, sizeof(str_game) - 1);
-	Q_strlcpy(str_os, YQ2OSTYPE, sizeof(str_os) - 1);
-	Q_strlcpy(str_arch, YQ2ARCH, sizeof(str_arch) - 1);
+	Q_strlcpy(str_os, BDEOSTYPE, sizeof(str_os) - 1);
+	Q_strlcpy(str_arch, BDEARCH, sizeof(str_arch) - 1);
 
 	fwrite(str_ver, sizeof(str_ver), 1, f);
 	fwrite(str_game, sizeof(str_game), 1, f);
@@ -844,18 +844,18 @@ ReadGame(const char *filename)
 			fclose(f);
 			gi.error("Savegame from another game.so.\n");
 		}
-		else if (strcmp(str_os, YQ2OSTYPE))
+		else if (strcmp(str_os, BDEOSTYPE))
 		{
 			fclose(f);
 			gi.error("Savegame from another os.\n");
 		}
-		else if (strcmp(str_arch, YQ2ARCH))
+		else if (strcmp(str_arch, BDEARCH))
 		{
 			fclose(f);
 			gi.error("Savegame from another architecture.\n");
 		}
 	}
-	else if (!strcmp(str_ver, "YQ2-1"))
+	else if (!strcmp(str_ver, "BDE-1"))
 	{
 		if (strcmp(str_game, GAMEVERSION))
 		{
