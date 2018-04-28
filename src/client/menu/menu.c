@@ -609,8 +609,7 @@ M_Main_Draw(void)
     int i,j,k,c;
     int xoffset;
     int wsize;
-    static int slideup;
-    static int slidecnt;
+    static int slide_amt;
     static int last_slide_time;
     char *names[] =
     {
@@ -635,15 +634,10 @@ M_Main_Draw(void)
     xoffset = (320/2);
     c = (sizeof(titles)/sizeof(titles[0]));
 
-    if (last_slide_time + 2500 < cl.time)
+    if (last_slide_time + 100 < cl.time)
     {
         last_slide_time = cl.time;
-        slideup = (int)roundf(sinf((float)slidecnt++ * 90));
-        
-        if (slidecnt > 3)
-        {
-            slidecnt=0;
-        }
+        slide_amt++;
     }
 
     for (i = 0; names[i] != 0; i++)
@@ -653,7 +647,7 @@ M_Main_Draw(void)
         k = xoffset - wsize/2;
 
         if (cls.state == ca_disconnected)
-            j += 2 * /* (i % 2 == 0 ? -1 : 1) * */ (slideup);
+            j += sinf(slide_amt) * 1;
 
         if (i != m_main_cursor)
         {
@@ -4417,7 +4411,7 @@ M_Init(void)
     }
 }
 
-#define MENU_FRAMES 1
+#define MENU_FRAMES 4
 
 void
 M_Draw(void)

@@ -48,7 +48,7 @@
 #endif
 
 #ifdef _WIN32
- #define CFGDIR "YamagiQ2"
+ #define CFGDIR "BladeGame"
 #else
  #define CFGDIR ".BDE"
 #endif

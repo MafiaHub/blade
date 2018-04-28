@@ -632,6 +632,11 @@ Q_log2(int val)
 	return answer;
 }
 
+float Q_lerp(float a, float b, float f)
+{
+	return (a * (1.0 - f)) + (b * f);
+}
+
 /* ==================================================================================== */
 
 char *
