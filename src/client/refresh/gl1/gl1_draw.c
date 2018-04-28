@@ -113,10 +113,22 @@ RDraw_FindPic(char *name)
 	{
 		Com_sprintf(fullname, sizeof(fullname), "pics/%s.pcx", name);
 		gl = R_FindImage(fullname, it_pic);
+
+		if (!gl)
+		{
+			Com_sprintf(fullname, sizeof(fullname), "pics/%s.png", name);
+			gl = R_FindImage(fullname, it_pic);
+		}
 	}
 	else
 	{
 		gl = R_FindImage(name + 1, it_pic);
+
+		if (!gl)
+		{
+			Com_sprintf(fullname, sizeof(fullname), "%s.png", name + 1);
+			gl = R_FindImage(fullname, it_pic);
+		}
 	}
 
 	return gl;

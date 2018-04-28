@@ -35,16 +35,29 @@ RE_Draw_FindPic
 image_t *RE_Draw_FindPic (char *name)
 {
 	image_t	*image;
+	char fullname[MAX_QPATH];
 
 	if (name[0] != '/' && name[0] != '\\')
 	{
-		char fullname[MAX_QPATH];
-
 		Com_sprintf (fullname, sizeof(fullname), "pics/%s.pcx", name);
 		image = R_FindImage (fullname, it_pic);
+
+		if (!image)
+		{
+			Com_sprintf(fullname, sizeof(fullname), "pics/%s.png", name);
+			image = R_FindImage(fullname, it_pic);
+		}
 	}
 	else
+	{
 		image = R_FindImage (name+1, it_pic);
+
+		if (!image)
+		{
+			Com_sprintf(fullname, sizeof(fullname), "%s.png", name+1);
+			image = R_FindImage(fullname, it_pic);
+		}
+	}
 
 	return image;
 }

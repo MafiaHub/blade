@@ -169,10 +169,22 @@ GL3_Draw_FindPic(char *name)
 	{
 		Com_sprintf(fullname, sizeof(fullname), "pics/%s.pcx", name);
 		gl = GL3_FindImage(fullname, it_pic);
+
+		if (!gl)
+		{
+			Com_sprintf(fullname, sizeof(fullname), "pics/%s.png", name);
+			gl = GL3_FindImage(fullname, it_pic);
+		}
 	}
 	else
 	{
 		gl = GL3_FindImage(name + 1, it_pic);
+
+		if (!gl)
+		{
+			Com_sprintf(fullname, sizeof(fullname), "%s.png", name + 1);
+			gl = GL3_FindImage(fullname, it_pic);
+		}
 	}
 
 	return gl;
