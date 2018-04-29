@@ -812,6 +812,7 @@ GAME_OBJS_ = \
 	src/game/player/trail.o \
 	src/game/player/view.o \
 	src/game/player/weapon.o \
+	src/game/player/light.o \
 	src/game/savegame/savegame.o
 
 # ----------

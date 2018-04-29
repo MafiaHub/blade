@@ -586,6 +586,7 @@ typedef struct
 #define EF_ROCKET 0x00000010                /* redlight + trail */
 #define EF_GRENADE 0x00000020
 #define EF_HYPERBLASTER 0x00000040
+#define EF_FLASHLIGHT 0x00300000
 #define EF_BFG 0x00000080
 #define EF_COLOR_SHELL 0x00000100
 #define EF_POWERSCREEN 0x00000200

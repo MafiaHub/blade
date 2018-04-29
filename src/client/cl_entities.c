@@ -540,6 +540,10 @@ CL_AddPacketEntities(frame_t *frame)
 					V_AddLight(ent.origin, 200, 1, 1, 0);
 				}
 			}
+			else if (effects & EF_FLASHLIGHT)
+			{
+				V_AddLight(ent.origin, 200, 233/255.0f, 239/255.0f, 244/255.0f);
+			}
 			else if (effects & EF_GIB)
 			{
 				CL_DiminishingTrail(cent->lerp_origin, ent.origin,

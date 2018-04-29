@@ -786,6 +786,10 @@ void ChaseNext(edict_t *ent);
 void ChasePrev(edict_t *ent);
 void GetChaseTarget(edict_t *ent);
 
+/* light.c */
+void FL_Think(edict_t *self);
+void FL_Toggle(edict_t *self);
+
 /* ============================================================================ */
 
 /* client_t->anim_priority */
@@ -1087,6 +1091,8 @@ struct edict_s
 	/* common data blocks */
 	moveinfo_t moveinfo;
 	monsterinfo_t monsterinfo;
+
+	edict_t *flashlight;
 };
 
 #endif /* GAME_LOCAL_H */
