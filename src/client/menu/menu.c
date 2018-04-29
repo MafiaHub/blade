@@ -4050,7 +4050,7 @@ M_Quit_Key(int key)
     return NULL;
 }
 
-#define QUIT_FRAMES 19
+#define QUIT_FRAMES 25
 
 static void
 M_Quit_Draw(void)

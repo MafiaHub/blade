@@ -1878,8 +1878,8 @@ void Pistol_Fire(edict_t *ent)
 
 void Weapon_Pistol(edict_t *ent)
 {
-	static int pause_frames[] = {13, 32, 42};
-	static int fire_frames[] = {10, 0};
+	static int pause_frames[] = {26, 32, 56};
+	static int fire_frames[] = {20, 0};
 
-	Weapon_Generic(ent, 9, 14, 39, 42, 63, 68, pause_frames, fire_frames, Pistol_Fire);
+	Weapon_Generic(ent, 19, 25, 68, 82, 33, 33, pause_frames, fire_frames, Pistol_Fire);
 }
