@@ -724,7 +724,7 @@ SpawnEntities(const char *mapname, char *entities, const char *spawnpoint)
 /* =================================================================== */
 
 char *single_statusbar =
-	"yb	-24 "
+	"yb	-44 "
 
 /* health */
 	"xl	50 "
@@ -738,7 +738,7 @@ char *single_statusbar =
 	"   pic 2 "
 	"   xr -124 "
 	"   anum "
-	"   yb -24 "
+	"   yb -44 "
 	"endif "
 
 /* magazine bullet count */
@@ -750,7 +750,7 @@ char *single_statusbar =
 /* armor */
 	"if 4 "
 	"	xl	50 "
-	"   yb -50 "
+	"   yb -70 "
 	"	pic 4 "
 	"	xl	74 "
 	"	rnum "
@@ -759,20 +759,20 @@ char *single_statusbar =
 /* selected item */
 	"if 6 "
 	"	xr -74 "
-	"   yb -50 "
+	"   yb -70 "
 	"	pic 6 "
 	"endif "
 
-	"yb	-50 "
+	"yb	-70 "
 
 /* picked up item */
 	"if 7 "
 	"	xv	0 "
 	"	pic 7 "
 	"	xv	26 "
-	"	yb	-42 "
+	"	yb	-62 "
 	"	stat_string 8 "
-	"	yb	-50 "
+	"	yb	-70 "
 	"endif "
 
 /* timer */
@@ -791,51 +791,60 @@ char *single_statusbar =
 ;
 
 char *dm_statusbar =
-	"yb	-24 "
+	"yb	-44 "
 
 /* health */
-	"xv	0 "
-	"hnum "
-	"xv	50 "
+	"xl	50 "
 	"pic 0 "
+	"xl	74 "
+	"hnum "
 
 /* ammo */
 	"if 2 "
-	"	xv	100 "
-	"	anum "
-	"	xv	150 "
-	"	pic 2 "
+	"	xr -74 "
+	"   pic 2 "
+	"   xr -124 "
+	"   anum "
+	"   yb -44 "
 	"endif "
+
+/* magazine bullet count */
+	/*"if 18 "
+	"   xr -124 "
+	"   mnum "
+	"endif " */
 
 /* armor */
 	"if 4 "
-	"	xv	200 "
-	"	rnum "
-	"	xv	250 "
+	"	xl	50 "
+	"   yb -70 "
 	"	pic 4 "
+	"	xl	74 "
+	"	rnum "
 	"endif "
 
 /* selected item */
 	"if 6 "
-	"	xv	296 "
+	"	xr -74 "
+	"   yb -70 "
 	"	pic 6 "
 	"endif "
 
-	"yb	-50 "
+	"yb	-70 "
 
 /* picked up item */
 	"if 7 "
 	"	xv	0 "
 	"	pic 7 "
 	"	xv	26 "
-	"	yb	-42 "
+	"	yb	-62 "
 	"	stat_string 8 "
-	"	yb	-50 "
+	"	yb	-70 "
 	"endif "
 
 /* timer */
 	"if 9 "
-	"	xv	246 "
+	"	xv	262 "
 	"	num	2	10 "
 	"	xv	296 "
 	"	pic	9 "
