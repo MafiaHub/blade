@@ -425,6 +425,16 @@ G_SetStats(edict_t *ent)
 			ent->client->pers.inventory[ent->client->ammo_index];
 	}
 
+	/* magazine bullets */
+	if (!ent->client->ammo_index || !ent->client->pers.mags[ent->client->pers.weapon->weapmodel].uses_mags)
+	{
+		ent->client->ps.stats[STAT_MAG_BULLETS] = 0;
+	}
+	else
+	{
+		ent->client->ps.stats[STAT_MAG_BULLETS] = ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size;
+	}
+
 	/* armor */
 	power_armor_type = PowerArmorType(ent);
 

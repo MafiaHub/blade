@@ -728,16 +728,24 @@ char *single_statusbar =
 
 /* health */
 	"xv	0 "
-	"hnum "
-	"xv	50 "
 	"pic 0 "
+	"xv	24 "
+	"hnum "
 
 /* ammo */
 	"if 2 "
-	"	xv	100 "
-	"	anum "
-	"	xv	150 "
-	"	pic 2 "
+	"	xv 296 "
+	"   yb -50 "
+	"   pic 2 "
+	"   xv 246 "
+	"   anum "
+	"   yb -24 "
+	"endif "
+
+/* magazine bullet count */
+	"if 18 "
+	"   xv 246 "
+	"   mnum "
 	"endif "
 
 /* armor */

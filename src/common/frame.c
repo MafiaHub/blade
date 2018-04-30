@@ -302,7 +302,7 @@ Qcommon_Init(int argc, char **argv)
 		if (!dedicated->value)
 		{
 			// Start main menu
-			Cbuf_AddText("start_menu\n");
+			Cbuf_AddText("start_intro\n");
 		}
 		else
 		{

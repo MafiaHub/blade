@@ -673,6 +673,8 @@ M_Main_Key(int key)
         break;
 
     case K_DOWNARROW:
+    case 's':
+    case 'S':
         if (++m_main_cursor >= MAIN_ITEMS)
         {
             m_main_cursor = 0;
@@ -680,6 +682,8 @@ M_Main_Key(int key)
         return sound;
 
     case K_UPARROW:
+    case 'w':
+    case 'W':
         if (--m_main_cursor < 0)
         {
             m_main_cursor = MAIN_ITEMS - 1;
@@ -1594,10 +1598,10 @@ static const char *idcredits[] = {
     "Dominik \"ZaKlaus\" Madarasz",
     "",
     "+ART",
-    "memb3r",
+    "Stanislav \"AnvilBear\" Matveev",
     "",
     "+LEVEL DESIGN",
-    "memb3r",
+    "Stanislav \"AnvilBear\" Matveev",
     "Dominik \"ZaKlaus\" Madarasz",
     "",
     "+SPECIAL THANKS",

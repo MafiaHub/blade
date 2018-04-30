@@ -1294,6 +1294,36 @@ SCR_ExecuteLayoutString(char *s)
 			continue;
 		}
 
+		if (!strcmp(token, "mnum"))
+		{
+			/* mag number */
+			int color;
+
+			width = 3;
+			value = cl.frame.playerstate.stats[STAT_MAG_BULLETS];
+
+			if (value > 5)
+			{
+				color = 0; /* green */
+			}
+			else if (value >= 0)
+			{
+				color = (cl.frame.serverframe >> 2) & 1; /* flash */
+			}
+			else
+			{
+				continue; /* negative number = don't show */
+			}
+
+			if (cl.frame.playerstate.stats[STAT_FLASHES] & 4)
+			{
+				Draw_PicScaled(x, y, "field_3", scale);
+			}
+
+			SCR_DrawFieldScaled(x, y, color, width, value, scale);
+			continue;
+		}
+
 		if (!strcmp(token, "rnum"))
 		{
 			/* armor number */
