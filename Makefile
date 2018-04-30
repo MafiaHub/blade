@@ -868,6 +868,7 @@ CLIENT_OBJS_ := \
 	src/common/shared/flash.o \
 	src/common/shared/rand.o \
 	src/common/shared/shared.o \
+	src/common/shared/zpl.o \
 	src/common/unzip/ioapi.o \
 	src/common/unzip/unzip.o \
 	src/server/sv_cmd.o \
