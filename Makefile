@@ -42,7 +42,7 @@ WITH_OGG:=yes
 # To use it your system needs libopenal.so.1
 # or openal32.dll (we recommend openal-soft)
 # installed
-WITH_OPENAL:=yes
+WITH_OPENAL:=no
 
 # Enables optional runtime loading of OpenAL (dlopen or
 # similar). If set to "no", the library is linked in at

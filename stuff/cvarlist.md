@@ -2,7 +2,7 @@ Blade Engine Console Variables
 =================================
 
 This lists explains most console variables (cvars) added by Blade
-Engine. Most of the original clients (Vanilla Runblader) cvars are
+Engine. Most of the original clients (Vanilla Quake II) cvars are
 still in place, however due to architectural changes some of them
 have been renamed. The prefixes are:
 

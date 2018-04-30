@@ -1591,7 +1591,7 @@ static int credits_start_time;
 static const char **credits;
 static char *creditsIndex[256];
 static char *creditsBuffer;
-static const char *idcredits[] = {
+static const char *v4credits[] = {
     "+RUNBLADER BY V4 GAMES",
     "",
     "+PROGRAMMING",
@@ -1607,11 +1607,6 @@ static const char *idcredits[] = {
     "+SPECIAL THANKS",
     "All our friends who supported us morally",
     "and with code/art contribution."
-    "",
-    "",
-    "",
-    "",
-    "",
     "",
     "+ADDITIONAL SUPPORT",
     "",
@@ -1763,7 +1758,7 @@ M_Menu_Credits_f(void)
     }
     else
     {
-        credits = idcredits;
+        credits = v4credits;
     }
 
     credits_start_time = cls.realtime;

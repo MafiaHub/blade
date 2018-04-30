@@ -1,9 +1,9 @@
 /*
- * Just a trivial stupid wrapper quake2.exe that starts yquake2.exe.
+ * Just a trivial stupid wrapper quake2.exe that starts blade.exe.
  * It calls it with the whole path (assuming it's in same directory as this wrapper)
  * and passes the commandline
  *
- * This should allow us to rename the real executable to yquake2.exe (to hopefully
+ * This should allow us to rename the real executable to blade.exe (to hopefully
  * avoid trouble with whatever stupid thing interferes with mouse input once
  * console has been opened if the games executable is called quake2.exe)
  * while avoiding confusion for people upgrading their BDE installation who still have
