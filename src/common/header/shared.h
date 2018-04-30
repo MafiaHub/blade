@@ -1012,7 +1012,7 @@ typedef enum
 #define STAT_SPECTATOR 17
 #define STAT_MAG_BULLETS 18
 
-#define MAX_STATS 32
+#define MAX_STATS 33
 
 /* dmflags->value flags */
 #define DF_NO_HEALTH 0x00000001         /* 1 */
