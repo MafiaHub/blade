@@ -1,3 +1,12 @@
+Blade 0.1a:
+- New fork of a source port with new features and changes applied.
+- Got rid of software renderer as it became redundant.
+- New main menu code changes and animated background support.
+- Rework of some engine parts to better acommodate our dev workflow.
+- Increment game api version.
+- Add provisionary gun reload mechanic.
+- Small code organisation changes.
+
 Quake II 7.10 to 7.20:
 - Add the soft renderer back. This feature is considered experimental.
   The porting of the old soft renderer code to SDL and it's cleanup

@@ -1,8 +1,8 @@
 Blade Engine Console Variables
 =================================
 
-This lists explains most console variables (cvars) added by Yamagi
-Quake II. Most of the original clients (Vanilla Quake II) cvars are
+This lists explains most console variables (cvars) added by Blade
+Engine. Most of the original clients (Vanilla Runblader) cvars are
 still in place, however due to architectural changes some of them
 have been renamed. The prefixes are:
 
@@ -30,7 +30,7 @@ example it's `+set busywait 0` (setting the `busywait` cvar) and
   in startup scripts, to test binaries, etc. If not set, the directory
   containing the binaries is used.
 
-* **portable**: Makes Quake II portable, all runtime data like the
+* **portable**: Makes Runblader portable, all runtime data like the
   the config, savegames and so on is stored next to the executable and
   not in the users home directory.
 
@@ -38,10 +38,10 @@ example it's `+set busywait 0` (setting the `busywait` cvar) and
 General:
 --------
 
-* **busywait**: By default this is set to `1`. causing Quake II to spin
+* **busywait**: By default this is set to `1`. causing Runblader to spin
   in a very tight loop until it's time to process the next frame. This is
   a very accurate way to determine the internal timing but comes with a
-  relatively high CPU usage. If set to `0` Quake II lays itself to sleep
+  relatively high CPU usage. If set to `0` Runblader lays itself to sleep
   and tells the operating system to send a wakeup signal when it's time
   for the next frame. The later is more CPU friendly but rather inaccurate,
   especially on Windows. Use with care.  
@@ -61,7 +61,7 @@ General:
   inaccurate and gets less precise with higher framerates, as it only
   measures full milliseconds.
 
-* **in_grab**: Defines how the mouse is grabbed by Quake IIs window. If
+* **in_grab**: Defines how the mouse is grabbed by Runbladers window. If
   set to `0` the mouse is never grabbed and if set to `1` it's always
   grabbed. If set to `2` (the default) the mouse is grabbed during
   gameplay and released otherwise (in menu, console or if game is paused).
@@ -73,14 +73,14 @@ Audio:
 * **al_device**: OpenAL device to use. In most cases there's no need to
   change this, since the default device is normally the right choice.
 
-* **al_driver**: OpenAL library to use. This is usefull if for some
-   reasons several OpenAL libraries are available and Quake II picks the
+* **al_driver**: OpenAL library to use. This is useful if for some
+   reasons several OpenAL libraries are available and Runblader picks the
    wrong one. The given value is the name of the library, for example
    `libopenal.so.1`.
 
 * **ogg_enable**: Enable Ogg/Vorbis music playback.
 
-* **ogg_ignoretrack0**: Normally Quake II disabled the background music
+* **ogg_ignoretrack0**: Normally Runblader disabled the background music
   if a major objective has been archived by setting the music track to 0.  
   Setting this cvar to `1` disables this behavior, the music keeps playing.
 
@@ -150,7 +150,7 @@ Graphics (all renderers):
   *r_customwidth* pixels wide. Set *r_mode* to `-1` to use the custom
   resolution.
 
-* **r_farsee**: Normally Quake II renders only up to 4096 units. If set
+* **r_farsee**: Normally Runblader renders only up to 4096 units. If set
   to `1` the limit is increased to 8192 units.
 
 * **vid_maxfps**: The maximum framerate, if `cl_async` is `1`. Otherwise
@@ -186,7 +186,7 @@ Graphics (GL renderers only):
 * **gl_retexturing**: If set to `1` (the default) and a retexturing pack
   is installed, the high resolution textures are used.
 
-* **gl_shadows**: Enables rendering of shadows. Quake IIs shadows are
+* **gl_shadows**: Enables rendering of shadows. Runbladers shadows are
   very simple and are prone to render errors.
 
 * **gl_zfix**: Sometimes two or even more surfaces overlap and flicker.
