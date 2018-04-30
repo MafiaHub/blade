@@ -719,11 +719,12 @@ GL3_FindImage(char *name, imagetype_t type)
 		if (gl_retexturing->value)
 		{
 			/* Get size of the original texture */
+			qboolean uses_wal = 1;
 			GetWalInfo(name, &realwidth, &realheight);
 			if(realwidth == 0)
 			{
 				/* No texture found */
-				return NULL;
+				uses_wal = 0;
 			}
 
 			/* try to load a tga, png or jpg (in that order/priority) */
@@ -731,18 +732,27 @@ GL3_FindImage(char *name, imagetype_t type)
 			   || LoadSTB(namewe, "png", &pic, &width, &height)
 			   || LoadSTB(namewe, "jpg", &pic, &width, &height) )
 			{
+				if (!uses_wal)
+				{
+					realwidth = width;
+					realheight = height;
+				}
+	
 				/* upload tga or png or jpg */
 				image = GL3_LoadPic(name, pic, width, realwidth, height, realheight, type, 32);
 			}
-			else
+			else if(uses_wal)
 			{
 				/* WAL if no TGA/PNG/JPEG available (exists always) */
 				image = LoadWal(namewe, type);
-			}
 
-			if (!image)
+				if (!image)
+				{
+					return NULL;
+				}
+			}
+			else
 			{
-				/* No texture found */
 				return NULL;
 			}
 		}

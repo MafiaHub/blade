@@ -1123,23 +1123,28 @@ R_FindImage(char *name, imagetype_t type)
 	{
 		if (gl_retexturing->value)
 		{
+			qboolean uses_pcx = 1;
 			GetPCXInfo(name, &realwidth, &realheight);
-			if(realwidth == 0)
+			if (realwidth == 0)
 			{
 				/* No texture found */
-				return NULL;
+				uses_pcx = 0;
 			}
 
 			/* try to load a tga, png or jpg (in that order/priority) */
-			if (  LoadSTB(namewe, "tga", &pic, &width, &height)
-			   || LoadSTB(namewe, "png", &pic, &width, &height)
-			   || LoadSTB(namewe, "jpg", &pic, &width, &height) )
+			if (LoadSTB(namewe, "tga", &pic, &width, &height) || LoadSTB(namewe, "png", &pic, &width, &height) || LoadSTB(namewe, "jpg", &pic, &width, &height))
 			{
+				if (!uses_pcx)
+				{
+					realwidth = width;
+					realheight = height;
+				}
+
 				/* upload tga or png or jpg */
 				image = R_LoadPic(name, pic, width, realwidth, height,
-						realheight, type, 32);
+									realheight, type, 32);
 			}
-			else
+			else if (uses_pcx)
 			{
 				/* PCX if no TGA/PNG/JPEG available (exists always) */
 				LoadPCX(name, &pic, NULL, &width, &height);
@@ -1152,6 +1157,10 @@ R_FindImage(char *name, imagetype_t type)
 
 				/* Upload the PCX */
 				image = R_LoadPic(name, pic, width, 0, height, 0, type, 8);
+			}
+			else
+			{
+				return NULL;
 			}
 		}
 		else /* gl_retexture is not set */
