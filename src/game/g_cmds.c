@@ -1414,6 +1414,10 @@ ClientCommand(edict_t *ent)
 	{
 		FL_Toggle(ent);
 	}
+	else if (Q_stricmp(cmd, "holster") == 0)
+	{
+		HolsterWeapon(ent);
+	}
 	else /* anything that doesn't match a command will be a chat */
 	{
 		Cmd_Say_f(ent, false, true);

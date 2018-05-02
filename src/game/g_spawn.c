@@ -757,13 +757,13 @@ char *single_statusbar =
 	"endif "
 
 /* selected item */
-	"if 6 "
+/* 	"if 6 "
 	"	xr -74 "
 	"   yb -70 "
 	"	pic 6 "
 	"endif "
 
-	"yb	-70 "
+	"yb	-70 " */
 
 /* picked up item */
 	"if 7 "
@@ -824,13 +824,13 @@ char *dm_statusbar =
 	"endif "
 
 /* selected item */
-	"if 6 "
+/* 	"if 6 "
 	"	xr -74 "
 	"   yb -70 "
 	"	pic 6 "
 	"endif "
 
-	"yb	-70 "
+	"yb	-70 " */
 
 /* picked up item */
 	"if 7 "

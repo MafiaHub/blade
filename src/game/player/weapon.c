@@ -293,6 +293,19 @@ ChangeWeapon(edict_t *ent)
 }
 
 void
+HolsterWeapon(edict_t *ent)
+{
+	if (!(ent && ent->client))
+	{
+		return;
+	}
+
+	ent->client->pers.lastweapon = ent->client->pers.weapon;
+	ent->client->pers.weapon = NULL;
+	ent->client->newweapon = NULL;
+}
+
+void
 NoAmmoWeaponChange(edict_t *ent)
 {
 	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))] &&

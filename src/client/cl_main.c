@@ -585,6 +585,8 @@ CL_InitLocal(void)
 	Cmd_AddCommand("prog", NULL);
 	Cmd_AddCommand("give", NULL);
 	Cmd_AddCommand("god", NULL);
+	Cmd_AddCommand("flashlight", NULL);
+	Cmd_AddCommand("holster", NULL);
 	Cmd_AddCommand("notarget", NULL);
 	Cmd_AddCommand("noclip", NULL);
 	Cmd_AddCommand("invuse", NULL);
