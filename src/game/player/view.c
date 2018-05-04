@@ -1384,9 +1384,11 @@ ClientEndServerFrame(edict_t *ent)
 	}
 
 	/* if the inventory is up, update it */
-	if (ent->client->showinventory)
+	if (ent->client->showinventory || (ent->client->next_inv_update_time < level.time))
 	{
 		InventoryMessage(ent);
 		gi.unicast(ent, false);
+
+		ent->client->next_inv_update_time = level.time + 500;
 	}
 }

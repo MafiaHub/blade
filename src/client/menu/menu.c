@@ -828,7 +828,6 @@ char *bindnames[][2] =
     {"+left", "turn left"},
     {"+right", "turn right"},
     {"+speed", "run"},
-    {"flashlight", "flashlight"},
     {"+moveleft", "step left"},
     {"+moveright", "step right"},
     {"+strafe", "sidestep"},

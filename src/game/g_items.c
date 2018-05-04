@@ -2058,6 +2058,27 @@ gitem_t itemlist[] = {
 		""
 	},
 
+	{
+		"item_battery",
+		Pickup_Powerup,
+		Use_Battery,
+		Drop_General,
+		NULL,
+		"misc/pkup.wav",
+		NULL, 0,
+		NULL,
+		"w_mk23", /* change to i_battery */
+		"Battery",
+		2,
+		1,
+		NULL,
+		IT_STAY_COOP | IT_POWERUP,
+		0,
+		NULL,
+		0,
+		""
+	},
+
 	/* QUAKED ammo_shells (.3 .3 1) (-16 -16 -16) (16 16 16) */
 	{
 		"ammo_shells",

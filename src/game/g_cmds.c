@@ -1486,10 +1486,6 @@ ClientCommand(edict_t *ent)
 	{
 		Cmd_PlayerList_f(ent);
 	}
-	else if (Q_stricmp(cmd, "flashlight") == 0)
-	{
-		FL_Toggle(ent);
-	}
 	else if (Q_stricmp(cmd, "holster") == 0)
 	{
 		HolsterWeapon(ent);

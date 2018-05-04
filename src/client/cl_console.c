@@ -77,7 +77,6 @@ Con_ToggleConsole_f(void)
 
 	if (cls.state == ca_disconnected)
 	{
-		/* start the demo loop again */
 		Cbuf_AddText("menu_main\n");
 		return;
 	}

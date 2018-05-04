@@ -1081,11 +1081,11 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/blade.exe : $(CLIENT_OBJS) icon
 	@echo "===> LD $@"
 	${Q}$(CC) build/icon/icon.res $(CLIENT_OBJS) $(LDFLAGS) $(SDLLDFLAGS) -o $@
-	# $(Q)strip $@
+	$(Q)strip $@
 # the wrappper, quick'n'dirty
 release/quake2.exe : src/win-wrapper/wrapper.c icon
 	$(Q)$(CC) -Wall -mwindows build/icon/icon.res src/win-wrapper/wrapper.c -o $@
-	# $(Q)strip $@
+	$(Q)strip $@
 else
 release/quake2 : $(CLIENT_OBJS)
 	@echo "===> LD $@"
@@ -1097,7 +1097,7 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/bded.exe : $(SERVER_OBJS) icon
 	@echo "===> LD $@.exe"
 	${Q}$(CC) build/icon/icon.res $(SERVER_OBJS) $(LDFLAGS) $(SDLLDFLAGS) -o $@
-	# $(Q)strip $@
+	$(Q)strip $@
 else
 release/bded : $(SERVER_OBJS)
 	@echo "===> LD $@"
@@ -1109,7 +1109,7 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/ref_gl1.dll : $(REFGL1_OBJS)
 	@echo "===> LD $@"
 	${Q}$(CC) $(REFGL1_OBJS) $(LDFLAGS) $(DLL_SDLLDFLAGS) -o $@
-	# $(Q)strip $@
+	$(Q)strip $@
 else ifeq ($(BDE_OSTYPE), Darwin)
 release/ref_gl1.dylib : $(REFGL1_OBJS)
 	@echo "===> LD $@"
@@ -1125,7 +1125,7 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/ref_gl3.dll : $(REFGL3_OBJS)
 	@echo "===> LD $@"
 	${Q}$(CC) $(REFGL3_OBJS) $(LDFLAGS) $(DLL_SDLLDFLAGS) -o $@
-	# $(Q)strip $@
+	$(Q)strip $@
 else ifeq ($(BDE_OSTYPE), Darwin)
 release/ref_gl3.dylib : $(REFGL3_OBJS)
 	@echo "===> LD $@"
@@ -1141,7 +1141,7 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/ref_soft.dll : $(REFSOFT_OBJS)
 	@echo "===> LD $@"
 	${Q}$(CC) $(REFSOFT_OBJS) $(LDFLAGS) $(DLL_SDLLDFLAGS) -o $@
-	# $(Q)strip $@
+	$(Q)strip $@
 else ifeq ($(BDE_OSTYPE), Darwin)
 release/ref_soft.dylib : $(REFSOFT_OBJS)
 	@echo "===> LD $@"
@@ -1157,7 +1157,7 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/baseb/game.dll : $(GAME_OBJS)
 	@echo "===> LD $@"
 	${Q}$(CC) $(GAME_OBJS) $(LDFLAGS) -o $@
-	# $(Q)strip $@
+	$(Q)strip $@
 else ifeq ($(BDE_OSTYPE), Darwin)
 release/baseb/game.dylib : $(GAME_OBJS)
 	@echo "===> LD $@"

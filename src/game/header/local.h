@@ -790,8 +790,9 @@ void ChasePrev(edict_t *ent);
 void GetChaseTarget(edict_t *ent);
 
 /* light.c */
-void FL_Think(edict_t *self);
-void FL_Toggle(edict_t *self);
+void FL_Think(edict_t *ent);
+void FL_Toggle(edict_t *ent);
+void Use_Battery(edict_t *ent, gitem_t *inv);
 
 /* ============================================================================ */
 
@@ -916,6 +917,7 @@ struct gclient_s
 	vec3_t oldvelocity;
 
 	float next_drown_time;
+	float next_inv_update_time;
 	int old_waterlevel;
 	int breather_sound;
 
