@@ -820,6 +820,7 @@ M_Menu_Multiplayer_f(void)
 char *bindnames[][2] =
 {
     {"+attack", "attack"},
+    {"reload", "reload"},
     {"weapnext", "next weapon"},
     {"weapprev", "previous weapon"},
     {"+forward", "walk forward"},
@@ -827,6 +828,7 @@ char *bindnames[][2] =
     {"+left", "turn left"},
     {"+right", "turn right"},
     {"+speed", "run"},
+    {"flashlight", "flashlight"},
     {"+moveleft", "step left"},
     {"+moveright", "step right"},
     {"+strafe", "sidestep"},
