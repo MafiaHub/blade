@@ -149,6 +149,8 @@ typedef struct
 	/* transient data from server */
 	char		layout[1024]; /* general 2D overlay */
 	int			inventory[MAX_ITEMS];
+	int         hotbar[10];
+	int         hotbar_icon[10]; /* hotbar which addresses assigned items */
 
 	/* non-gameserver infornamtion */
 	fileHandle_t cinematic_file;

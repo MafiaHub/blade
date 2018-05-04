@@ -300,9 +300,8 @@ HolsterWeapon(edict_t *ent)
 		return;
 	}
 
-	ent->client->pers.lastweapon = ent->client->pers.weapon;
-	ent->client->pers.weapon = NULL;
 	ent->client->newweapon = NULL;
+	ChangeWeapon(ent);
 }
 
 void
@@ -433,6 +432,8 @@ Use_Weapon(edict_t *ent, gitem_t *item)
 
 	/* change to this weapon when down */
 	ent->client->newweapon = item;
+	ent->client->ps.gunframe = 0;
+	ChangeWeapon(ent);
 }
 
 void

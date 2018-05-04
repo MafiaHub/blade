@@ -585,6 +585,7 @@ void Cmd_Help_f(edict_t *ent);
 void Cmd_Reload_f(edict_t *ent);
 
 /* g_items.c */
+extern int item_icons[MAX_ITEMS];
 void PrecacheItem(gitem_t *it);
 void InitItems(void);
 void SetItemNames(void);
@@ -742,6 +743,7 @@ void InitClientPersistant(gclient_t *client);
 void InitClientResp(gclient_t *client);
 void InitBodyQue(void);
 void ClientBeginServerFrame(edict_t *ent);
+void AssignHotkey(edict_t *ent, int slot, char *name);
 
 /* g_player.c */
 void player_pain(edict_t *self, edict_t *other, float kick, int damage);
@@ -828,6 +830,7 @@ typedef struct
 
 	int selected_item;
 	int inventory[MAX_ITEMS];
+	int hotbar[10];
 	ammo_mag_t mags[MAX_ITEMS];
 
 	/* ammo capacities */

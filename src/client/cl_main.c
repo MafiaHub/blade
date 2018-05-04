@@ -580,6 +580,8 @@ CL_InitLocal(void)
 	Cmd_AddCommand("use", NULL);
 	Cmd_AddCommand("drop", NULL);
 	Cmd_AddCommand("say", NULL);
+	Cmd_AddCommand("assign", NULL);
+	Cmd_AddCommand("unassign", NULL);
 	Cmd_AddCommand("say_team", NULL);
 	Cmd_AddCommand("info", NULL);
 	Cmd_AddCommand("prog", NULL);

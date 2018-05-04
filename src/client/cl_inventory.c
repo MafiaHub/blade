@@ -35,6 +35,12 @@ CL_ParseInventory(void)
 	{
 		cl.inventory[i] = MSG_ReadShort(&net_message);
 	}
+
+	for (i = 0; i < 10; i++)
+	{
+		cl.hotbar[i] = MSG_ReadShort(&net_message);
+		cl.hotbar_icon[i] = MSG_ReadShort(&net_message);
+	}
 }
 
 static void
@@ -66,9 +72,8 @@ CL_DrawInventory(void)
 	int num, selected_num, item;
 	int index[MAX_ITEMS];
 	char string[1024];
+	char hotkey[4];
 	int x, y;
-	char binding[1024];
-	const char *bind;
 	int selected;
 	int top;
 
@@ -125,21 +130,26 @@ CL_DrawInventory(void)
 	for (i = top; i < num && i < top + DISPLAY_ITEMS; i++)
 	{
 		item = index[i];
-		/* search for a binding */
-		Com_sprintf(binding, sizeof(binding), "use %s",
-				cl.configstrings[CS_ITEMS + item]);
-		bind = "";
-
-		for (j = 0; j < 256; j++)
+		Com_sprintf(hotkey, 4, "%s", "  ");
+		
+		/* temp hack */
+		for (j = 0; j < 10; j++)
 		{
-			if (keybindings[j] && !Q_stricmp(keybindings[j], binding))
+			int slot = cl.hotbar[j];
+			if (slot-- && slot == item)
 			{
-				bind = Key_KeynumToString(j);
+				int key = j;
+				key++;
+
+				if (key == 10)
+					key = 0;
+
+				Com_sprintf(hotkey, 4, "%d", key);
 				break;
 			}
 		}
 
-		Com_sprintf(string, sizeof(string), "%6s %3i %s", bind,
+		Com_sprintf(string, sizeof(string), "%6s %3i %s", hotkey,
 				cl.inventory[item], cl.configstrings[CS_ITEMS + item]);
 
 		if (item != selected)

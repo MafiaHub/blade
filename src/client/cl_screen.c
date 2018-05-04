@@ -1090,6 +1090,24 @@ SCR_ExecuteLayoutString(char *s)
 			continue;
 		}
 
+		if (!strcmp(token, "hotb"))
+		{
+			int i;
+			int step;
+			int slot;
+
+			token = COM_Parse(&s);
+			step = -(300*scale);
+
+			for (i=0; i<10; i++)
+			{
+				slot = cl.hotbar_icon[i];
+
+				Draw_PicScaled(x + step, y, slot ? cl.configstrings[CS_IMAGES + slot] : DEFAULT_HOTBAR_ICON, scale);
+				step += 50;
+			}
+		}
+
 		if (!strcmp(token, "pic"))
 		{
 			/* draw a pic from a stat number */

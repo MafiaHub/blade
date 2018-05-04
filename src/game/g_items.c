@@ -2712,6 +2712,8 @@ SetItemNames(void)
 	{
 		it = &itemlist[i];
 		gi.configstring(CS_ITEMS + i, it->pickup_name);
+		gi.configstring(CS_ICONS + i, it->icon);
+		item_icons[i] = gi.imageindex(it->icon);
 	}
 
 	jacket_armor_index = ITEM_INDEX(FindItem("Jacket Armor"));
@@ -2720,3 +2722,5 @@ SetItemNames(void)
 	power_screen_index = ITEM_INDEX(FindItem("Power Screen"));
 	power_shield_index = ITEM_INDEX(FindItem("Power Shield"));
 }
+
+int item_icons[MAX_ITEMS];

@@ -756,6 +756,11 @@ char *single_statusbar =
 	"	rnum "
 	"endif "
 
+/* hotbar */
+	"xb 0 "
+	"yb -44 "
+	"hotb "
+
 /* selected item */
 /* 	"if 6 "
 	"	xr -74 "

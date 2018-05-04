@@ -102,7 +102,10 @@ typedef unsigned char byte;
 #define MAX_SOUNDS 256              /* so they cannot be blindly increased */
 #define MAX_IMAGES 256
 #define MAX_ITEMS 256
+#define MAX_ICONS 256
 #define MAX_GENERAL (MAX_CLIENTS * 2)       /* general config strings */
+
+#define DEFAULT_HOTBAR_ICON "anum_0"
 
 /* game print flags */
 #define PRINT_LOW 0                 /* pickup messages */
@@ -1069,7 +1072,8 @@ typedef enum
 #define CS_IMAGES (CS_SOUNDS + MAX_SOUNDS)
 #define CS_LIGHTS (CS_IMAGES + MAX_IMAGES)
 #define CS_ITEMS (CS_LIGHTS + MAX_LIGHTSTYLES)
-#define CS_PLAYERSKINS (CS_ITEMS + MAX_ITEMS)
+#define CS_ICONS (CS_ITEMS + MAX_ITEMS)
+#define CS_PLAYERSKINS (CS_ICONS + MAX_ICONS)
 #define CS_GENERAL (CS_PLAYERSKINS + MAX_CLIENTS)
 #define MAX_CONFIGSTRINGS (CS_GENERAL + MAX_GENERAL)
 

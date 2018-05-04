@@ -527,23 +527,38 @@ Cmd_Noclip_f(edict_t *ent)
 void
 Cmd_Use_f(edict_t *ent)
 {
-	int index;
+	int index, hotbar;
 	gitem_t *it;
-	char *s;
+	int slot;
 
 	if (!ent)
 	{
 		return;
 	}
 
-	s = gi.args();
-	it = FindItem(s);
+	hotbar = atoi(gi.argv(1));
 
-	if (!it)
+	if (ent->client->showinventory)
 	{
-		gi.cprintf(ent, PRINT_HIGH, "unknown item: %s\n", s);
+		AssignHotkey(ent, hotbar, NULL);
 		return;
 	}
+
+	if (!hotbar)
+		hotbar = 10;
+
+	hotbar--;
+
+	slot = ent->client->pers.hotbar[hotbar] - 1;
+
+	/* todo: improve error handling */
+	if (slot < 1)
+	{
+		Com_Printf("Unassigned slot: %d\n", hotbar);
+		return;
+	}
+
+	it = itemlist + slot;
 
 	if (!it->use)
 	{
@@ -555,15 +570,16 @@ Cmd_Use_f(edict_t *ent)
 
 	if (!ent->client->pers.inventory[index])
 	{
-		gi.cprintf(ent, PRINT_HIGH, "Out of item: %s\n", s);
+		gi.cprintf(ent, PRINT_HIGH, "Out of item: %s\n", it->pickup_name);
 		return;
 	}
 
 	it->use(ent, it);
 }
 
-// Handles weapon reload requests
-void Cmd_Reload_f(edict_t *ent)
+/* Handles weapon reload requests */
+void 
+Cmd_Reload_f(edict_t *ent)
 {
 	int rds_left;
 
@@ -1096,6 +1112,54 @@ Cmd_Wave_f(edict_t *ent)
 	}
 }
 
+/* Assign an item to a hotbar */
+void
+Cmd_Assign_f(edict_t *ent)
+{
+	int slot;
+	char *name;
+
+	if (gi.argc() < 2)
+	{
+		return;
+	}
+
+	slot = atoi(gi.argv(1));
+	name = gi.argv(2);
+
+	AssignHotkey(ent, slot, name);
+}
+
+/* Unassign an item from a hotbar */
+void 
+Cmd_Unassign_f(edict_t *ent)
+{
+	int slot;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	if (gi.argc() < 2)
+	{
+		return;
+	}
+
+	slot = atoi(gi.argv(1));
+
+	if (!slot)
+		slot = 10;
+
+	slot--;
+
+	ent->client->pers.hotbar[slot] = 0;
+
+	/* update client-side inventory and hotbar */
+	InventoryMessage(ent);
+	gi.unicast(ent, true);
+}
+
 void
 Cmd_Say_f(edict_t *ent, qboolean team, qboolean arg0)
 {
@@ -1290,6 +1354,18 @@ ClientCommand(edict_t *ent)
 	if (Q_stricmp(cmd, "say") == 0)
 	{
 		Cmd_Say_f(ent, false, false);
+		return;
+	}
+
+	if (Q_stricmp(cmd, "assign") == 0)
+	{
+		Cmd_Assign_f(ent);
+		return;
+	}
+
+	if (Q_stricmp(cmd, "unassign") == 0)
+	{
+		Cmd_Unassign_f(ent);
 		return;
 	}
 

@@ -2524,3 +2524,76 @@ ClientBeginServerFrame(edict_t *ent)
 
 	client->latched_buttons = 0;
 }
+
+/* Assign an item to a hotkey */
+void 
+AssignHotkey(edict_t *ent, int slot, char *name)
+{
+	int i;
+	int index;
+	int old_value;
+	int old_slot;
+	gitem_t *item;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	if (!slot)
+		slot = 10;
+
+	slot--;
+
+	old_slot = slot;
+
+	if (name)
+	{
+		item = FindItem(name);
+
+		if (!item)
+		{
+			Com_Printf("Unknown Item: %s\n", name);
+			return;
+		}
+	}
+	else
+	{
+		item = itemlist + ent->client->pers.selected_item;
+	}
+
+	index = ITEM_INDEX(item) + 1;
+	old_value = index;
+
+	for (i = 0; i < 10; i++)
+	{
+		if (i == slot)
+			continue;
+
+		if (ent->client->pers.hotbar[i] == index)
+		{
+			ent->client->pers.hotbar[i] = 0;
+			old_slot = i;
+			break;
+		}
+	}
+
+	if (index - 1 == ent->client->pers.selected_item && ent->client->pers.hotbar[slot] == index)
+	{
+		ent->client->pers.hotbar[slot] = 0;
+	}
+	else
+	{
+		if (old_slot != slot)
+		{
+			old_value = ent->client->pers.hotbar[slot];
+		}
+
+		ent->client->pers.hotbar[slot] = index;
+		ent->client->pers.hotbar[old_slot] = old_value;
+	}
+
+	/* update client-side inventory and hotbar */
+	InventoryMessage(ent);
+	gi.unicast(ent, true);
+}

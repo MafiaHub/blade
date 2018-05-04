@@ -378,18 +378,40 @@ void
 InventoryMessage(edict_t *ent)
 {
         int i;
+		static qboolean icons_loaded = 0;
+		static int      icons_empty;
 
         if (!ent)
         {
-                return;
+            return;
         }
+
+		if (!icons_loaded)
+		{
+			icons_empty = gi.imageindex(DEFAULT_HOTBAR_ICON);
+			icons_loaded = 1;
+		}
 
         gi.WriteByte(svc_inventory);
 
         for (i = 0; i < MAX_ITEMS; i++)
         {
-                gi.WriteShort(ent->client->pers.inventory[i]);
+            gi.WriteShort(ent->client->pers.inventory[i]);
         }
+
+		for (i = 0; i < 10; i++)
+		{
+			int slot = ent->client->pers.hotbar[i];
+			gi.WriteShort(slot);
+
+			if (!slot)
+			{
+				gi.WriteShort(icons_empty);
+				continue;
+			}
+
+			gi.WriteShort(item_icons[slot-1]);
+		}
 }
 
 

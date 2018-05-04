@@ -149,8 +149,10 @@ ApplyChanges(void *unused)
 			Third element in array is unknown renderer. */
 		if (s_renderer_list.curvalue == 0)
 		{
-			Cvar_Set("vid_renderer", "gl1");
-			restart = true;
+			//Cvar_Set("vid_renderer", "gl1");
+			//restart = true;
+			s_renderer_list.curvalue = 1;
+			Com_Error(1, "OpenGL 1.4 is not currently supported.\n");
 		}
 		else if (s_renderer_list.curvalue == 1)
 		{
