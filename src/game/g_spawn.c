@@ -757,7 +757,7 @@ char *single_statusbar =
 	"endif "
 
 /* hotbar */
-	"xb 0 "
+	"xl 0 "
 	"yb -44 "
 	"hotb "
 
@@ -790,7 +790,7 @@ char *single_statusbar =
 
 /*  help / weapon icon */
 	"if 11 "
-	"	xv	148 "
+	"	xv	340 "
 	"	pic	11 "
 	"endif "
 ;

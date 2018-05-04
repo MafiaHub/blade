@@ -1097,13 +1097,20 @@ SCR_ExecuteLayoutString(char *s)
 			int slot;
 
 			token = COM_Parse(&s);
-			step = -(300*scale);
+			step = viddef.width / 2 - (500/2);
 
 			for (i=0; i<10; i++)
 			{
+				int mod = i; mod++; if (mod == 10) mod = 0;
 				slot = cl.hotbar_icon[i];
 
-				Draw_PicScaled(x + step, y, slot ? cl.configstrings[CS_IMAGES + slot] : DEFAULT_HOTBAR_ICON, scale);
+				if (slot)
+				{
+					Draw_PicScaled((x + step), y, cl.configstrings[CS_IMAGES + slot], scale);
+				}
+
+				Draw_CharScaled((x + step + 8*scale), (y + 30*scale), '0' + mod, scale);
+				
 				step += 50;
 			}
 		}

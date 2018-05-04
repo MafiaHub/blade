@@ -105,8 +105,6 @@ typedef unsigned char byte;
 #define MAX_ICONS 256
 #define MAX_GENERAL (MAX_CLIENTS * 2)       /* general config strings */
 
-#define DEFAULT_HOTBAR_ICON "anum_0"
-
 /* game print flags */
 #define PRINT_LOW 0                 /* pickup messages */
 #define PRINT_MEDIUM 1              /* death messages */

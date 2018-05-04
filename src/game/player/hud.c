@@ -378,19 +378,10 @@ void
 InventoryMessage(edict_t *ent)
 {
         int i;
-		static qboolean icons_loaded = 0;
-		static int      icons_empty;
-
         if (!ent)
         {
             return;
         }
-
-		if (!icons_loaded)
-		{
-			icons_empty = gi.imageindex(DEFAULT_HOTBAR_ICON);
-			icons_loaded = 1;
-		}
 
         gi.WriteByte(svc_inventory);
 
@@ -406,7 +397,7 @@ InventoryMessage(edict_t *ent)
 
 			if (!slot)
 			{
-				gi.WriteShort(icons_empty);
+				gi.WriteShort(0);
 				continue;
 			}
 
