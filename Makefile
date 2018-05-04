@@ -345,12 +345,12 @@ endif
 # ----------
 
 # Phony targets
-.PHONY : all client game icon server ref_gl1 ref_gl3
+.PHONY : all client game icon server ref_gl3
 
 # ----------
 
 # Builds everything
-all: config client server game ref_gl1 ref_gl3
+all: config client server game ref_gl3
 
 # ----------
 

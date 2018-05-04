@@ -186,7 +186,7 @@ Graphics (GL renderers only):
 * **gl_retexturing**: If set to `1` (the default) and a retexturing pack
   is installed, the high resolution textures are used.
 
-* **gl_shadows**: Enables rendering of shadows. Runbladers shadows are
+* **gl_shadows**: Enables rendering of shadows. Runblader's shadows are
   very simple and are prone to render errors.
 
 * **gl_zfix**: Sometimes two or even more surfaces overlap and flicker.

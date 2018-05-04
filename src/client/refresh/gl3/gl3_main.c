@@ -216,7 +216,7 @@ GL3_Register(void)
 	gl_nolerp_list = ri.Cvar_Get("gl_nolerp_list", "pics/conchars.pcx pics/ch1.pcx pics/ch2.pcx pics/ch3.pcx", 0);
 	gl_nobind = ri.Cvar_Get("gl_nobind", "0", 0);
 
-	gl_texturemode = ri.Cvar_Get("gl_texturemode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE);
+	gl_texturemode = ri.Cvar_Get("gl_texturemode", "GL_NEAREST", CVAR_ARCHIVE);
 	gl_anisotropic = ri.Cvar_Get("gl_anisotropic", "0", CVAR_ARCHIVE);
 
 	vid_fullscreen = ri.Cvar_Get("vid_fullscreen", "0", CVAR_ARCHIVE);

@@ -93,7 +93,6 @@ SelectNextItem(edict_t *ent, int itflags)
 {
 	gclient_t *cl;
 	int i, index;
-	gitem_t *it;
 
 	if (!ent)
 	{
@@ -118,9 +117,7 @@ SelectNextItem(edict_t *ent, int itflags)
 			continue;
 		}
 
-		it = &itemlist[index];
-
-		if (!it->use)
+		/* if (!it->use)
 		{
 			continue;
 		}
@@ -128,13 +125,16 @@ SelectNextItem(edict_t *ent, int itflags)
 		if (!(it->flags & itflags))
 		{
 			continue;
-		}
+		} */
 
 		cl->pers.selected_item = index;
 		return;
 	}
 
 	cl->pers.selected_item = -1;
+
+	InventoryMessage(ent);
+	gi.unicast(ent, true);
 }
 
 void
@@ -142,7 +142,6 @@ SelectPrevItem(edict_t *ent, int itflags)
 {
 	gclient_t *cl;
 	int i, index;
-	gitem_t *it;
 
 	if (!ent)
 	{
@@ -167,9 +166,7 @@ SelectPrevItem(edict_t *ent, int itflags)
 			continue;
 		}
 
-		it = &itemlist[index];
-
-		if (!it->use)
+		/* if (!it->use)
 		{
 			continue;
 		}
@@ -177,13 +174,16 @@ SelectPrevItem(edict_t *ent, int itflags)
 		if (!(it->flags & itflags))
 		{
 			continue;
-		}
+		} */
 
 		cl->pers.selected_item = index;
 		return;
 	}
 
 	cl->pers.selected_item = -1;
+
+	InventoryMessage(ent);
+	gi.unicast(ent, true);
 }
 
 void
@@ -620,6 +620,7 @@ Cmd_Reload_f(edict_t *ent)
 void
 Cmd_Drop_f(edict_t *ent)
 {
+	int i;
 	int index;
 	gitem_t *it;
 	char *s;
@@ -640,7 +641,7 @@ Cmd_Drop_f(edict_t *ent)
 
 	if (!it->drop)
 	{
-		gi.cprintf(ent, PRINT_HIGH, "Item is not dropable.\n");
+		gi.cprintf(ent, PRINT_HIGH, "Item is not droppable.\n");
 		return;
 	}
 
@@ -653,6 +654,16 @@ Cmd_Drop_f(edict_t *ent)
 	}
 
 	it->drop(ent, it);
+
+	/* find any hotkey associating this item and clean it */
+	if (ent->client->pers.inventory[index] < 1)
+		for (i = 0; i < 10; i++)
+		{
+			if (ent->client->pers.hotbar[i] == index)
+			{
+				ent->client->pers.hotbar[i] = 0;
+			}
+		}
 }
 
 void
@@ -918,6 +929,7 @@ Cmd_WeapLast_f(edict_t *ent)
 void
 Cmd_InvDrop_f(edict_t *ent)
 {
+	int i, index;
 	gitem_t *it;
 
 	if (!ent)
@@ -937,11 +949,23 @@ Cmd_InvDrop_f(edict_t *ent)
 
 	if (!it->drop)
 	{
-		gi.cprintf(ent, PRINT_HIGH, "Item is not dropable.\n");
+		gi.cprintf(ent, PRINT_HIGH, "Item is not droppable.\n");
 		return;
 	}
 
+	index = ent->client->pers.selected_item;
+
 	it->drop(ent, it);
+
+	/* find any hotkey associating this item and clean it */
+	if (ent->client->pers.inventory[index] < 1)
+		for (i = 0; i < 10; i++)
+		{
+			if (ent->client->pers.hotbar[i] - 1 == index)
+			{
+				ent->client->pers.hotbar[i] = 0;
+			}
+		}
 }
 
 void

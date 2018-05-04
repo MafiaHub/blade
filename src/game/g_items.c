@@ -792,9 +792,9 @@ Drop_Ammo(edict_t *ent, gitem_t *item)
 	index = ITEM_INDEX(item);
 	dropped = Drop_Item(ent, item);
 
-	if (ent->client->pers.inventory[index] >= item->quantity)
+	if (ent->client->pers.inventory[index] >= item->quantity / 3)
 	{
-		dropped->count = item->quantity;
+		dropped->count = item->quantity / 3;
 	}
 	else
 	{
