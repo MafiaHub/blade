@@ -171,7 +171,7 @@ GL3_RotateForEntity(entity_t *e)
 static void
 GL3_Strings(void)
 {
-	GLint i, numExtensions;
+	GLint numExtensions;
 	R_Printf(PRINT_ALL, "GL_VENDOR: %s\n", gl3config.vendor_string);
 	R_Printf(PRINT_ALL, "GL_RENDERER: %s\n", gl3config.renderer_string);
 	R_Printf(PRINT_ALL, "GL_VERSION: %s\n", gl3config.version_string);

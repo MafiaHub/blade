@@ -5,7 +5,7 @@ We aim to replace the requirements for using Quake 2 data and introduce our own 
 to become Quake 2 independent. Our interest is in Quake 2 mechanics and tech itself and Quake 2
 related assets are not planned to be used within our title.
 
-This code is build upon Blade Engine, which itself is based on Icculus Quake II. 
+This code is build upon Blade Engine, which itself is based on Yamagi Quake II. 
 Blade Engine is released under the terms of the GPL version 2. See the
 LICENSE file for further information.
 

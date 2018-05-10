@@ -42,6 +42,10 @@
 
 #define MAX_ENT_CLUSTERS 16
 
+#ifndef _WIN32
+#define stricmp strcasecmp
+#endif
+
 typedef enum
 {
 	SOLID_NOT, /* no interaction with other objects */
