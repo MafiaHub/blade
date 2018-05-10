@@ -839,6 +839,7 @@ char *bindnames[][2] =
     {"+moveup", "up / jump"},
     {"+movedown", "down / crouch"},
     {"inven", "inventory"},
+    {"use_world", "use / touch"},
     {"invuse", "use item"},
     {"invdrop", "drop item"},
     {"invprev", "prev item"},

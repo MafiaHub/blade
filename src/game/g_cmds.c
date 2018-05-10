@@ -521,6 +521,18 @@ Cmd_Noclip_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, msg);
 }
 
+/* Use / Touch any entity in front of us */
+void
+Cmd_UseWorld_f(edict_t *ent)
+{
+	if (!ent)
+	{
+		return;
+	}
+
+	ent->usehands = 1;
+}
+
 /*
  * Use an inventory item
  */
@@ -664,6 +676,9 @@ Cmd_Drop_f(edict_t *ent)
 				ent->client->pers.hotbar[i] = 0;
 			}
 		}
+
+	InventoryMessage(ent);
+	gi.unicast(ent, true);
 }
 
 void
@@ -966,6 +981,9 @@ Cmd_InvDrop_f(edict_t *ent)
 				ent->client->pers.hotbar[i] = 0;
 			}
 		}
+
+	InventoryMessage(ent);
+	gi.unicast(ent, true);
 }
 
 void
@@ -1445,6 +1463,10 @@ ClientCommand(edict_t *ent)
 	else if (Q_stricmp(cmd, "noclip") == 0)
 	{
 		Cmd_Noclip_f(ent);
+	}
+	else if (Q_stricmp(cmd, "use_world") == 0)
+	{
+		Cmd_UseWorld_f(ent);
 	}
 	else if (Q_stricmp(cmd, "inven") == 0)
 	{

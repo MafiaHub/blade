@@ -840,9 +840,10 @@ char *dm_statusbar =
 /* picked up item */
 	"if 7 "
 	"	xv	0 "
-	"	pic 7 "
-	"	xv	26 "
 	"	yb	-62 "
+	"	pic 7 "
+	"	yb	-62 "
+	"	xv	26 "
 	"	stat_string 8 "
 	"	yb	-70 "
 	"endif "

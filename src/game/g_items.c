@@ -1807,7 +1807,7 @@ gitem_t itemlist[] = {
 		"w_blaster",
 		"Blaster",
 		0,
-		0,
+		1,
 		NULL,
 		IT_WEAPON | IT_STAY_COOP,
 		WEAP_BLASTER,
@@ -2039,12 +2039,12 @@ gitem_t itemlist[] = {
 	/* SOCOM Mk23 Pistol */
 	{
 		"weapon_mk23",
-		NULL,
+		Pickup_Weapon,
 		Use_Weapon,
-		NULL,
+		Drop_Weapon,
 		Weapon_Pistol,
 		"misc/w_pkup.wav",
-		NULL, EF_ROTATE,
+		"models/weapons/v_mk23/tris.md2", EF_ROTATE, /* ultra hack */
 		"models/weapons/v_mk23/tris.md2",
 		"w_mk23",
 		"Pistol",
@@ -2067,7 +2067,7 @@ gitem_t itemlist[] = {
 		"misc/pkup.wav",
 		NULL, 0,
 		NULL,
-		"w_mk23", /* change to i_battery */
+		"i_battery",
 		"Battery",
 		2,
 		1,

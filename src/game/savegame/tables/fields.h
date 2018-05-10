@@ -31,6 +31,7 @@
 {"speed", FOFS(speed), F_FLOAT},
 {"accel", FOFS(accel), F_FLOAT},
 {"decel", FOFS(decel), F_FLOAT},
+{"useonly", FOFS(useonly), F_INT},
 {"target", FOFS(target), F_LSTRING},
 {"targetname", FOFS(targetname), F_LSTRING},
 {"pathtarget", FOFS(pathtarget), F_LSTRING},

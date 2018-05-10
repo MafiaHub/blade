@@ -458,8 +458,8 @@ Drop_Weapon(edict_t *ent, gitem_t *item)
 		 (item == ent->client->newweapon)) &&
 		(ent->client->pers.inventory[index] == 1))
 	{
-		gi.cprintf(ent, PRINT_HIGH, "Can't drop current weapon\n");
-		return;
+		//gi.cprintf(ent, PRINT_HIGH, "Can't drop current weapon\n");
+		HolsterWeapon(ent);
 	}
 
 	Drop_Item(ent, item);

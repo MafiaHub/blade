@@ -1919,7 +1919,7 @@ ClientBegin(edict_t *ent)
 	else
 	{
 		/* send effect if in a multiplayer game */
-		if (game.maxclients > 1)
+		/* if (game.maxclients > 1)
 		{
 			gi.WriteByte(svc_muzzleflash);
 			gi.WriteShort(ent - g_edicts);
@@ -1928,7 +1928,7 @@ ClientBegin(edict_t *ent)
 
 			gi.bprintf(PRINT_HIGH, "%s entered the game\n",
 					ent->client->pers.netname);
-		}
+		} */
 	}
 
 	/* make sure all view stuff is valid */
@@ -2442,6 +2442,14 @@ ClientThink(edict_t *ent, usercmd_t *ucmd)
 		if (other->inuse && (other->client->chase_target == ent))
 		{
 			UpdateChaseCam(other);
+		}
+	}
+
+	if (ent->last_reset_time < level.time)
+	{
+		ent->last_reset_time = level.time + 1.2;
+		{
+			ent->usehands = 0;
 		}
 	}
 }

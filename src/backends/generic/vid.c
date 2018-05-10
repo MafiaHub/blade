@@ -187,15 +187,15 @@ VID_CheckChanges(void)
 		// Proceed to reboot the refresher
 		if(!VID_LoadRefresh())
 		{
-			if (strcmp(vid_renderer->string, "gl1") != 0)
+			if (strcmp(vid_renderer->string, "gl3") != 0)
 			{
-				Com_Printf("\n ... trying again with standard OpenGL1.x renderer ... \n\n");
-				Cvar_Set("vid_renderer", "gl1");
+				Com_Printf("\n ... trying again with standard OpenGL3.x renderer ... \n\n");
+				Cvar_Set("vid_renderer", "gl3");
 				VID_LoadRefresh();
 			}
 			else
 			{
-				Com_Error(ERR_FATAL, "Couldn't load a rendering backend!\n");
+				Com_Error(ERR_FATAL, "Couldn't load a rendering backend!\nThis issue may be resolved by restarting your system! If that doesn't help, OpenGL 3.2 is not compatible with your system, sorry...");
 			}
 		}
 		cls.disable_screen = false;
@@ -208,7 +208,7 @@ VID_Init(void)
 	/* Create the video variables so we know how to start the graphics drivers */
 	vid_fullscreen = Cvar_Get("vid_fullscreen", "0", CVAR_ARCHIVE);
 	vid_gamma = Cvar_Get("vid_gamma", "1.2", CVAR_ARCHIVE);
-	vid_renderer = Cvar_Get("vid_renderer", "gl1", CVAR_ARCHIVE);
+	vid_renderer = Cvar_Get("vid_renderer", "gl3", CVAR_ARCHIVE);
 
 	/* Add some console commands that we want to handle */
 	Cmd_AddCommand("vid_restart", VID_Restart_f);
@@ -364,7 +364,7 @@ VID_LoadRefresh(void)
 	if(GetRefAPI == NULL)
 	{
 		Com_Error( ERR_FATAL, "Loading %s as renderer lib failed!", reflib_name );
-		Cvar_Set("vid_renderer", "gl1");
+		Cvar_Set("vid_renderer", "gl3");
 
 		return false;
 	}

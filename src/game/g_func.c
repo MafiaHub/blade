@@ -1406,6 +1406,11 @@ door_use(edict_t *self, edict_t *other /* unused */, edict_t *activator)
 		return;
 	}
 
+	if (self->useonly && !activator->usehands)
+	{
+		return;
+	}
+
 	edict_t *ent;
 
 	if (self->flags & FL_TEAMSLAVE)

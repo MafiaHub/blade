@@ -1009,6 +1009,8 @@ struct edict_s
 	float speed, accel, decel;
 	vec3_t movedir;
 	vec3_t pos1, pos2;
+	qboolean useonly;
+	qboolean usehands; /* sets to FALSE on the end of the frame */
 
 	vec3_t velocity;
 	vec3_t avelocity;
@@ -1038,6 +1040,7 @@ struct edict_s
 	float damage_debounce_time;
 	float fly_sound_debounce_time;
 	float last_move_time;
+	float last_reset_time;
 
 	int health;
 	int max_health;

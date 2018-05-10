@@ -474,7 +474,7 @@ fire_blaster(edict_t *self, vec3_t start, vec3_t dir, int damage,
 	bolt->clipmask = MASK_SHOT;
 	bolt->solid = SOLID_BBOX;
 	bolt->s.effects |= effect;
-	bolt->s.renderfx |= RF_NOSHADOW;
+	//bolt->s.renderfx |= RF_NOSHADOW;
 	VectorClear(bolt->mins);
 	VectorClear(bolt->maxs);
 	bolt->s.modelindex = gi.modelindex("models/objects/laser/tris.md2");

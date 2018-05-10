@@ -1007,6 +1007,9 @@
 {"PlayerSort", (byte *)PlayerSort},
 {"Cmd_PutAway_f", (byte *)Cmd_PutAway_f},
 {"Cmd_Kill_f", (byte *)Cmd_Kill_f},
+{"Cmd_UseWorld_f", (byte *)Cmd_UseWorld_f},
+{"Cmd_Assign_f", (byte *)Cmd_Assign_f},
+{"Cmd_Unassign_f", (byte *)Cmd_Unassign_f},
 {"Cmd_InvDrop_f", (byte *)Cmd_InvDrop_f},
 {"Cmd_WeapLast_f", (byte *)Cmd_WeapLast_f},
 {"Cmd_WeapNext_f", (byte *)Cmd_WeapNext_f},
@@ -1048,4 +1051,8 @@
 {"ai_stand", (byte *)ai_stand},
 {"ai_move", (byte *)ai_move},
 {"AI_SetSightClient", (byte *)AI_SetSightClient},
+{"FL_Think", (byte *)FL_Think},
+{"FL_Toggle", (byte *)FL_Toggle},
+{"Use_Battery", (byte *)Use_Battery},
+
 {0, 0}
