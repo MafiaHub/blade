@@ -433,7 +433,7 @@ GL3_LoadPic(char *name, byte *pic, int width, int realwidth,
 		image->has_alpha = GL3_Upload32((unsigned *)pic, width, height,
 					(image->type != it_pic && image->type != it_sky));
 	}
-
+	
 	if (realwidth && realheight)
 	{
 		if ((realwidth <= image->width) && (realheight <= image->height))

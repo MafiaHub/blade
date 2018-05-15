@@ -320,6 +320,7 @@ typedef struct
 #define SURF_WARP 0x8     /* turbulent water warp */
 #define SURF_TRANS33 0x10
 #define SURF_TRANS66 0x20
+#define SURF_TRANS100 0x100 /* mark as transparent but don't apply alpha */
 #define SURF_FLOWING 0x40 /* scroll towards angle */
 #define SURF_NODRAW 0x80  /* don't bother referencing the texture */
 

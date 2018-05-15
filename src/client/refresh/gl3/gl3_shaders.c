@@ -398,11 +398,20 @@ static const char* fragmentSrc3D = MULTILINE_STRING(
 		void main()
 		{
 			vec4 texel = texture(tex, passTexCoord);
+			vec4 old_texel = texel;
 
 			// apply intensity and gamma
 			texel.rgb *= intensity;
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
-			outColor.a = texel.a*alpha; // I think alpha shouldn't be modified by gamma and intensity
+
+			if (old_texel == 0x9f5b53)
+			{
+				outColor.a = 0.0;
+			}
+			else
+			{
+				outColor.a = texel.a*alpha; // I think alpha shouldn't be modified by gamma and intensity
+			}
 		}
 );
 

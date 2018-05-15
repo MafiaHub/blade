@@ -505,7 +505,7 @@ R_RenderBrushPoly(msurface_t *fa)
 		if (gl1_dynamic->value)
 		{
 			if (!(fa->texinfo->flags &
-				  (SURF_SKY | SURF_TRANS33 |
+				  (SURF_SKY | SURF_TRANS33 | SURF_TRANS100 |
 				   SURF_TRANS66 | SURF_WARP)))
 			{
 				is_dynamic = true;
@@ -576,7 +576,7 @@ R_DrawAlphaSurfaces(void)
 		R_Bind(s->texinfo->image->texnum);
 		c_brush_polys++;
 
-		if (s->texinfo->flags & SURF_TRANS33)
+		if (s->texinfo->flags & SURF_TRANS33 | SURF_TRANS100)
 		{
 			glColor4f(intens, intens, intens, 0.33);
 		}
@@ -687,7 +687,7 @@ R_DrawInlineBModel(void)
 		if (((psurf->flags & SURF_PLANEBACK) && (dot < -BACKFACE_EPSILON)) ||
 			(!(psurf->flags & SURF_PLANEBACK) && (dot > BACKFACE_EPSILON)))
 		{
-			if (psurf->texinfo->flags & (SURF_TRANS33 | SURF_TRANS66))
+			if (psurf->texinfo->flags & (SURF_TRANS33 | SURF_TRANS100 | SURF_TRANS66))
 			{
 				/* add to the translucent chain */
 				psurf->texturechain = r_alpha_surfaces;
@@ -909,7 +909,7 @@ R_RecursiveWorldNode(mnode_t *node)
 			/* just adds to visible sky bounds */
 			R_AddSkySurface(surf);
 		}
-		else if (surf->texinfo->flags & (SURF_TRANS33 | SURF_TRANS66))
+		else if (surf->texinfo->flags & (SURF_TRANS33 | SURF_TRANS100 | SURF_TRANS66))
 		{
 			/* add to the translucent chain */
 			surf->texturechain = r_alpha_surfaces;

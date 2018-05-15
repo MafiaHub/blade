@@ -57,28 +57,29 @@ Mirror_UpdateEntity(edict_t *mirror, edict_t *ent, edict_t *orig)
 
 	ent->s.modelindex = orig->s.modelindex;
 	ent->s.frame = orig->s.frame;
+	ent->s.skinnum = orig->s.skinnum;
 
 	VectorSubtract(orig->s.origin, mirror->s.origin, v);
 
 	VectorCopy(mirror->s.origin, pos);
 	VectorCopy(orig->s.angles, ent->s.angles);
-	ent->s.angles[1] = ent->s.angles[1] + 180;
 
 	if (mirror->spawnflags & 1)
 	{
 		v[1] = -v[1];
+		ent->s.angles[1] = ent->s.angles[1] + 180;
 	}
 	else if (mirror->spawnflags & 2)
 	{
 		v[2] = -v[2];
+		ent->s.angles[2] = ent->s.angles[2] + 180;
 	}
 	else {
 		v[0] = -v[0];
+		ent->s.angles[1] = ent->s.angles[1] + 180;
 	}
 
 	VectorAdd(pos, v, ent->s.origin);
-
-	ent->s.origin[2] = orig->s.origin[2];
 }
 
 void
@@ -121,8 +122,6 @@ Use_Mirror(edict_t *ent, edict_t *other /* unused */, edict_t *activator)
 			m->movetype = MOVETYPE_NONE;
 			m->solid = SOLID_NOT;
 			m->is_clone = true;
-			VectorSet(m->mins, -32, -32, -32);
-			VectorSet(m->maxs, 32, 32, 32);
 			
 			Mirror_UpdateEntity(ent, m, activator);
 			VectorCopy(m->s.origin, m->s.old_origin);
@@ -145,7 +144,7 @@ Think_Mirror(edict_t *ent)
 
 	for (i = 0; i < MAX_MIRRORED_EDICTS; i++)
 	{
-		edict_t *m = ent->mirrored_edicts[i] ;
+		edict_t *m = ent->mirrored_edicts[i];
 		if (m && m->is_clone)
 		{
 			if (m->last_mirror_seen_time > level.time + 1)
