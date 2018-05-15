@@ -33,6 +33,7 @@
 
 #define FRAME_RELOAD_FIRST (FRAME_DEACTIVATE_LAST + 1)
 #define FRAME_LASTRD_FIRST (FRAME_RELOAD_LAST + 1)
+#define WEAPON_HOLSTERED (gitem_t *)0xDEADBEEF
 
 #define GRENADE_TIMER 3.0
 #define GRENADE_MINSPEED 400
@@ -300,8 +301,7 @@ HolsterWeapon(edict_t *ent)
 		return;
 	}
 
-	ent->client->newweapon = NULL;
-	ChangeWeapon(ent);
+	ent->client->newweapon = WEAPON_HOLSTERED;
 }
 
 void
@@ -466,6 +466,53 @@ Drop_Weapon(edict_t *ent, gitem_t *item)
 	ent->client->pers.inventory[index]--;
 }
 
+void
+ReloadWeapon(edict_t *ent)
+{
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	int rds_left;
+
+	if (ent->deadflag == DEAD_DEAD)
+	{
+		gi.centerprintf(ent, "Dead ones can't reload guns!\n");
+		return;
+	}
+
+	if (ent->client->pers.mags[ent->client->pers.weapon->weapmodel].uses_mags)
+	{
+		rds_left = ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size;
+	}
+	else
+	{
+		return;
+	}
+
+	if (ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size 
+		== ent->client->pers.mags[ent->client->pers.weapon->weapmodel].max_mag_size)
+	{
+		/* ... */
+	}
+	else if (ent->client->pers.inventory[ent->client->ammo_index])
+	{
+		if ((ent->client->weaponstate != WEAPON_END_MAG) && (ent->client->pers.inventory[ent->client->ammo_index] < rds_left))
+		{
+			gi.centerprintf(ent, "Last magazine left!\n");
+		}
+		else
+		{
+			ent->client->weaponstate = WEAPON_RELOADING;
+		}
+	}
+	else
+	{
+		gi.centerprintf(ent, "NO AMMO LEFT\n");
+	}
+}
+
 /*
  * A generic function to handle
  * the basics of weapon thinking
@@ -525,6 +572,8 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 			ent->client->ps.gunframe++;
 		else
 			ent->client->ps.gunframe = FRAME_LASTRD_LAST;
+
+		ReloadWeapon(ent);
 	}
 
 	if (ent->client->weaponstate == WEAPON_DROPPING)
@@ -571,6 +620,11 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 	{
 		ent->client->weaponstate = WEAPON_DROPPING;
 		ent->client->ps.gunframe = FRAME_DEACTIVATE_FIRST;
+		
+		if (ent->client->newweapon == WEAPON_HOLSTERED)
+		{
+			ent->client->newweapon = NULL;
+		}
 
 		if ((FRAME_DEACTIVATE_LAST - FRAME_DEACTIVATE_FIRST) < 4)
 		{
@@ -1892,7 +1946,7 @@ void Pistol_Fire(edict_t *ent)
 
 void Weapon_Pistol(edict_t *ent)
 {
-	static int pause_frames[] = {26, 32, 56};
+	static int pause_frames[] = {67, 67, 67};
 	static int fire_frames[] = {20, 0};
 
 	Weapon_Generic(ent, 19, 25, 68, 82, 33, 33, pause_frames, fire_frames, Pistol_Fire);

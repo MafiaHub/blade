@@ -19,7 +19,7 @@
  *
  * =======================================================================
  *
- * This file implements all static entities at client site.
+ * This file implements all static entities at client side.
  *
  * =======================================================================
  */

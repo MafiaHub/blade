@@ -20,7 +20,7 @@
  *
  * =======================================================================
  *
- * Functionpointers to every function in the game.so.
+ * Function pointers to every function in the game DLL.
  *
  * =======================================================================
  */
@@ -131,6 +131,8 @@
 {"Think_Weapon", (byte *)Think_Weapon},
 {"NoAmmoWeaponChange", (byte *)NoAmmoWeaponChange},
 {"ChangeWeapon", (byte *)ChangeWeapon},
+{"HolsterWeapon", (byte *)HolsterWeapon},
+{"ReloadWeapon", (byte *)ReloadWeapon},
 {"Pickup_Weapon", (byte *)Pickup_Weapon},
 {"PlayerNoise", (byte *)PlayerNoise},
 {"P_ProjectSource", (byte *)P_ProjectSource},
@@ -861,6 +863,9 @@
 {"gib_think", (byte *)gib_think},
 {"ClipGibVelocity", (byte *)ClipGibVelocity},
 {"VelocityForDamage", (byte *)VelocityForDamage},
+{"Mirror_UpdateEntity", (byte *)Mirror_UpdateEntity},
+{"Use_Mirror", (byte *)Use_Mirror},
+{"SP_func_mirror", (byte *)SP_func_mirror},
 {"SP_func_areaportal", (byte *)SP_func_areaportal},
 {"Use_Areaportal", (byte *)Use_Areaportal},
 {"G_RunFrame", (byte *)G_RunFrame},

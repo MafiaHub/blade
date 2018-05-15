@@ -29,6 +29,163 @@
 int gibsthisframe;
 int lastgibframe;
 
+/*
+ * QUAKED func_mirror (0 0 0) (-8 -8 -8) (8 8 8) ?
+ *
+ * params
+ * 
+ * Clones the edicts entering its area and mirrors their transformation
+ * to imitate a working mirror on the map.
+ * 
+ * 
+ */
+
+void
+Mirror_UpdateEntity(edict_t *mirror, edict_t *ent, edict_t *orig)
+{
+	vec3_t pos, v;
+
+	if (!ent || !orig || !mirror)
+	{
+		return;
+	}
+
+	if (!orig->inuse || !ent->is_clone)
+	{
+		return;
+	}
+
+	ent->s.modelindex = orig->s.modelindex;
+	ent->s.frame = orig->s.frame;
+
+	VectorSubtract(orig->s.origin, mirror->s.origin, v);
+
+	VectorCopy(mirror->s.origin, pos);
+	VectorCopy(orig->s.angles, ent->s.angles);
+	ent->s.angles[1] = ent->s.angles[1] + 180;
+
+	if (mirror->spawnflags & 1)
+	{
+		v[1] = -v[1];
+	}
+	else if (mirror->spawnflags & 2)
+	{
+		v[2] = -v[2];
+	}
+	else {
+		v[0] = -v[0];
+	}
+
+	VectorAdd(pos, v, ent->s.origin);
+
+	ent->s.origin[2] = orig->s.origin[2];
+}
+
+void
+Use_Mirror(edict_t *ent, edict_t *other /* unused */, edict_t *activator)
+{
+	int i;
+	
+	if (!ent || !activator)
+	{
+		return;
+	}
+
+	if (activator->is_clone)
+	{
+		return;
+	}
+
+	ent->mirror_trigger = other;
+
+	/* make sure the activator isn't already cloned by the mirror. */
+	for (i = 0; i < MAX_MIRRORED_EDICTS; i++)
+	{
+		edict_t *m = ent->mirrored_edicts[i];
+		if (m && m->owner == activator)
+		{
+			m->last_mirror_seen_time = level.time;
+			return;
+		}
+	}
+
+	/* if not, create a new entity and process it. */
+	for (i = 0; i < MAX_MIRRORED_EDICTS; i++)
+	{
+		if (!ent->mirrored_edicts[i])
+		{
+			edict_t *m;
+			ent->mirrored_edicts[i] = G_Spawn();
+			m = ent->mirrored_edicts[i];
+			m->owner = activator;
+			m->movetype = MOVETYPE_NONE;
+			m->solid = SOLID_NOT;
+			m->is_clone = true;
+			VectorSet(m->mins, -32, -32, -32);
+			VectorSet(m->maxs, 32, 32, 32);
+			
+			Mirror_UpdateEntity(ent, m, activator);
+			VectorCopy(m->s.origin, m->s.old_origin);
+
+			gi.linkentity(m);
+			return;
+		}
+	}
+}
+
+void
+Think_Mirror(edict_t *ent)
+{
+	int i;
+
+	if (!ent)
+	{
+		return;
+	}
+
+	for (i = 0; i < MAX_MIRRORED_EDICTS; i++)
+	{
+		edict_t *m = ent->mirrored_edicts[i] ;
+		if (m && m->is_clone)
+		{
+			if (m->last_mirror_seen_time > level.time + 1)
+			{
+				G_FreeEdict(m);
+				ent->mirrored_edicts[i] = NULL;
+				continue;
+			}
+
+			Mirror_UpdateEntity(ent, m, m->owner);
+			gi.linkentity(m);
+		}
+
+		/* Entity was reused for a different purpose. */
+		else
+		{
+			ent->mirrored_edicts[i] = NULL;
+		}
+	}
+
+	ent->nextthink = level.time + FRAMETIME;
+}
+
+void
+SP_func_mirror(edict_t *ent)
+{
+	if (!ent)
+	{
+		return;
+	}
+
+	memset(ent->mirrored_edicts, 0, sizeof(edict_t *) * MAX_MIRRORED_EDICTS);
+
+	ent->use = Use_Mirror;
+	ent->think = Think_Mirror;
+	ent->nextthink = level.time + FRAMETIME;
+}
+
+/* ===================================================== */
+
 void
 Use_Areaportal(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
 {

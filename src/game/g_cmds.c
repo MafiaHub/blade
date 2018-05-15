@@ -593,37 +593,7 @@ Cmd_Use_f(edict_t *ent)
 void 
 Cmd_Reload_f(edict_t *ent)
 {
-	int rds_left;
-
-	if (ent->deadflag == DEAD_DEAD)
-	{
-		gi.centerprintf(ent, "I know you're a hard ass,\nBUT YOU'RE FUCKING DEAD!!\n");
-		return;
-	}
-
-	if (ent->client->pers.mags[ent->client->pers.weapon->weapmodel].uses_mags)
-			rds_left = ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size;
-	else
-	{
-			gi.centerprintf(ent,"Where'd you train?\nYou can't reload that!\n");
-			return;
-	}
-
-	if (ent->client->pers.mags[ent->client->pers.weapon->weapmodel].cur_mag_size == ent->client->pers.mags[ent->client->pers.weapon->weapmodel].max_mag_size)
-	{
-		gi.centerprintf(ent,"The clip is already full!\n");
-	}
-	else if (ent->client->pers.inventory[ent->client->ammo_index])
-	{       
-		if((ent->client->weaponstate != WEAPON_END_MAG) && (ent->client->pers.inventory[ent->client->ammo_index] < rds_left))
-		{
-			gi.centerprintf(ent,"Buy a clue\nYou're on your last magazine!\n");
-		}
-		else
-			ent->client->weaponstate = WEAPON_RELOADING;
-	}
-	else
-		gi.centerprintf(ent,"Pull your head out\nYou've got NO AMMO!\n");
+	ReloadWeapon(ent);
 }
 
 /*

@@ -20,7 +20,7 @@
  *
  * =======================================================================
  *
- * Prototypes for every function in the game.so.
+ * Prototypes for every function in the game DLL.
  *
  * =======================================================================
  */
@@ -125,12 +125,14 @@ extern void Weapon_GrenadeLauncher ( edict_t * ent ) ;
 extern void weapon_grenadelauncher_fire ( edict_t * ent ) ;
 extern void Weapon_Grenade ( edict_t * ent ) ;
 extern void weapon_grenade_fire ( edict_t * ent , qboolean held ) ;
-extern void Weapon_Generic ( edict_t * ent , int FRAME_ACTIVATE_LAST , int FRAME_FIRE_LAST , int FRAME_IDLE_LAST , int FRAME_DEACTIVATE_LAST , int * pause_frames , int * fire_frames , void ( * fire ) ( edict_t * ent ) ) ;
+extern void Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int FRAME_RELOAD_LAST, int FRAME_LASTRD_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent)) ;
 extern void Drop_Weapon ( edict_t * ent , gitem_t * item ) ;
 extern void Use_Weapon ( edict_t * ent , gitem_t * item ) ;
 extern void Think_Weapon ( edict_t * ent ) ;
 extern void NoAmmoWeaponChange ( edict_t * ent ) ;
 extern void ChangeWeapon ( edict_t * ent ) ;
+extern void HolsterWeapon ( edict_t * ent ) ;
+extern void ReloadWeapon ( edict_t * ent ) ;
 extern qboolean Pickup_Weapon ( edict_t * ent , edict_t * other ) ;
 extern void PlayerNoise ( edict_t * who , vec3_t where , int type ) ;
 extern void P_ProjectSource ( gclient_t * client , vec3_t point , vec3_t distance , vec3_t forward , vec3_t right , vec3_t result ) ;
@@ -861,6 +863,9 @@ extern void gib_touch ( edict_t * self , edict_t * other , cplane_t * plane , cs
 extern void gib_think ( edict_t * self ) ;
 extern void ClipGibVelocity ( edict_t * ent ) ;
 extern void VelocityForDamage ( int damage , vec3_t v ) ;
+extern void Mirror_UpdateEntity ( edict_t * mirror , edict_t * ent , edict_t * orig ) ;
+extern void Use_Mirror ( edict_t * ent , edict_t * other , edict_t * activator ) ;
+extern void SP_func_mirror ( edict_t * ent ) ;
 extern void SP_func_areaportal ( edict_t * ent ) ;
 extern void Use_Areaportal ( edict_t * ent , edict_t * other , edict_t * activator ) ;
 extern void G_RunFrame ( void ) ;

@@ -55,6 +55,7 @@ void SP_func_wall(edict_t *self);
 void SP_func_object(edict_t *self);
 void SP_func_explosive(edict_t *self);
 void SP_func_timer(edict_t *self);
+void SP_func_mirror(edict_t *ent);
 void SP_func_areaportal(edict_t *ent);
 void SP_func_clock(edict_t *ent);
 void SP_func_killbox(edict_t *ent);
@@ -167,6 +168,7 @@ spawn_t spawns[] = {
 	{"func_train", SP_func_train},
 	{"func_water", SP_func_water},
 	{"func_conveyor", SP_func_conveyor},
+	{"func_mirror", SP_func_mirror},
 	{"func_areaportal", SP_func_areaportal},
 	{"func_clock", SP_func_clock},
 	{"func_wall", SP_func_wall},

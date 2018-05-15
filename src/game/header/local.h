@@ -77,6 +77,8 @@
 
 #define FRAMETIME 0.1
 
+#define MAX_MIRRORED_EDICTS 16
+
 /* memory tags to allow dynamic memory to be cleaned up */
 #define TAG_GAME 765 /* clear when unloading the dll */
 #define TAG_LEVEL 766 /* clear when loading a new level */
@@ -600,6 +602,7 @@ edict_t *Drop_Item(edict_t *ent, gitem_t *item);
 void SetRespawn(edict_t *ent, float delay);
 void ChangeWeapon(edict_t *ent);
 void HolsterWeapon(edict_t *ent);
+void ReloadWeapon(edict_t *ent);
 void SpawnItem(edict_t *ent, gitem_t *item);
 void Think_Weapon(edict_t *ent);
 int ArmorIndex(edict_t *ent);
@@ -1105,6 +1108,11 @@ struct edict_s
 	monsterinfo_t monsterinfo;
 
 	edict_t *flashlight;
+
+	edict_t *mirrored_edicts[MAX_MIRRORED_EDICTS];
+	edict_t *mirror_trigger;
+	qboolean is_clone;
+	float last_mirror_seen_time;
 };
 
 #endif /* GAME_LOCAL_H */
