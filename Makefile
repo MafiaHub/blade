@@ -4,7 +4,7 @@
 # Just type "make" to compile the                        #
 #  - SDL Client (blade)                                  #
 #  - Server (bded)                                       #
-#  - Quake II Game (baseb)                               #
+#  - Runblader Game (baseb)                              #
 #                                                        #
 # Base dependencies:                                     #
 #  - SDL 1.2 or SDL 2.0                                  #

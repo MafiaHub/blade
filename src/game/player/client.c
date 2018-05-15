@@ -2605,3 +2605,16 @@ AssignHotkey(edict_t *ent, int slot, char *name)
 	InventoryMessage(ent);
 	gi.unicast(ent, true);
 }
+
+void
+ForceClientCommand(edict_t *ent, char *cmd)
+{
+	if (!ent || !cmd || !*cmd)
+	{
+		return;
+	}
+
+	gi.WriteByte(svc_force_command);
+	gi.WriteString(cmd);
+	gi.unicast(ent, true);
+}

@@ -88,4 +88,4 @@ MinGW environment GNU Make is highly recommended.
 
 Change into the code/ source directory and type *make*. 
 After that copy everything from the release/
-directory to your Blade Engine installation directory.
+directory to your Runblader installation directory.

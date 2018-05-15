@@ -1796,6 +1796,7 @@ StartGame(void)
     M_ForceMenuOff();
     Cvar_SetValue("deathmatch", 0);
     Cvar_SetValue("coop", 0);
+    Cvar_SetValue("coopexit", 0);
 
     Cbuf_AddText("loading ; killserver ; wait ; newgame\n");
     cls.key_dest = key_game;
@@ -2518,6 +2519,7 @@ StartServerActionFunc(void *self)
     {
         Cvar_SetValue("deathmatch", 1); /* deathmatch is always true for rogue games */
         Cvar_SetValue("coop", 0); /* This works for at least the main game and both addons */
+        Cvar_SetValue("coopexit", 0);
     }
 
     spot = NULL;

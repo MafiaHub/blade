@@ -415,6 +415,11 @@ SP_target_explosion(edict_t *ent)
 void
 use_target_changelevel(edict_t *self, edict_t *other, edict_t *activator)
 {
+	edict_t *ent;
+	float radius;
+	int i;
+	vec3_t v;
+
 	if (!self || !other  || !activator)
 	{
 		return;
@@ -430,6 +435,27 @@ use_target_changelevel(edict_t *self, edict_t *other, edict_t *activator)
 		if (g_edicts[1].health <= 0)
 		{
 			return;
+		}
+	}
+
+	if (coop->value && coopexit->value)
+	{
+		radius = maxclients->value * 100;
+		for (i = 0; i < maxclients->value; i++)
+		{
+			ent = g_edicts + 1 + i;
+			
+			if (!ent->inuse || !ent->client)
+			{
+				continue;
+			}
+
+			VectorSubtract(activator->s.origin, ent->s.origin, v);
+
+			if (VectorLength(v) > radius)
+			{
+				return;
+			}
 		}
 	}
 
@@ -475,13 +501,6 @@ SP_target_changelevel(edict_t *ent)
 		gi.dprintf("target_changelevel with no map at %s\n", vtos(ent->s.origin));
 		G_FreeEdict(ent);
 		return;
-	}
-
-	/* Mapquirk for secret exists in fact1 and fact3 */
-	if ((Q_stricmp(level.mapname, "fact1") == 0) &&
-		   	(Q_stricmp(ent->map, "fact3") == 0))
-	{
-		ent->map = "fact3$secret1";
 	}
 
 	ent->use = use_target_changelevel;
@@ -593,9 +612,6 @@ use_target_spawner(edict_t *self, edict_t *other /* unused */, edict_t *activato
 void
 SP_target_spawner(edict_t *self)
 {
-	vec3_t	forward;
-	vec3_t	fact2spawnpoint1 = {-1504,512,72};
-
 	if (!self)
 	{
 		return;
@@ -603,15 +619,6 @@ SP_target_spawner(edict_t *self)
 
 	self->use = use_target_spawner;
 	self->svflags = SVF_NOCLIENT;
-
-	/* Maphack for the insane spawner in Mobs-Egerlings
-	   beloved fact2. Found in KMQuake2 */
-	if (!Q_stricmp(level.mapname, "fact2")
-		&& VectorCompare(self->s.origin, fact2spawnpoint1) )
-	{
-		VectorSet (forward, 0, 0, 1);
-		VectorMA (self->s.origin, -8, forward, self->s.origin);
-	}
 
 	if (self->speed)
 	{

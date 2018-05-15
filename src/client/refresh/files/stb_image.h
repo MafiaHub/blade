@@ -6894,7 +6894,11 @@ static int stbi__psd_info(stbi__context *s, int *x, int *y, int *comp)
 
 static int stbi__psd_is16(stbi__context *s)
 {
-   int channelCount, dummy, depth;
+   int channelCount, depth;
+
+   // ZaKlaus: warning suppression
+   int dummy __attribute__((unused));
+
    if (stbi__get32be(s) != 0x38425053) {
        stbi__rewind( s );
        return 0;

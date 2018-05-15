@@ -21,7 +21,7 @@
  *
  * This is a signal handler for printing some hints to debug problem in
  * the case of a crash. On Linux a backtrace is printed. Additionally
- * a special handler for SIGINT and SIGTERM ist supplied.
+ * a special handler for SIGINT and SIGTERM is supplied.
  *
  * =======================================================================
  */
@@ -75,7 +75,7 @@ printBacktrace(int sig)
 	printf("Compiler:     %s\n", __VERSION__);
 	printf("Signal:       %i\n", sig);
 	printf("\nBacktrace:\n");
-	printf("  Not available on this plattform.\n\n");
+	printf("  Not available on this platform.\n\n");
 }
 
 #endif
@@ -85,21 +85,21 @@ signalhandler(int sig)
 {
 	printf("\n=======================================================\n");
 	printf("\nBlade Engine crashed! This should not happen...\n");
-	printf("\nMake sure that you're using the last version. It can\n");
-	printf("be found at http://www.yamagi.org/quake2. If you do,\n");
-	printf("send a bug report to quake2@yamagi.org and include:\n\n");
+	printf("\nMake sure that you're using the latest version. It can\n");
+	printf("be found at our official website. If you do,\n");
+	printf("send a bug report to zaklaus@outlook.com and include:\n\n");
 	printf(" - This output\n");
 	printf(" - The conditions that triggered the crash\n");
 	printf(" - How to reproduce the crash (if known)\n");
 	printf(" - The following files. None of them contains private\n");
 	printf("   data. They're necessary to analyze the backtrace:\n\n");
-	printf("    - quake2 (the executable / binary)\n\n");
+	printf("    - blade (the executable / binary)\n\n");
 	printf("    - game.so (the game.so of the mod you were playing\n");
 	printf("      when the game crashed. baseb/game.so for the\n");
 	printf("      main game)\n\n");
 	printf(" - Any other data which you think might be useful\n");
-	printf("\nThank you very much for your help, making Yamagi Quake\n");
-	printf("II an even better source port. It's much appreciated.\n");
+	printf("\nThank you very much for your help, making Runblader\n");
+	printf("an even better game. It's much appreciated.\n");
 	printf("\n=======================================================\n\n");
 
 	printBacktrace(sig);

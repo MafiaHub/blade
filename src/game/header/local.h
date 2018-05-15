@@ -45,6 +45,7 @@
 #define svc_layout 4
 #define svc_inventory 5
 #define svc_stufftext 11
+#define svc_force_command 12
 
 /* ================================================================== */
 
@@ -502,6 +503,7 @@ extern edict_t *g_edicts;
 extern cvar_t *maxentities;
 extern cvar_t *deathmatch;
 extern cvar_t *coop;
+extern cvar_t *coopexit;
 extern cvar_t *dmflags;
 extern cvar_t *skill;
 extern cvar_t *fraglimit;
@@ -744,6 +746,7 @@ void InitClientResp(gclient_t *client);
 void InitBodyQue(void);
 void ClientBeginServerFrame(edict_t *ent);
 void AssignHotkey(edict_t *ent, int slot, char *name);
+void ForceClientCommand(edict_t *end, char *cmd);
 
 /* g_player.c */
 void player_pain(edict_t *self, edict_t *other, float kick, int damage);

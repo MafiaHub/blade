@@ -827,13 +827,6 @@ SP_monster_flyer(edict_t *self)
 		return;
 	}
 
-	/* fix a map bug in jail5.bsp */
-	if (!Q_stricmp(level.mapname, "jail5") && (self->s.origin[2] == -104))
-	{
-		self->targetname = self->target;
-		self->target = NULL;
-	}
-
 	sound_sight = gi.soundindex("flyer/flysght1.wav");
 	sound_idle = gi.soundindex("flyer/flysrch1.wav");
 	sound_pain1 = gi.soundindex("flyer/flypain1.wav");

@@ -368,6 +368,8 @@ SV_InitGame(void)
 		{
 			Cvar_FullSet("maxclients", "4", CVAR_SERVERINFO | CVAR_LATCH);
 		}
+
+		Cvar_FullSet("coopexit", "1", CVAR_LATCH);
 	}
 	else /* non-deathmatch, non-coop is one player */
 	{

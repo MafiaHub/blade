@@ -105,7 +105,7 @@ ai_move(edict_t *self, float dist)
 /*
  *
  * Used for standing around and looking
- * for players Distance is for slight
+ * for players. Distance is for slight
  * position adjustments needed by the
  * animations
  */

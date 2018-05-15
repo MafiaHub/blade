@@ -40,6 +40,7 @@ edict_t *g_edicts;
 
 cvar_t *deathmatch;
 cvar_t *coop;
+cvar_t *coopexit;
 cvar_t *dmflags;
 cvar_t *skill;
 cvar_t *fraglimit;
