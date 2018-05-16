@@ -500,7 +500,7 @@ R_BuildLightMap(msurface_t *surf, byte *dest, int stride)
 	float *bl;
 
 	if (surf->texinfo->flags &
-		(SURF_SKY | SURF_TRANS33 | SURF_TRANS66 | SURF_WARP))
+		(SURF_SKY | SURF_TRANS33 | SURF_TRANS100 | SURF_TRANS66 | SURF_WARP))
 	{
 		ri.Sys_Error(ERR_DROP, "R_BuildLightMap called for non-lit surface");
 	}
