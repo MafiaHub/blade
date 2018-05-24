@@ -506,7 +506,17 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 			}
 
 			lmTex.rgb *= overbrightbits;
-			outColor = lmTex*texel;
+
+			/* Texture uses per-pixel brightness texturing */
+			if (alpha == 0.666f && texel.a < 1.0f)
+			{
+				outColor.rgb = texel.rgb*(1.0f - texel.a);
+			}
+			else
+			{
+				outColor = lmTex*texel;
+			}
+			
 			outColor.rgb = pow(outColor.rgb, vec3(gamma)); // apply gamma correction to result
 
 			outColor.a = 1; // lightmaps aren't used with translucent surfaces

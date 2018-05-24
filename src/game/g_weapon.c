@@ -816,7 +816,7 @@ rocket_touch(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 		if (!deathmatch->value)
 		{
 			if ((surf) && !(surf->flags &
-				  (SURF_WARP | SURF_TRANS33 | SURF_TRANS100 | SURF_TRANS66 | SURF_FLOWING)))
+				  (SURF_WARP | SURF_TRANS33 | SURF_TRANS100 | SURF_FLOWING)))
 			{
 				n = randk() % 5;
 

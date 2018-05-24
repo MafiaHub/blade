@@ -210,11 +210,21 @@ GL3_DrawGLPoly(msurface_t *fa)
 {
 	glpoly_t *p = fa->polys;
 
+	if (fa->texinfo->flags & SURF_TRANS66)
+	{
+		gl3state.uni3DData.alpha = 0.666f;
+		GL3_UpdateUBO3D();
+	}
+	
+
 	GL3_BindVAO(gl3state.vao3D);
 	GL3_BindVBO(gl3state.vbo3D);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(gl3_3D_vtx_t)*p->numverts, p->vertices, GL_STREAM_DRAW);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, p->numverts);
+
+	gl3state.uni3DData.alpha = 1.0f;
+	GL3_UpdateUBO3D(); /* optimize this bit */
 }
 
 void
@@ -409,10 +419,6 @@ GL3_DrawAlphaSurfaces(void)
 		{
 			alpha = 1.0f; /* evil hack to make sure TRANS33 actually only marks surface as transparent */
 		}
-		else if (s->texinfo->flags & SURF_TRANS66)
-		{
-			alpha = 0.666f;
-		}
 		else if (s->texinfo->flags & SURF_TRANS100)
 		{
 			alpha = 1.0f;
@@ -493,7 +499,7 @@ RenderLightmappedPoly(msurface_t *surf)
 	hmm_vec4 lmScales[MAX_LIGHTMAPS_PER_SURFACE] = {0};
 	lmScales[0] = HMM_Vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	assert((surf->texinfo->flags & (SURF_SKY | SURF_TRANS33 | SURF_TRANS100 | SURF_TRANS66 | SURF_WARP)) == 0
+	assert((surf->texinfo->flags & (SURF_SKY | SURF_TRANS33 | SURF_TRANS100 | SURF_WARP)) == 0
 			&& "RenderLightMappedPoly mustn't be called with transparent, sky or warping surfaces!");
 
 	// Any dynamic lights on this surface?
@@ -564,7 +570,7 @@ DrawInlineBModel(void)
 		if (((psurf->flags & SURF_PLANEBACK) && (dot < -BACKFACE_EPSILON)) ||
 			(!(psurf->flags & SURF_PLANEBACK) && (dot > BACKFACE_EPSILON)))
 		{
-			if (psurf->texinfo->flags & (SURF_TRANS33 | SURF_TRANS100 | SURF_TRANS66))
+			if (psurf->texinfo->flags & (SURF_TRANS33 | SURF_TRANS100))
 			{
 				/* add to the translucent chain */
 				psurf->texturechain = gl3_alpha_surfaces;
@@ -776,7 +782,7 @@ RecursiveWorldNode(mnode_t *node)
 			/* just adds to visible sky bounds */
 			GL3_AddSkySurface(surf);
 		}
-		else if (surf->texinfo->flags & (SURF_TRANS33 | SURF_TRANS100 | SURF_TRANS66))
+		else if (surf->texinfo->flags & (SURF_TRANS33 | SURF_TRANS100))
 		{
 			/* add to the translucent chain */
 			surf->texturechain = gl3_alpha_surfaces;
