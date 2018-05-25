@@ -1878,7 +1878,7 @@ gitem_t itemlist[] = {
 		WEAP_MACHINEGUN,
 		NULL,
 		0,
-		"weapons/machgf1b.wav weapons/machgf2b.wav weapons/machgf3b.wav weapons/machgf4b.wav weapons/machgf5b.wav"
+		""
 	},
 
 	/* QUAKED weapon_chaingun (.3 .3 1) (-16 -16 -16) (16 16 16) */
