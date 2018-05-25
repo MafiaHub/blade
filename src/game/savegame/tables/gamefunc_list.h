@@ -112,7 +112,7 @@
 {"weapon_shotgun_fire", (byte *)weapon_shotgun_fire},
 {"Weapon_Chaingun", (byte *)Weapon_Chaingun},
 {"Chaingun_Fire", (byte *)Chaingun_Fire},
-{"Weapon_Machinegun", (byte *)Weapon_Machinegun},
+{"Weapon_Mk73_Rifle", (byte *)Weapon_Mk73_Rifle},
 {"Machinegun_Fire", (byte *)Machinegun_Fire},
 {"Weapon_HyperBlaster", (byte *)Weapon_HyperBlaster},
 {"Weapon_HyperBlaster_Fire", (byte *)Weapon_HyperBlaster_Fire},

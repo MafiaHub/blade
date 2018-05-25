@@ -112,7 +112,7 @@ extern void Weapon_Shotgun ( edict_t * ent ) ;
 extern void weapon_shotgun_fire ( edict_t * ent ) ;
 extern void Weapon_Chaingun ( edict_t * ent ) ;
 extern void Chaingun_Fire ( edict_t * ent ) ;
-extern void Weapon_Machinegun ( edict_t * ent ) ;
+extern void Weapon_Mk73_Rifle(edict_t *ent);
 extern void Machinegun_Fire ( edict_t * ent ) ;
 extern void Weapon_HyperBlaster ( edict_t * ent ) ;
 extern void Weapon_HyperBlaster_Fire ( edict_t * ent ) ;

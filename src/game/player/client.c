@@ -1629,6 +1629,53 @@ spectator_respawn(edict_t *ent)
 
 /* ============================================================== */
 
+void
+RegisterWeaponsUsingMagazine(edict_t *ent)
+{
+	gclient_t *client;
+	ammo_mag_t *mag;
+	int i;
+	
+	if (!ent)
+	{
+		return;
+	}
+
+	client = ent->client;
+
+	// mk23_pistol
+	{
+		mag = &client->pers.mags[WEAP_PISTOL];
+		mag->uses_mags = true;
+		mag->max_mag_size = 12;
+		mag->eject_frame_index = 48;
+		mag->insert_frame_index = 54;
+		mag->eject_frame_sound_index = gi.soundindex("weapons/mk23_clipout.wav");
+		mag->insert_frame_sound_index = gi.soundindex("weapons/mk23_clipin.wav");
+	}
+
+	// mk73_rifle
+	{
+		mag = &client->pers.mags[WEAP_MACHINEGUN];
+		mag->uses_mags = true;
+		mag->max_mag_size = 30;
+		mag->eject_frame_index = 71;
+		mag->insert_frame_index = 75;
+		mag->eject_frame_sound_index = gi.soundindex("weapons/mk23_clipout.wav");
+		mag->insert_frame_sound_index = gi.soundindex("weapons/mk23_clipin.wav");
+	}
+
+	for (i = 0; i < MAX_ITEMS; i++)
+	{
+		mag = &client->pers.mags[i];
+
+		if (mag->uses_mags)
+		{
+			mag->cur_mag_size = mag->max_mag_size;
+		}
+	}
+}
+
 /*
  * Called when a player connects to
  * a server or respawns in a deathmatch.
@@ -1812,6 +1859,8 @@ PutClientInServer(edict_t *ent)
 	}
 
 	gi.linkentity(ent);
+
+	RegisterWeaponsUsingMagazine(ent);
 
 	/* force the current weapon up */
 	client->newweapon = client->pers.weapon;
@@ -2474,6 +2523,12 @@ ClientBeginServerFrame(edict_t *ent)
 		((level.time - client->respawn_time) >= 5))
 	{
 		spectator_respawn(ent);
+		return;
+	}
+
+	if (!client->pers.weapon && client->newweapon && client->newweapon != WEAPON_HOLSTERED)
+	{
+		ChangeWeapon(ent);
 		return;
 	}
 

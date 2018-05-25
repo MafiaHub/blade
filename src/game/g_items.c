@@ -37,7 +37,7 @@ void Weapon_Blaster(edict_t *ent);
 void Weapon_Pistol(edict_t *ent);
 void Weapon_Shotgun(edict_t *ent);
 void Weapon_SuperShotgun(edict_t *ent);
-void Weapon_Machinegun(edict_t *ent);
+void Weapon_Mk73_Rifle(edict_t *ent);
 void Weapon_Chaingun(edict_t *ent);
 void Weapon_HyperBlaster(edict_t *ent);
 void Weapon_RocketLauncher(edict_t *ent);
@@ -1860,18 +1860,17 @@ gitem_t itemlist[] = {
 		"weapons/sshotf1b.wav"
 	},
 
-	/* QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16) */
 	{
-		"weapon_machinegun",
+		"weapon_mk73_rifle",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
-		Weapon_Machinegun,
+		Weapon_Mk73_Rifle,
 		"misc/w_pkup.wav",
-		"models/weapons/g_machn/tris.md2", EF_ROTATE,
-		"models/weapons/v_machn/tris.md2",
+		"models/weapons/g_mk73_rifle/tris.md2", EF_ROTATE,
+		"models/weapons/v_mk73_rifle/tris.md2",
 		"w_machinegun",
-		"Machinegun",
+		"Mk73 Rifle",
 		0,
 		1,
 		"Bullets",

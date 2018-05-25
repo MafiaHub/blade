@@ -166,6 +166,9 @@ typedef enum
 #define POWER_ARMOR_SCREEN 1
 #define POWER_ARMOR_SHIELD 2
 
+/* magic constants */
+#define WEAPON_HOLSTERED (gitem_t *)0xDEADBEEF
+
 /* handedness values */
 #define RIGHT_HANDED 0
 #define LEFT_HANDED 1
@@ -817,6 +820,10 @@ typedef struct
 	qboolean uses_mags;
 	int max_mag_size;
 	int cur_mag_size;
+	int eject_frame_index;
+	int insert_frame_index;
+	int eject_frame_sound_index;
+	int insert_frame_sound_index;
 } ammo_mag_t;
 
 /* client data that stays across multiple level loads */

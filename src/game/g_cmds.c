@@ -1137,7 +1137,13 @@ Cmd_Assign_f(edict_t *ent)
 	}
 
 	slot = atoi(gi.argv(1));
-	name = gi.argv(2);
+	name = gi.args();
+
+	while (*name && *name != ' ')
+		name++;
+
+	while (*name && *name == ' ')
+		name++;
 
 	AssignHotkey(ent, slot, name);
 }
