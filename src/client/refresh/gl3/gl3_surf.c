@@ -256,64 +256,6 @@ GL3_DrawGLFlowingPoly(msurface_t *fa)
 }
 
 static void
-DrawTriangleOutlines(void)
-{
-	STUB_ONCE("TODO: Implement for gl_showtris support!");
-#if 0
-	int i, j;
-	glpoly_t *p;
-
-	if (!gl_showtris->value)
-	{
-		return;
-	}
-
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
-	glColor4f(1, 1, 1, 1);
-
-	for (i = 0; i < MAX_LIGHTMAPS; i++)
-	{
-		msurface_t *surf;
-
-		for (surf = gl3_lms.lightmap_surfaces[i];
-				surf != 0;
-				surf = surf->lightmapchain)
-		{
-			p = surf->polys;
-
-			for ( ; p; p = p->chain)
-			{
-				for (j = 2; j < p->numverts; j++)
-				{
-					GLfloat vtx[12];
-					unsigned int k;
-
-					for (k=0; k<3; k++)
-					{
-						vtx[0+k] = p->vertices [ 0 ][ k ];
-						vtx[3+k] = p->vertices [ j - 1 ][ k ];
-						vtx[6+k] = p->vertices [ j ][ k ];
-						vtx[9+k] = p->vertices [ 0 ][ k ];
-					}
-
-					glEnableClientState( GL_VERTEX_ARRAY );
-
-					glVertexPointer( 3, GL_FLOAT, 0, vtx );
-					glDrawArrays( GL_LINE_STRIP, 0, 4 );
-
-					glDisableClientState( GL_VERTEX_ARRAY );
-				}
-			}
-		}
-	}
-
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
-#endif // 0
-}
-
-static void
 UpdateLMscales(const hmm_vec4 lmScales[MAX_LIGHTMAPS_PER_SURFACE], gl3ShaderInfo_t* si)
 {
 	int i;
@@ -827,7 +769,6 @@ GL3_DrawWorld(void)
 	RecursiveWorldNode(gl3_worldmodel->nodes);
 	DrawTextureChains();
 	GL3_DrawSkyBox();
-	DrawTriangleOutlines();
 
 	currententity = NULL;
 }
