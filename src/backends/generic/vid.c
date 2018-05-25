@@ -227,7 +227,7 @@ void VID_WriteScreenshot( int width, int height, int comp, const void* data )
 	int i, success=0;
 	static const char* supportedFormats[] = { "tga", "bmp", "png", "jpg" };
 	static const int numFormats = sizeof(supportedFormats)/sizeof(supportedFormats[0]);
-	int format = 0; // 0=tga 1=bmp 2=png 3=jpg
+	int format = 3; // 0=tga 1=bmp 2=png 3=jpg
 	int quality = 85;
 	int argc = Cmd_Argc();
 	const char* gameDir = FS_Gamedir();
@@ -283,12 +283,12 @@ void VID_WriteScreenshot( int width, int height, int comp, const void* data )
 	for (i = 0; i <= 9999; i++)
 	{
 		FILE *f;
-		Com_sprintf(checkname, sizeof(checkname), "%s/scrnshot/q2_%04d.%s", gameDir, i, supportedFormats[format]);
+		Com_sprintf(checkname, sizeof(checkname), "%s/scrnshot/bd_%04d.%s", gameDir, i, supportedFormats[format]);
 		f = Q_fopen(checkname, "rb");
 
 		if (!f)
 		{
-			Com_sprintf(picname, sizeof(picname), "q2_%04d.%s", i, supportedFormats[format]);
+			Com_sprintf(picname, sizeof(picname), "bd_%04d.%s", i, supportedFormats[format]);
 			break; /* file doesn't exist */
 		}
 
