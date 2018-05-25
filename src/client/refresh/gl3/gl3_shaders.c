@@ -510,7 +510,7 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 			/* Texture uses per-pixel brightness texturing */
 			if (alpha == 0.666f && texel.a < 1.0f)
 			{
-				outColor.rgb = texel.rgb*(1.0f - texel.a);
+				outColor.rgb = mix(texel.rgb*(1.0f - texel.a), lmTex.rgb*texel.rgb, texel.a);
 			}
 			else
 			{
@@ -551,7 +551,7 @@ static const char* fragmentSrc3Dsky = MULTILINE_STRING(
 			// TODO: something about GL_BLEND vs GL_ALPHATEST etc
 
 			// apply gamma correction
-			// texel.rgb *= intensity; // TODO: really no intensity for sky?
+			texel.rgb *= intensity; // TODO: really no intensity for sky?
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
 			outColor.a = texel.a*alpha; // I think alpha shouldn't be modified by gamma and intensity
 		}

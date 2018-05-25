@@ -763,7 +763,7 @@ Pickup_Ammo(edict_t *ent, edict_t *other)
 	{
 		if ((other->client->pers.weapon != ent->item) &&
 			(!deathmatch->value ||
-			 (other->client->pers.weapon == FindItem("blaster"))))
+			 (other->client->pers.weapon == FindItem("Pistol"))))
 		{
 			other->client->newweapon = ent->item;
 		}

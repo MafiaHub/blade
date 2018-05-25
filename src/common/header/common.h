@@ -33,6 +33,7 @@
 #include "crc.h"
 
 #define BDEVERSION "0.1a"
+#define BDEGAME "Runblader"
 #define BASEDIRNAME "baseb"
 
 #ifndef BDEOSTYPE

@@ -747,6 +747,11 @@ TossClientWeapon(edict_t *self)
 		return;
 	}
 
+	if (!self->client->pers.weapon)
+	{
+		return;
+	}
+
 	item = self->client->pers.weapon;
 
 	if (!self->client->pers.inventory[self->client->ammo_index])
@@ -982,21 +987,13 @@ player_die(edict_t *self, edict_t *inflictor, edict_t *attacker,
 void
 InitClientPersistant(gclient_t *client)
 {
-	gitem_t *item;
-
 	if (!client)
 	{
 		return;
 	}
 
 	memset(&client->pers, 0, sizeof(client->pers));
-
-	item = FindItem("Pistol");
-	client->pers.selected_item = ITEM_INDEX(item);
-	client->pers.inventory[client->pers.selected_item] = 1;
-
-	client->pers.weapon = item;
-
+	
 	client->pers.health = 100;
 	client->pers.max_health = 100;
 
@@ -1654,7 +1651,6 @@ PutClientInServer(edict_t *ent)
 	int i;
 	client_persistant_t saved;
 	client_respawn_t resp;
-	gitem_t *item;
 
 	/* find a spawn point do it before setting
 	   health back up, so farthest ranging
@@ -1759,7 +1755,10 @@ PutClientInServer(edict_t *ent)
 		}
 	}
 
-	client->ps.gunindex = gi.modelindex(client->pers.weapon->view_model);
+	if (client->pers.weapon)
+	{
+		client->ps.gunindex = gi.modelindex(client->pers.weapon->view_model);
+	}
 
 	/* clear entity state values */
 	ent->s.effects = 0;
@@ -1813,13 +1812,6 @@ PutClientInServer(edict_t *ent)
 	}
 
 	gi.linkentity(ent);
-
-	/* TEMP */
-	item = FindItem("bullets");
-	Add_Ammo(ent, item, 48);
-	client->pers.mags[WEAP_PISTOL].uses_mags = true;
-	client->pers.mags[WEAP_PISTOL].max_mag_size = 12;
-	client->pers.mags[WEAP_PISTOL].cur_mag_size = client->pers.mags[WEAP_PISTOL].max_mag_size;
 
 	/* force the current weapon up */
 	client->newweapon = client->pers.weapon;

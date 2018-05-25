@@ -271,7 +271,7 @@ int GL3_InitContext(void* win)
 	}
 
 	/* Window title - set here so we can display renderer name in it */
-	snprintf(title, sizeof(title), "Blade Engine %s - OpenGL 3.2", BDEVERSION);
+	snprintf(title, sizeof(title), "Blade Engine %s - %s", BDEVERSION, BDEGAME);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetWindowTitle(window, title);
 #else

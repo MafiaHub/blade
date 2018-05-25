@@ -414,21 +414,7 @@ GL3_DrawAlphaSurfaces(void)
 	{
 		GL3_Bind(s->texinfo->image->texnum);
 		c_brush_polys++;
-		float alpha = 1.0f;
-		if (s->texinfo->flags & SURF_TRANS33)
-		{
-			alpha = 1.0f; /* evil hack to make sure TRANS33 actually only marks surface as transparent */
-		}
-		else if (s->texinfo->flags & SURF_TRANS100)
-		{
-			alpha = 1.0f;
-		}
-		if(alpha != gl3state.uni3DData.alpha)
-		{
-			gl3state.uni3DData.alpha = alpha;
-			GL3_UpdateUBO3D();
-		}
-
+		
 		if (s->flags & SURF_DRAWTURB)
 		{
 			GL3_EmitWaterPolys(s);
@@ -444,9 +430,6 @@ GL3_DrawAlphaSurfaces(void)
 			GL3_DrawGLPoly(s);
 		}
 	}
-
-	gl3state.uni3DData.alpha = 1.0f;
-	GL3_UpdateUBO3D();
 
 	glDisable(GL_BLEND);
 
