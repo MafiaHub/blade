@@ -636,13 +636,24 @@ static const char* fragmentSrcAlias = MULTILINE_STRING(
 		{
 			vec4 texel = texture(tex, passTexCoord);
 
-			// apply gamma correction and intensity
-			texel.rgb *= intensity;
-			texel.a *= alpha; // is alpha even used here?
-			texel *= min(vec4(3.0), passColor);
+			if (texel.a < 1.0f)
+			{
+				outColor.rgb = pow(mix(texel.rgb * (1.0f - texel.a), intensity * min(vec4(3.0), passColor).rgb * texel.rgb, texel.a), vec3(gamma));
+			}
+			else
+			{
+				texel.rgb *= intensity;
+				texel *= min(vec4(3.0), passColor);
+				outColor.rgb = pow(texel.rgb, vec3(gamma));
+			}
 
-			outColor.rgb = pow(texel.rgb, vec3(gamma));
-			outColor.a = texel.a; // I think alpha shouldn't be modified by gamma and intensity
+			// apply gamma correction and intensity
+			//texel.rgb *= intensity;
+			//texel.a *= alpha; // is alpha even used here?
+			//texel *= min(vec4(3.0), passColor);
+
+			//outColor.rgb = pow(texel.rgb, vec3(gamma));
+			outColor.a = 1.0f;
 		}
 );
 

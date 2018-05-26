@@ -852,7 +852,7 @@ GL3_DrawAliasModel(entity_t *entity)
 	{
 		if (entity->skinnum >= MAX_MD2SKINS)
 		{
-			skin = model->skins[0];
+			skin = model->skins[model->skinnum];
 		}
 		else
 		{
@@ -860,9 +860,14 @@ GL3_DrawAliasModel(entity_t *entity)
 
 			if (!skin)
 			{
-				skin = model->skins[0];
+				skin = model->skins[model->skinnum];
 			}
 		}
+	}
+
+	if (!skin)
+	{
+		skin = model->skins[0];
 	}
 
 	if (!skin)

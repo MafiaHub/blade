@@ -58,6 +58,7 @@ Mirror_UpdateEntity(edict_t *mirror, edict_t *ent, edict_t *orig)
 	ent->s.modelindex = orig->s.modelindex;
 	ent->s.frame = orig->s.frame;
 	ent->s.skinnum = orig->s.skinnum;
+	ent->speed=100;
 
 	VectorSubtract(orig->s.origin, mirror->s.origin, v);
 

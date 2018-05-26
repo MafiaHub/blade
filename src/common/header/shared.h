@@ -1138,6 +1138,7 @@ typedef struct
 	vec3_t gunoffset;
 	int gunindex;
 	int gunframe;
+	int gunskin;
 
 	float blend[4];             /* rgba full screen effect */
 	float fov;                  /* horizontal field of view */

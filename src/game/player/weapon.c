@@ -502,6 +502,7 @@ ReloadWeapon(edict_t *ent)
 		else
 		{
 			ent->client->weaponstate = WEAPON_RELOADING;
+			ent->client->ps.gunskin = 1;
 		}
 	}
 	else
@@ -557,6 +558,8 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 				mag->cur_mag_size = mag->max_mag_size;
 			else
 				mag->cur_mag_size = ent->client->pers.inventory[ent->client->ammo_index];
+
+			ent->client->ps.gunskin = 0;
 		}
 	}
 
@@ -720,6 +723,11 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 				{
 					gi.sound(ent, CHAN_ITEM, gi.soundindex(
 								"items/damage3.wav"), 1, ATTN_NORM, 0);
+				}
+
+				if (ent->client->pers.inventory[ent->client->ammo_index] < 1)
+				{
+					ent->client->ps.gunskin = 1;
 				}
 
 				fire(ent);

@@ -231,6 +231,7 @@ typedef struct model_s
 
 	/* for alias models and skins */
 	gl3image_t *skins[MAX_MD2SKINS];
+	int skinnum;
 
 	int extradatasize;
 	void *extradata;

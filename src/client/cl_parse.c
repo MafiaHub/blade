@@ -615,6 +615,11 @@ CL_ParsePlayerstate(frame_t *oldframe, frame_t *newframe)
 		state->gunindex = MSG_ReadByte(&net_message);
 	}
 
+	if (flags & PS_WEAPONSKIN)
+	{
+		state->gunskin = MSG_ReadByte(&net_message);
+	}
+
 	if (flags & PS_WEAPONFRAME)
 	{
 		state->gunframe = MSG_ReadByte(&net_message);

@@ -253,6 +253,11 @@ SV_WritePlayerstateToClient(client_frame_t *from, client_frame_t *to,
 		pflags |= PS_WEAPONFRAME;
 	}
 
+	if (ps->gunskin != ops->gunskin)
+	{
+		pflags |= PS_WEAPONSKIN;
+	}
+
 	pflags |= PS_WEAPONINDEX;
 
 	/* write it */
@@ -326,6 +331,11 @@ SV_WritePlayerstateToClient(client_frame_t *from, client_frame_t *to,
 	if (pflags & PS_WEAPONINDEX)
 	{
 		MSG_WriteByte(msg, ps->gunindex);
+	}
+
+	if (pflags & PS_WEAPONSKIN)
+	{
+		MSG_WriteByte(msg, ps->gunskin);
 	}
 
 	if (pflags & PS_WEAPONFRAME)
