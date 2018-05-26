@@ -502,7 +502,7 @@ ReloadWeapon(edict_t *ent)
 		else
 		{
 			ent->client->weaponstate = WEAPON_RELOADING;
-			ent->client->ps.gunskin = 1;
+			ent->client->ps.gunskin = 2;
 		}
 	}
 	else
@@ -635,6 +635,21 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 
 	if (ent->client->weaponstate == WEAPON_READY)
 	{
+		ammo_mag_t *mag = &ent->client->pers.mags[ent->client->pers.weapon->weapmodel];
+
+		if (ent->client->pers.inventory[ent->client->ammo_index] < 1)
+		{
+			if (mag->uses_mags)
+			{
+				ent->client->ps.gunskin = 2;
+			}
+
+			else
+			{
+				ent->client->ps.gunskin = 1;
+			}
+		}
+
 		if (((ent->client->latched_buttons |
 			  ent->client->buttons) & BUTTON_ATTACK))
 		{
@@ -716,6 +731,11 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 						return;
 					}
 
+					if (mag->cur_mag_size < mag->max_mag_size * 0.30f)
+					{
+						ent->client->ps.gunskin = 1;
+					}
+
 					mag->cur_mag_size--;
 				}
 				
@@ -727,7 +747,16 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 
 				if (ent->client->pers.inventory[ent->client->ammo_index] < 1)
 				{
-					ent->client->ps.gunskin = 1;
+					if (mag->uses_mags)
+					{
+						ent->client->ps.gunskin = 2;
+					}
+					
+					else
+					{
+						ent->client->ps.gunskin = 1;
+					}
+					
 				}
 
 				fire(ent);
