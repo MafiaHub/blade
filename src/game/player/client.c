@@ -1634,7 +1634,6 @@ RegisterWeaponsUsingMagazine(edict_t *ent)
 {
 	gclient_t *client;
 	ammo_mag_t *mag;
-	int i;
 	
 	if (!ent)
 	{
@@ -1665,7 +1664,8 @@ RegisterWeaponsUsingMagazine(edict_t *ent)
 		mag->insert_frame_sound_index = gi.soundindex("weapons/mk23_clipin.wav");
 	}
 
-	for (i = 0; i < MAX_ITEMS; i++)
+	/* Let spawners manage starting ammo. */
+	/* for (i = 0; i < MAX_ITEMS; i++)
 	{
 		mag = &client->pers.mags[i];
 
@@ -1673,7 +1673,7 @@ RegisterWeaponsUsingMagazine(edict_t *ent)
 		{
 			mag->cur_mag_size = mag->max_mag_size;
 		}
-	}
+	} */
 }
 
 /*

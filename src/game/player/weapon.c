@@ -649,6 +649,10 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 				ent->client->ps.gunskin = 1;
 			}
 		}
+		else if (mag->uses_mags && mag->cur_mag_size < 1)
+		{
+			ent->client->ps.gunskin = 2;
+		}
 
 		if (((ent->client->latched_buttons |
 			  ent->client->buttons) & BUTTON_ATTACK))
@@ -657,7 +661,8 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 
 			if ((!ent->client->ammo_index) ||
 				(ent->client->pers.inventory[ent->client->ammo_index] >=
-				 ent->client->pers.weapon->quantity))
+				 ent->client->pers.weapon->quantity) ||
+				 (mag->uses_mags && mag->cur_mag_size > 0))
 			{
 				ent->client->ps.gunframe = FRAME_FIRE_FIRST;
 				ent->client->weaponstate = WEAPON_FIRING;
@@ -675,6 +680,12 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 					ent->s.frame = FRAME_attack1 - 1;
 					ent->client->anim_end = FRAME_attack8;
 				}
+			}
+			else if (mag->uses_mags && mag->cur_mag_size < 1)
+			{
+				ent->client->ps.gunskin = 2;
+				ReloadWeapon(ent);
+				return;
 			}
 			else
 			{

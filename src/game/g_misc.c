@@ -903,6 +903,11 @@ light_use(edict_t *self, edict_t *other /* unused */, edict_t *activator /* unus
 		return;
 	}
 
+	if (self->cstyle)
+	{
+		return;
+	}
+
 	if (self->spawnflags & START_OFF)
 	{
 		gi.configstring(CS_LIGHTS + self->style, "m");
@@ -924,7 +929,7 @@ SP_light(edict_t *self)
 	}
 
 	/* no targeted lights in deathmatch, because they cause global messages */
-	if (!self->targetname || deathmatch->value)
+	if (!self->targetname && deathmatch->value)
 	{
 		G_FreeEdict(self);
 		return;
@@ -934,7 +939,11 @@ SP_light(edict_t *self)
 	{
 		self->use = light_use;
 
-		if (self->spawnflags & START_OFF)
+		if (self->cstyle)
+		{
+			gi.configstring(CS_LIGHTS + self->style, self->cstyle);
+		}
+		else if (self->spawnflags & START_OFF)
 		{
 			gi.configstring(CS_LIGHTS + self->style, "a");
 		}
