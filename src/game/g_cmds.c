@@ -581,6 +581,9 @@ Cmd_UseWorld_f(edict_t *ent)
 	ent->usehands = 1;
 }
 
+void
+Cmd_Quests_f(edict_t *ent);
+
 /*
  * Use an inventory item
  */
@@ -593,13 +596,6 @@ Cmd_Use_f(edict_t *ent)
 
 	if (!ent)
 	{
-		return;
-	}
-
-	if (ent->client->showquests)
-	{
-		ent->client->showquests = false;
-		ent->client->showhelp = true;
 		return;
 	}
 
@@ -828,6 +824,12 @@ Cmd_InvUse_f(edict_t *ent)
 
 	if (!ent)
 	{
+		return;
+	}
+
+	if (ent->client->showquests)
+	{
+		Cmd_Help_f(ent);
 		return;
 	}
 
