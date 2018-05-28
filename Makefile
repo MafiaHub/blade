@@ -807,6 +807,7 @@ GAME_OBJS_ = \
 	src/game/monster/soldier/soldier.o \
 	src/game/monster/supertank/supertank.o \
 	src/game/monster/tank/tank.o \
+	src/game/g_quest.o \
 	src/game/player/client.o \
 	src/game/player/hud.o \
 	src/game/player/trail.o \
@@ -833,6 +834,7 @@ CLIENT_OBJS_ := \
 	src/client/cl_entities.o \
 	src/client/cl_input.o \
 	src/client/cl_inventory.o \
+	src/client/cl_quest.o \
 	src/client/cl_keyboard.o \
 	src/client/cl_lights.o \
 	src/client/cl_main.o \

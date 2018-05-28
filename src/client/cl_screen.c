@@ -1665,6 +1665,11 @@ SCR_UpdateScreen(void)
 				CL_DrawInventory();
 			}
 
+			if (cl.frame.playerstate.stats[STAT_LAYOUTS] & 4)
+			{
+				CL_DrawQuestlog();
+			}
+
 			SCR_DrawNet();
 			SCR_CheckDrawCenterString();
 

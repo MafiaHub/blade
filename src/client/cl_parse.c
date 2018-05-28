@@ -40,6 +40,7 @@ char *svc_strings[256] = {
 	"svc_temp_entity",
 	"svc_layout",
 	"svc_inventory",
+	"svc_questlist",
 	"svc_force_command",
 
 	"svc_nop",
@@ -1384,6 +1385,10 @@ CL_ParseServerMessage(void)
 
 			case svc_inventory:
 				CL_ParseInventory();
+				break;
+
+			case svc_questlist:
+				CL_ParseQuestlog();
 				break;
 
 			case svc_force_command:

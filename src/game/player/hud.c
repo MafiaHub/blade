@@ -364,8 +364,8 @@ HelpComputerMessage(edict_t *ent)
 			"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ",
 			sk,
 			level.level_name,
-			game.helpmessage1,
-			game.helpmessage2,
+			ent->client->pers.quest_titles[ent->client->pers.quest_selected],
+			ent->client->pers.quest_help[ent->client->pers.quest_selected][ent->client->pers.quest_stage[ent->client->pers.quest_selected]],
 			level.killed_monsters, level.total_monsters,
 			level.found_goals, level.total_goals,
 			level.found_secrets, level.total_secrets);
@@ -403,6 +403,41 @@ InventoryMessage(edict_t *ent)
 
 			gi.WriteShort(item_icons[slot-1]);
 		}
+}
+
+void
+QuestsMessage(edict_t *ent)
+{
+	gclient_t *cl;
+	int i, cnt = 0, sel = 0;
+	char *quests[MAX_ACTIVE_QUESTS];
+
+	cl = ent->client;
+
+	for (i = 0; i < MAX_QUESTS; i++)
+	{
+		if (cl->pers.quest_stage[i] > 0 && cl->pers.quest_stage[i] < QUEST_STAGE_COMPLETE)
+		{
+			quests[cnt] = cl->pers.quest_titles[i];
+
+			if (cl->pers.quest_selected == i)
+			{
+				sel = cnt;
+			}
+
+			cnt++;
+		}
+	}
+
+	gi.WriteByte(svc_questlist);
+
+	gi.WriteByte(sel);
+	gi.WriteByte(cnt);
+
+	for (i = 0; i < cnt; i++)
+	{
+		gi.WriteString(quests[i]);
+	}
 }
 
 
@@ -564,6 +599,11 @@ G_SetStats(edict_t *ent)
 		{
 			ent->client->ps.stats[STAT_LAYOUTS] |= 2;
 		}
+
+		if (ent->client->showquests)
+		{
+			ent->client->ps.stats[STAT_LAYOUTS] |= 4;
+		}
 	}
 
 	/* frags */
@@ -652,6 +692,11 @@ G_SetSpectatorStats(edict_t *ent)
 	if (cl->showinventory && (cl->pers.health > 0))
 	{
 		cl->ps.stats[STAT_LAYOUTS] |= 2;
+	}
+
+	if (cl->showquests)
+	{
+		cl->ps.stats[STAT_LAYOUTS] |= 4;
 	}
 
 	if (cl->chase_target && cl->chase_target->inuse)

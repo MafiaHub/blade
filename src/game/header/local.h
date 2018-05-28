@@ -44,6 +44,7 @@
 #define svc_temp_entity 3
 #define svc_layout 4
 #define svc_inventory 5
+#define svc_questlist 6
 #define svc_stufftext 11
 #define svc_force_command 12
 
@@ -153,6 +154,16 @@ typedef enum
 #define AS_SLIDING 2
 #define AS_MELEE 3
 #define AS_MISSILE 4
+
+/* quest system */
+#define MAX_QUESTS 128
+#define MAX_QUEST_LENGTH 32
+#define MAX_ACTIVE_QUESTS 8
+#define QUEST_STAGE_INACTIVE 0
+#define QUEST_STAGE_STARTED 10
+#define QUEST_STAGE_COMPLETE 100
+#define QUEST_STAGE_FAILED (QUEST_STAGE_COMPLETE + 50)
+#define MAX_QUEST_STAGES (QUEST_STAGE_FAILED + 1)
 
 /* armor types */
 #define ARMOR_NONE 0
@@ -270,11 +281,6 @@ typedef struct gitem_s
    the server.ssv file for savegames */
 typedef struct
 {
-	char helpmessage1[512];
-	char helpmessage2[512];
-	int helpchanged; /* flash F1 icon if non 0, play sound
-					    and increment only if 1, 2, or 3 */
-
 	gclient_t *clients; /* [maxclients] */
 
 	/* can't store spawnpoint in level, because
@@ -775,9 +781,13 @@ void ValidateSelectedItem(edict_t *ent);
 void DeathmatchScoreboardMessage(edict_t *client, edict_t *killer);
 void HelpComputerMessage(edict_t *client);
 void InventoryMessage(edict_t *client);
+void QuestsMessage(edict_t *client);
 
 /* g_pweapon.c */
 void PlayerNoise(edict_t *who, vec3_t where, int type);
+
+/* g_quest.c */
+qboolean Quest_Setstage(int questid, int stage, int depends, edict_t *activator, char *target, char *questname, char *message);
 
 /* m_move.c */
 qboolean M_CheckBottom(edict_t *ent);
@@ -865,6 +875,14 @@ typedef struct
 	int helpchanged;
 
 	qboolean spectator; /* client is a spectator */
+
+	/* Quest system */
+	int quest_stage[MAX_QUESTS];
+	char quest_titles[MAX_QUESTS][MAX_QUEST_LENGTH];
+	char quest_help[MAX_QUESTS][MAX_QUEST_STAGES][MAX_QUEST_LENGTH];
+	int quest_active;
+	int quest_selected;
+	
 } client_persistant_t;
 
 /* client data that stays across deathmatch respawns */
@@ -895,6 +913,7 @@ struct gclient_s
 	qboolean showinventory; /* set layout stat */
 	qboolean showhelp;
 	qboolean showhelpicon;
+	qboolean showquests;
 
 	int ammo_index;
 
@@ -1121,6 +1140,13 @@ struct edict_s
 	edict_t *mirror_trigger;
 	qboolean is_clone;
 	float last_mirror_seen_time;
+
+	/* quest system */
+	char *questname;
+	int questid;
+	int stage;
+	int depends;
+	int messageid;
 };
 
 #endif /* GAME_LOCAL_H */

@@ -262,9 +262,6 @@ InitGame(void)
 	/* items */
 	InitItems();
 
-	game.helpmessage1[0] = 0;
-	game.helpmessage2[0] = 0;
-
 	/* initialize all entities for this game */
 	game.maxentities = maxentities->value;
 	g_edicts = gi.TagMalloc(game.maxentities * sizeof(g_edicts[0]), TAG_GAME);

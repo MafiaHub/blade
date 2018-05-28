@@ -179,24 +179,11 @@ SP_target_speaker(edict_t *ent)
 void
 Use_Target_Help(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
 {
-	if (!ent)
-	{
-		return;
-	}
-
-	if (ent->spawnflags & 1)
-	{
-		Q_strlcpy(game.helpmessage1, ent->message, sizeof(game.helpmessage1));
-	}
-	else
-	{
-		Q_strlcpy(game.helpmessage2, ent->message, sizeof(game.helpmessage2));
-	}
-
-	game.helpchanged++;
+	/* ... */
 }
 
 /*
+ * OBSOLETE
  * QUAKED target_help (1 0 1) (-16 -16 -24) (16 16 24) help1
  * When fired, the "message" key becomes the current personal computer string,
  * and the message light will be set on all clients status bars.
@@ -209,22 +196,8 @@ SP_target_help(edict_t *ent)
 		return;
 	}
 
-	if (deathmatch->value)
-	{
-		/* auto-remove for deathmatch */
-		G_FreeEdict(ent);
-		return;
-	}
-
-	if (!ent->message)
-	{
-		gi.dprintf("%s with no message at %s\n", ent->classname,
-				vtos(ent->s.origin));
-		G_FreeEdict(ent);
-		return;
-	}
-
-	ent->use = Use_Target_Help;
+	Com_Printf("Use of obsolete %s at %s detected. Use quest_setstage instead!\n", ent->classname, vtos(ent->s.origin));
+	G_FreeEdict(ent);
 }
 
 /* ========================================================== */

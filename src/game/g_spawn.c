@@ -148,6 +148,8 @@ void SP_turret_breach(edict_t *self);
 void SP_turret_base(edict_t *self);
 void SP_turret_driver(edict_t *self);
 
+void SP_quest_setstage(edict_t *self);
+
 spawn_t spawns[] = {
 	{"item_health", SP_item_health},
 	{"item_health_small", SP_item_health_small},
@@ -266,6 +268,8 @@ spawn_t spawns[] = {
 	{"turret_breach", SP_turret_breach},
 	{"turret_base", SP_turret_base},
 	{"turret_driver", SP_turret_driver},
+
+	{"quest_setstage", SP_quest_setstage},
 
 	{NULL, NULL}
 };

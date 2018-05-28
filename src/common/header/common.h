@@ -180,6 +180,7 @@ enum svc_ops_e
 	svc_temp_entity,
 	svc_layout,
 	svc_inventory,
+	svc_questlist,
 	svc_force_command,
 
 	/* the rest are private to the client and server */

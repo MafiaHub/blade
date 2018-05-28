@@ -101,6 +101,30 @@ SelectNextItem(edict_t *ent, int itflags)
 
 	cl = ent->client;
 
+	if (cl->showquests)
+	{
+		int sel = cl->pers.quest_selected;
+
+		for (i = sel+1; i < MAX_QUESTS; i++)
+		{
+			if (cl->pers.quest_stage[i] > 0 && cl->pers.quest_stage[i] < QUEST_STAGE_COMPLETE)
+			{
+				sel = i;
+				break;
+			}
+		}
+
+		if (cl->pers.quest_selected != sel)
+		{
+			cl->pers.quest_selected = sel;
+		}
+
+		QuestsMessage(ent);
+		gi.unicast(ent, true);
+
+		return;
+	}
+
 	if (cl->chase_target)
 	{
 		ChaseNext(ent);
@@ -149,6 +173,30 @@ SelectPrevItem(edict_t *ent, int itflags)
 	}
 
 	cl = ent->client;
+
+	if (cl->showquests)
+	{
+		int sel = cl->pers.quest_selected;
+
+		for (i = sel-1; i >= 0; i--)
+		{
+			if (cl->pers.quest_stage[i] > 0 && cl->pers.quest_stage[i] < QUEST_STAGE_COMPLETE)
+			{
+				sel = i;
+				break;
+			}
+		}
+
+		if (cl->pers.quest_selected != sel)
+		{
+			cl->pers.quest_selected = sel;
+		}
+
+		QuestsMessage(ent);
+		gi.unicast(ent, true);
+
+		return;
+	}
 
 	if (cl->chase_target)
 	{
@@ -548,6 +596,13 @@ Cmd_Use_f(edict_t *ent)
 		return;
 	}
 
+	if (ent->client->showquests)
+	{
+		ent->client->showquests = false;
+		ent->client->showhelp = true;
+		return;
+	}
+
 	hotbar = atoi(gi.argv(1));
 
 	if (ent->client->showinventory)
@@ -661,6 +716,7 @@ Cmd_Score_f(edict_t *ent)
 
 	ent->client->showinventory = false;
 	ent->client->showhelp = false;
+	ent->client->showquests = false;
 
 	if (!deathmatch->value && !coop->value)
 	{
@@ -695,6 +751,7 @@ Cmd_Help_f(edict_t *ent)
 
 	ent->client->showinventory = false;
 	ent->client->showscores = false;
+	ent->client->showquests = false;
 
 	if (ent->client->showhelp)
 	{
@@ -722,6 +779,7 @@ Cmd_Inven_f(edict_t *ent)
 
 	cl->showscores = false;
 	cl->showhelp = false;
+	cl->showquests = false;
 
 	if (cl->showinventory)
 	{
@@ -732,6 +790,34 @@ Cmd_Inven_f(edict_t *ent)
 	cl->showinventory = true;
 
 	InventoryMessage(ent);
+	gi.unicast(ent, true);
+}
+
+void
+Cmd_Quests_f(edict_t *ent)
+{
+	gclient_t *cl;
+
+	if (!ent)
+	{
+		return;
+	}
+
+	cl = ent->client;
+
+	cl->showscores = false;
+	cl->showhelp = false;
+	cl->showinventory = false;
+
+	if (cl->showquests)
+	{
+		cl->showquests = false;
+		return;
+	}
+
+	cl->showquests = true;
+
+	QuestsMessage(ent);
 	gi.unicast(ent, true);
 }
 
@@ -1148,6 +1234,34 @@ Cmd_Assign_f(edict_t *ent)
 	AssignHotkey(ent, slot, name);
 }
 
+void
+Cmd_Setstage_f(edict_t *ent)
+{
+	int questid, stage;
+	char *target;
+	
+	if (gi.argc() < 3)
+	{
+		return;
+	}
+
+	questid = atoi(gi.argv(1));
+	stage   = atoi(gi.argv(2));
+	target  = gi.argv(3);
+
+	Quest_Setstage(questid, stage, 0, ent, target, NULL, NULL);
+}
+
+void
+Cmd_GetQuestinfo_f(edict_t *ent)
+{
+	gclient_t *cl = ent->client;
+	int sel = cl->pers.quest_selected;
+	Com_Printf("Quest ID: %d (%s)\nStage: %d (%s)\n", 
+	sel, cl->pers.quest_titles[sel], 
+	cl->pers.quest_stage[sel], cl->pers.quest_help[sel][cl->pers.quest_stage[sel]]);
+}
+
 /* Unassign an item from a hotbar */
 void 
 Cmd_Unassign_f(edict_t *ent)
@@ -1448,6 +1562,10 @@ ClientCommand(edict_t *ent)
 	{
 		Cmd_Inven_f(ent);
 	}
+	else if (Q_stricmp(cmd, "quests") == 0)
+	{
+		Cmd_Quests_f(ent);
+	}
 	else if (Q_stricmp(cmd, "invnext") == 0)
 	{
 		SelectNextItem(ent, -1);
@@ -1511,6 +1629,14 @@ ClientCommand(edict_t *ent)
 	else if (Q_stricmp(cmd, "holster") == 0)
 	{
 		HolsterWeapon(ent);
+	}
+	else if (Q_stricmp(cmd, "setstage") == 0)
+	{
+		Cmd_Setstage_f(ent);
+	}
+	else if (Q_stricmp(cmd, "getqi") == 0)
+	{
+		Cmd_GetQuestinfo_f(ent);
 	}
 	else /* anything that doesn't match a command will be a chat */
 	{

@@ -1045,9 +1045,8 @@ G_SetClientSound(edict_t *ent)
 		return;
 	}
 
-	if (ent->client->pers.game_helpchanged != game.helpchanged)
+	if (ent->client->pers.game_helpchanged == 1)
 	{
-		ent->client->pers.game_helpchanged = game.helpchanged;
 		ent->client->pers.helpchanged = 1;
 	}
 
@@ -1378,6 +1377,7 @@ ClientEndServerFrame(edict_t *ent)
 		if (ent->client->showhelp)
 		{
 			ent->client->pers.helpchanged = 0;
+			ent->client->pers.game_helpchanged = 0;
 			HelpComputerMessage(ent);
 			gi.unicast(ent, false);
 		}

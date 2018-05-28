@@ -151,6 +151,9 @@ typedef struct
 	int			inventory[MAX_ITEMS];
 	int         hotbar[10];
 	int         hotbar_icon[10]; /* hotbar which addresses assigned items */
+	char        quest_names[8][32];
+	char        quest_selected;
+	char        quest_max;
 
 	/* non-gameserver infornamtion */
 	fileHandle_t cinematic_file;
@@ -514,8 +517,10 @@ void M_ForceMenuOff (void);
 void M_AddToServerList (netadr_t adr, char *info);
 
 void CL_ParseInventory (void);
-void CL_KeyInventory (int key);
 void CL_DrawInventory (void);
+
+void CL_ParseQuestlog(void);
+void CL_DrawQuestlog(void);
 
 void CL_PredictMovement (void);
 trace_t CL_PMTrace(vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end);
