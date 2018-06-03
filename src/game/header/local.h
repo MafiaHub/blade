@@ -283,6 +283,13 @@ typedef struct
 {
 	gclient_t *clients; /* [maxclients] */
 
+	/* Quest system */
+	int quest_stage[MAX_QUESTS];
+	char quest_titles[MAX_QUESTS][MAX_QUEST_LENGTH];
+	char quest_help[MAX_QUESTS][MAX_QUEST_STAGES][MAX_QUEST_LENGTH];
+	int quest_active;
+	int quest_selected;
+
 	/* can't store spawnpoint in level, because
 	   it would get overwritten by the savegame
 	   restore */
@@ -875,14 +882,6 @@ typedef struct
 	int helpchanged;
 
 	qboolean spectator; /* client is a spectator */
-
-	/* Quest system */
-	int quest_stage[MAX_QUESTS];
-	char quest_titles[MAX_QUESTS][MAX_QUEST_LENGTH];
-	char quest_help[MAX_QUESTS][MAX_QUEST_STAGES][MAX_QUEST_LENGTH];
-	int quest_active;
-	int quest_selected;
-	
 } client_persistant_t;
 
 /* client data that stays across deathmatch respawns */

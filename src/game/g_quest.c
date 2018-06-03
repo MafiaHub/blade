@@ -31,7 +31,6 @@ Quest_Setstage(int questid, int stage, int depends, edict_t *activator, char *ta
 {
 	int i, st;
 	edict_t *ent, *t;
-	gclient_t *cl;
 	int quest_cc = 0;
 
 	if (!activator)
@@ -39,131 +38,113 @@ Quest_Setstage(int questid, int stage, int depends, edict_t *activator, char *ta
 		return false;
 	}
 
-	for (i = 0; i < maxclients->value; i++)
+	st = game.quest_stage[questid];
+
+	if (game.quest_active == MAX_ACTIVE_QUESTS && stage == QUEST_STAGE_STARTED)
 	{
-		ent = g_edicts + 1 + i;
-
-		if (!ent->inuse)
-		{
-			continue;
-		}
-
-
-		cl = ent->client;
-		st = cl->pers.quest_stage[questid];
-		
-		if (cl->pers.quest_active == MAX_ACTIVE_QUESTS && stage == QUEST_STAGE_STARTED)
-		{
-			continue;
-		}
-
-		if (st != depends && depends != 0)
-		{
-			continue;
-		}
-		else if (cl->pers.quest_stage[questid] < stage)
-		{
-			quest_cc++;
-			if (cl->pers.quest_stage[questid] == QUEST_STAGE_INACTIVE)
-			{
-				cl->pers.quest_active++;
-			}
-
-			cl->pers.quest_stage[questid] = stage;
-
-			if (cl->pers.quest_stage[questid] >= QUEST_STAGE_COMPLETE)
-			{
-				cl->pers.quest_active--;
-			}
-
-			if (message)
-			{
-				gi.centerprintf(ent, "%s", message);
-				Q_strlcpy(cl->pers.quest_help[questid][stage], message, strlen(message) + 1);
-			}
-
-			if (questname)
-			{
-				Q_strlcpy(cl->pers.quest_titles[questid], questname, strlen(questname) + 1);
-			}
-			else if (stage == QUEST_STAGE_STARTED)
-			{
-				gi.dprintf("Unnamed quest ID: %d, FIX THIS!", questid);
-				Com_sprintf(cl->pers.quest_titles[questid], MAX_QUEST_LENGTH, "Unnamed Quest ID: %d", questid);
-			}
-
-			if (stage < QUEST_STAGE_COMPLETE)
-			{
-				if (cl->pers.quest_selected == 0)
-				{
-					cl->pers.quest_selected = questid;
-				}
-
-				if (questid == cl->pers.quest_selected)
-				{
-					cl->pers.game_helpchanged++;
-				}
-			}
-			else
-			{
-				int j;
-
-				for (j = 0; j < MAX_QUESTS; j++)
-				{
-					if (cl->pers.quest_stage[j] > 0 && cl->pers.quest_stage[j] < QUEST_STAGE_COMPLETE)
-					{
-						cl->pers.quest_selected = j;
-						break;
-					}
-				}
-
-				if (j == MAX_QUESTS)
-				{
-					cl->pers.quest_selected = 0;
-				}
-
-				cl->pers.game_helpchanged++;
-			}
-
-			QuestsMessage(ent);
-			gi.unicast(ent, true);
-		}
+		return false;
 	}
 
-	/* fix for coop games when some players won't met the criteria. */
-	if (quest_cc)
+	if (st != depends && depends != 0)
 	{
-		for (i = 0; i < maxclients->value; i++)
+		return false;
+	}
+	else if (game.quest_stage[questid] < stage)
+	{
+		quest_cc++;
+		if (game.quest_stage[questid] == QUEST_STAGE_INACTIVE)
 		{
-			ent = g_edicts + i + 1;
+			game.quest_active++;
+		}
 
-			cl = ent->client;
-			st = cl->pers.quest_stage[questid];
+		game.quest_stage[questid] = stage;
 
-			if (st < stage)
+		if (game.quest_stage[questid] >= QUEST_STAGE_COMPLETE)
+		{
+			game.quest_active--;
+		}
+
+		if (message)
+		{
+			for (i = 0; i < maxclients->value; i++)
 			{
-				cl->pers.quest_stage[questid] = stage;
+				ent = g_edicts + i + 1;
+
+				if (!ent->inuse)
+				{
+					continue;
+				}
+
+				gi.centerprintf(ent, "%s", message);
 
 				QuestsMessage(ent);
 				gi.unicast(ent, true);
 			}
+
+			Q_strlcpy(game.quest_help[questid][stage], message, strlen(message) + 1);
 		}
-	}
 
-	if (target && quest_cc)
-	{
-		t = NULL;
-
-		while ((t = G_Find(t, FOFS(targetname), target)))
+		if (questname)
 		{
-			if (t->use)
+			Q_strlcpy(game.quest_titles[questid], questname, strlen(questname) + 1);
+		}
+		else if (stage == QUEST_STAGE_STARTED)
+		{
+			gi.dprintf("Unnamed quest ID: %d, FIX THIS!", questid);
+			Com_sprintf(game.quest_titles[questid], MAX_QUEST_LENGTH, "Unnamed Quest ID: %d", questid);
+		}
+
+		if (stage < QUEST_STAGE_COMPLETE)
+		{
+			if (game.quest_selected == 0)
 			{
-				t->use(t, activator, activator);
+				game.quest_selected = questid;
+			}
+		}
+		else
+		{
+			int j;
+
+			for (j = 0; j < MAX_QUESTS; j++)
+			{
+				if (game.quest_stage[j] > 0 && game.quest_stage[j] < QUEST_STAGE_COMPLETE)
+				{
+					game.quest_selected = j;
+					break;
+				}
+			}
+
+			if (j == MAX_QUESTS)
+			{
+				game.quest_selected = 0;
 			}
 		}
 	}
+/* 
+		for (i = 0; i < maxclients->value; i++)
+		{
+			ent = g_edicts + i + 1;
 
-	return quest_cc != 0;
+			if (!ent->inuse)
+			{
+				continue;
+			}
+		} */
+
+		if (target && quest_cc)
+		{
+			t = NULL;
+
+			while ((t = G_Find(t, FOFS(targetname), target)))
+			{
+				if (t->use)
+				{
+					t->use(t, activator, activator);
+				}
+			}
+		}
+
+		return quest_cc != 0;
 }
 
 /*

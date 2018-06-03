@@ -103,20 +103,20 @@ SelectNextItem(edict_t *ent, int itflags)
 
 	if (cl->showquests)
 	{
-		int sel = cl->pers.quest_selected;
+		int sel = game.quest_selected;
 
 		for (i = sel+1; i < MAX_QUESTS; i++)
 		{
-			if (cl->pers.quest_stage[i] > 0 && cl->pers.quest_stage[i] < QUEST_STAGE_COMPLETE)
+			if (game.quest_stage[i] > 0 && game.quest_stage[i] < QUEST_STAGE_COMPLETE)
 			{
 				sel = i;
 				break;
 			}
 		}
 
-		if (cl->pers.quest_selected != sel)
+		if (game.quest_selected != sel)
 		{
-			cl->pers.quest_selected = sel;
+			game.quest_selected = sel;
 		}
 
 		QuestsMessage(ent);
@@ -176,20 +176,20 @@ SelectPrevItem(edict_t *ent, int itflags)
 
 	if (cl->showquests)
 	{
-		int sel = cl->pers.quest_selected;
+		int sel = game.quest_selected;
 
 		for (i = sel-1; i >= 0; i--)
 		{
-			if (cl->pers.quest_stage[i] > 0 && cl->pers.quest_stage[i] < QUEST_STAGE_COMPLETE)
+			if (game.quest_stage[i] > 0 && game.quest_stage[i] < QUEST_STAGE_COMPLETE)
 			{
 				sel = i;
 				break;
 			}
 		}
 
-		if (cl->pers.quest_selected != sel)
+		if (game.quest_selected != sel)
 		{
-			cl->pers.quest_selected = sel;
+			game.quest_selected = sel;
 		}
 
 		QuestsMessage(ent);
@@ -1258,10 +1258,10 @@ void
 Cmd_GetQuestinfo_f(edict_t *ent)
 {
 	gclient_t *cl = ent->client;
-	int sel = cl->pers.quest_selected;
+	int sel = game.quest_selected;
 	Com_Printf("Quest ID: %d (%s)\nStage: %d (%s)\n", 
-	sel, cl->pers.quest_titles[sel], 
-	cl->pers.quest_stage[sel], cl->pers.quest_help[sel][cl->pers.quest_stage[sel]]);
+	sel, game.quest_titles[sel], 
+	game.quest_stage[sel], game.quest_help[sel][game.quest_stage[sel]]);
 }
 
 /* Unassign an item from a hotbar */

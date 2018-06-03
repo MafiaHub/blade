@@ -364,8 +364,8 @@ HelpComputerMessage(edict_t *ent)
 			"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ",
 			sk,
 			level.level_name,
-			ent->client->pers.quest_titles[ent->client->pers.quest_selected],
-			ent->client->pers.quest_help[ent->client->pers.quest_selected][ent->client->pers.quest_stage[ent->client->pers.quest_selected]],
+			game.quest_titles[game.quest_selected],
+			game.quest_help[game.quest_selected][game.quest_stage[game.quest_selected]],
 			level.killed_monsters, level.total_monsters,
 			level.found_goals, level.total_goals,
 			level.found_secrets, level.total_secrets);
@@ -408,19 +408,16 @@ InventoryMessage(edict_t *ent)
 void
 QuestsMessage(edict_t *ent)
 {
-	gclient_t *cl;
 	int i, cnt = 0, sel = 0;
 	char *quests[MAX_ACTIVE_QUESTS];
 
-	cl = ent->client;
-
 	for (i = 0; i < MAX_QUESTS; i++)
 	{
-		if (cl->pers.quest_stage[i] > 0 && cl->pers.quest_stage[i] < QUEST_STAGE_COMPLETE)
+		if (game.quest_stage[i] > 0 && game.quest_stage[i] < QUEST_STAGE_COMPLETE)
 		{
-			quests[cnt] = cl->pers.quest_titles[i];
+			quests[cnt] = game.quest_titles[i];
 
-			if (cl->pers.quest_selected == i)
+			if (game.quest_selected == i)
 			{
 				sel = cnt;
 			}
