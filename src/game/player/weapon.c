@@ -652,6 +652,8 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 		else if (mag->uses_mags && mag->cur_mag_size < 1)
 		{
 			ent->client->ps.gunskin = 2;
+			ReloadWeapon(ent);
+			return;
 		}
 
 		if (((ent->client->latched_buttons |
