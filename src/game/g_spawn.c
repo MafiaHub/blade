@@ -265,6 +265,19 @@ ED_CallSpawn(edict_t *ent)
 		}
 	}
 
+	/* check for static mesh spawn */
+	if (!strncmp("mesh_", ent->classname, 5))
+	{
+		char modelpath[MAX_QPATH] = {0};
+		sprintf(modelpath, "models/objects/%s/tris.md2", ent->classname + 5);
+
+		ent->movetype = MOVETYPE_NONE;
+		ent->solid = SOLID_BBOX;
+		ent->s.modelindex = gi.modelindex(modelpath);
+		gi.linkentity(ent);
+		return;
+	}
+
 	gi.dprintf("%s doesn't have a spawn function\n", ent->classname);
 }
 
