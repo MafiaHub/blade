@@ -207,6 +207,7 @@ SP_quest_setstage(edict_t *self)
 
     if (deathmatch->value)
     {
+		G_FreeEdict(self);
         return;
     }
 
