@@ -794,6 +794,7 @@ void QuestsMessage(edict_t *client);
 void PlayerNoise(edict_t *who, vec3_t where, int type);
 
 /* g_quest.c */
+qboolean IsQuestInProgress(int questid);
 qboolean Quest_Setstage(int questid, int stage, int depends, edict_t *activator, char *target, char *questname, char *message);
 
 /* m_move.c */

@@ -180,7 +180,7 @@ SelectPrevItem(edict_t *ent, int itflags)
 
 		for (i = sel-1; i >= 0; i--)
 		{
-			if (game.quest_stage[i] > 0 && game.quest_stage[i] < QUEST_STAGE_COMPLETE)
+			if (IsQuestInProgress(i))
 			{
 				sel = i;
 				break;
@@ -1257,7 +1257,6 @@ Cmd_Setstage_f(edict_t *ent)
 void
 Cmd_GetQuestinfo_f(edict_t *ent)
 {
-	gclient_t *cl = ent->client;
 	int sel = game.quest_selected;
 	Com_Printf("Quest ID: %d (%s)\nStage: %d (%s)\n", 
 	sel, game.quest_titles[sel], 

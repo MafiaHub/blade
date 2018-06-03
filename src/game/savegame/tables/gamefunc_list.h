@@ -1059,6 +1059,7 @@
 {"FL_Think", (byte *)FL_Think},
 {"FL_Toggle", (byte *)FL_Toggle},
 {"Use_Battery", (byte *)Use_Battery},
+{"IsQuestInProgress", (byte *)IsQuestInProgress},
 {"Quest_Setstage", (byte *)Quest_Setstage},
 {"quest_setstage_use", (byte *)quest_setstage_use},
 {"SP_quest_setstage", (byte *)SP_quest_setstage},

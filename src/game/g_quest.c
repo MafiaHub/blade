@@ -26,6 +26,11 @@
 
 #include "header/local.h"
 
+qboolean IsQuestInProgress(int questid)
+{
+	return (game.quest_stage[questid] > 0 && game.quest_stage[questid] < QUEST_STAGE_COMPLETE);
+}
+
 qboolean 
 Quest_Setstage(int questid, int stage, int depends, edict_t *activator, char *target, char *questname, char *message)
 {
@@ -107,7 +112,7 @@ Quest_Setstage(int questid, int stage, int depends, edict_t *activator, char *ta
 
 			for (j = 0; j < MAX_QUESTS; j++)
 			{
-				if (game.quest_stage[j] > 0 && game.quest_stage[j] < QUEST_STAGE_COMPLETE)
+				if (IsQuestInProgress(j))
 				{
 					game.quest_selected = j;
 					break;
