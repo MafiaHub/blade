@@ -1059,3 +1059,6 @@ extern void AI_SetSightClient ( void ) ;
 extern void FL_Think(edict_t *ent);
 extern void FL_Toggle(edict_t *ent);
 extern void Use_Battery(edict_t *ent, gitem_t *inv);
+extern qboolean Quest_Setstage(int questid, int stage, int depends, edict_t *activator, char *target, char *questname, char *message);
+extern void quest_setstage_use(edict_t *self, edict_t *other /* unused */, edict_t *activator);
+extern void SP_quest_setstage(edict_t *self);

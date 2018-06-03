@@ -795,10 +795,10 @@ char *single_statusbar =
 	"endif "
 
 /*  help / weapon icon */
-	"if 11 "
+	/* "if 11 "
 	"	xv	340 "
 	"	pic	11 "
-	"endif "
+	"endif " */
 ;
 
 char *dm_statusbar =
@@ -863,11 +863,11 @@ char *dm_statusbar =
 	"endif "
 
 /*  help / weapon icon */
-	"if 11 "
+/* 	"if 11 "
 	"	xv	148 "
 	"	pic	11 "
 	"endif "
-
+ */
 /*  frags */
 	"xr	-50 "
 	"yt 2 "
