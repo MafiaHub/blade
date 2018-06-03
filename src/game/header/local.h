@@ -1147,6 +1147,9 @@ struct edict_s
 	int stage;
 	int depends;
 	int messageid;
+
+	/* model */
+	char *modelname;
 };
 
 #endif /* GAME_LOCAL_H */

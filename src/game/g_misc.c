@@ -2278,6 +2278,33 @@ SP_light_mine2(edict_t *ent)
 	gi.linkentity(ent);
 }
 
+/* 
+ * QUAKED misc_mesh
+ * Renders a static mesh in the world.
+ * 
+ * Modelname - Path to the model to be spawned (REQUIRED)
+ */
+void
+SP_misc_mesh(edict_t *ent)
+{
+	if (!ent)
+	{
+		return;
+	}
+
+	if (!ent->modelname)
+	{
+		gi.dprintf("Static mesh has no model name specified!\n");
+		G_FreeEdict(ent);
+		return;
+	}
+
+	ent->movetype = MOVETYPE_NONE;
+	ent->solid = SOLID_BBOX;
+	ent->s.modelindex = gi.modelindex(ent->modelname);
+	gi.linkentity(ent);
+}
+
 /* ===================================================== */
 
 /*

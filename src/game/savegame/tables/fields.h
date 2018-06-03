@@ -46,6 +46,7 @@
 {"questid", FOFS(questid), F_INT},
 {"stage", FOFS(stage), F_INT},
 {"depends", FOFS(depends), F_INT},
+{"modelname", FOFS(modelname), F_LSTRING},
 {"random", FOFS(random), F_FLOAT},
 {"move_origin", FOFS(move_origin), F_VECTOR},
 {"move_angles", FOFS(move_angles), F_VECTOR},

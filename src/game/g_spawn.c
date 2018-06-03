@@ -115,6 +115,7 @@ void SP_misc_strogg_ship(edict_t *self);
 void SP_misc_teleporter(edict_t *self);
 void SP_misc_teleporter_dest(edict_t *self);
 void SP_misc_blackhole(edict_t *self);
+void SP_misc_mesh(edict_t *self);
 
 void SP_monster_commander_body(edict_t *self);
 
@@ -205,6 +206,7 @@ spawn_t spawns[] = {
 	{"misc_teleporter", SP_misc_teleporter},
 	{"misc_teleporter_dest", SP_misc_teleporter_dest},
 	{"misc_blackhole", SP_misc_blackhole},
+	{"misc_mesh", SP_misc_mesh},
 
 	{"monster_commander_body", SP_monster_commander_body},
 

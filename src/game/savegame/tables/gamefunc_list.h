@@ -253,6 +253,7 @@
 {"SP_trigger_gravity", (byte *)SP_trigger_gravity},
 {"trigger_gravity_touch", (byte *)trigger_gravity_touch},
 {"SP_trigger_hurt", (byte *)SP_trigger_hurt},
+{"SP_misc_mesh", (byte *)SP_misc_mesh},
 {"hurt_use", (byte *)hurt_use},
 {"hurt_touch", (byte *)hurt_touch},
 {"SP_trigger_push", (byte *)SP_trigger_push},
