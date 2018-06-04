@@ -70,8 +70,8 @@ typedef struct
 #define IDALIASHEADER (('2' << 24) + ('P' << 16) + ('D' << 8) + 'I')
 #define ALIAS_VERSION 8
 
-#define MAX_TRIANGLES 4096
-#define MAX_VERTS 2048
+#define MAX_TRIANGLES 32768
+#define MAX_VERTS 8192
 #define MAX_FRAMES 512
 #define MAX_MD2SKINS 32
 #define MAX_SKINNAME 64
