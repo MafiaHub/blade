@@ -1151,6 +1151,7 @@ struct edict_s
 	/* model */
 	char *modelname;
 	int maxframes;
+	int minframes;
 	int animloop;
 };
 

@@ -47,6 +47,7 @@
 {"stage", FOFS(stage), F_INT},
 {"depends", FOFS(depends), F_INT},
 {"modelname", FOFS(modelname), F_LSTRING},
+{"minframes", FOFS(minframes), F_INT},
 {"maxframes", FOFS(maxframes), F_INT},
 {"animloop", FOFS(animloop), F_INT},
 {"random", FOFS(random), F_FLOAT},

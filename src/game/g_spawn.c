@@ -231,7 +231,7 @@ mesh_think(edict_t *ent)
 	}
 	else if (ent->animloop)
 	{
-		ent->s.frame = 0;
+		ent->s.frame = ent->minframes;
 		ent->nextthink = level.time + FRAMETIME;
 	}
 }
@@ -248,7 +248,7 @@ mesh_use(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused
 	{
 		ent->think = NULL;
 		ent->nextthink = 99999999;
-		ent->s.frame = 0;
+		ent->s.frame = ent->minframes;
 	}
 	else
 	{
@@ -316,6 +316,7 @@ ED_CallSpawn(edict_t *ent)
 		ent->movetype = MOVETYPE_NONE;
 		ent->solid = SOLID_BBOX;
 		ent->s.modelindex = gi.modelindex(modelpath);
+		ent->s.frame = ent->minframes;
 
 		if (ent->maxframes && !ent->targetname)
 		{
