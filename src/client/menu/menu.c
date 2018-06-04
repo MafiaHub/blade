@@ -1610,6 +1610,7 @@ static const char *v4credits[] = {
     "All our friends who supported us morally",
     "and with code/art contribution."
     "",
+    "",
     "+ADDITIONAL SUPPORT",
     "",
     "+Blade Engine BY",
@@ -1622,9 +1623,8 @@ static const char *v4credits[] = {
     "Denis Pauk",
     "Dave \"Zoid\" Kirsch",
     "",
-    "Quake II(tm) (C)1997 Id Software, Inc.",
-    "All Rights Reserved.  Distributed by",
-    "Activision, Inc. under license.",
+    "Blade Engine (C)2018 V4 Games.",
+    "All Rights Reserved.",
     "Quake II(tm), the Id Software name,",
     "the \"Q II\"(tm) logo and id(tm)",
     "logo are trademarks of Id Software,",
@@ -1634,8 +1634,10 @@ static const char *v4credits[] = {
     "properties of their respective owners.",
     0};
 
+static int xoffs_cr;
+
 static void
-M_Credits_MenuDraw(void)
+M_Credits_MenuDraw()
 {
     int i, y;
 	float scale = SCR_GetMenuScale();
@@ -1670,7 +1672,7 @@ M_Credits_MenuDraw(void)
             int x;
 
             x = (viddef.width / scale- (int)strlen(credits[i]) * 8 - stringoffset *
-                 8) / 2 + (j + stringoffset) * 8;
+                 8) / 2 + (j + stringoffset) * 8 + xoffs_cr;
 
             if (bold)
             {
@@ -1715,6 +1717,8 @@ M_Menu_Credits_f(void)
     int n;
     int count;
     char *p;
+
+    xoffs_cr = 0;
 
     creditsBuffer = NULL;
     count = FS_LoadFile("credits", (void **)&creditsBuffer);
@@ -4053,14 +4057,47 @@ M_Quit_Key(int key)
     return NULL;
 }
 
-#define QUIT_FRAMES 25
+#define MENU_FRAMES 4
 
 static void
 M_Quit_Draw(void)
 {
-    static int last_quit_time;
-    static int quit_counter = 0;
-    static char quit_name[13] = "quit/quit0";
+    static qboolean credits_init = 0;
+    static char *quit_prompt = "Exit to reality? (Y/N)";
+    int prompt_len = strlen(quit_prompt);
+
+    {
+        static int menu_index = 0;
+        static int last_menu_time = 0;
+        static char menu_name[19] = "menuback/menuback0";
+
+        if (last_menu_time + 250 < cl.time)
+        {
+            last_menu_time = cl.time;
+
+            if (++menu_index >= MENU_FRAMES)
+                menu_index = 0;
+
+            sprintf(menu_name, "menuback/menuback%d", menu_index);
+        }
+
+        Draw_StretchPic(0, 0, viddef.width, viddef.height, menu_name);
+    }
+
+    Menu_DrawString(viddef.width / 6 - prompt_len * 8 / 2, viddef.height / 4, quit_prompt);
+
+    if (!credits_init)
+    {
+        credits_init = 1;
+        M_Menu_Credits_f();
+        M_Menu_Quit_f();
+    }
+
+    xoffs_cr = viddef.width / 8;
+    M_Credits_MenuDraw();
+    xoffs_cr = 0;
+
+    /* static char quit_name[13] = "quit/quit0";
 
     if (last_quit_time + 100 < cl.time)
     {
@@ -4074,6 +4111,7 @@ M_Quit_Draw(void)
 
     Draw_StretchPic(0, 0, viddef.width,
                     viddef.height, quit_name);
+                     */
 }
 
 static void
@@ -4111,8 +4149,6 @@ M_Init(void)
         Cvar_Get(buffer, "", CVAR_ARCHIVE);
     }
 }
-
-#define MENU_FRAMES 4
 
 void
 M_Draw(void)
