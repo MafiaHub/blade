@@ -250,6 +250,8 @@ extern edict_t * G_Find ( edict_t * from , int fieldofs , char * match ) ;
 extern void G_ProjectSource ( vec3_t point , vec3_t distance , vec3_t forward , vec3_t right , vec3_t result ) ;
 extern void SP_trigger_monsterjump ( edict_t * self ) ;
 extern void SP_misc_mesh(edict_t *ent);
+extern void mesh_use(edict_t *ent, edict_t *other, edict_t *activator);
+extern void mesh_think(edict_t *ent);
 extern void trigger_monsterjump_touch ( edict_t * self , edict_t * other , cplane_t * plane , csurface_t * surf ) ;
 extern void SP_trigger_gravity ( edict_t * self ) ;
 extern void trigger_gravity_touch ( edict_t * self , edict_t * other , cplane_t * plane , csurface_t * surf ) ;

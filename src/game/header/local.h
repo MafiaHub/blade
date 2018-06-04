@@ -1150,6 +1150,8 @@ struct edict_s
 
 	/* model */
 	char *modelname;
+	int maxframes;
+	int animloop;
 };
 
 #endif /* GAME_LOCAL_H */

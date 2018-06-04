@@ -215,6 +215,48 @@ spawn_t spawns[] = {
 	{NULL, NULL}
 };
 
+void
+mesh_think(edict_t *ent)
+{
+	if (!ent)
+	{
+		return;
+	}
+
+	ent->s.frame++;
+
+	if (ent->s.frame < ent->maxframes)
+	{
+		ent->nextthink = level.time + FRAMETIME;
+	}
+	else if (ent->animloop)
+	{
+		ent->s.frame = 0;
+		ent->nextthink = level.time + FRAMETIME;
+	}
+}
+
+void
+mesh_use(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
+{
+	if (!ent)
+	{
+		return;
+	}
+
+	if (ent->think)
+	{
+		ent->think = NULL;
+		ent->nextthink = 99999999;
+		ent->s.frame = 0;
+	}
+	else
+	{
+		ent->think = mesh_think;
+		ent->nextthink = level.time + FRAMETIME;
+	}
+}
+
 /*
  * Finds the spawn function for
  * the entity and calls it
@@ -274,6 +316,18 @@ ED_CallSpawn(edict_t *ent)
 		ent->movetype = MOVETYPE_NONE;
 		ent->solid = SOLID_BBOX;
 		ent->s.modelindex = gi.modelindex(modelpath);
+
+		if (ent->maxframes && !ent->targetname)
+		{
+			ent->think = mesh_think;
+			ent->nextthink = level.time + FRAMETIME;
+		}
+		
+		if (ent->targetname)
+		{
+			ent->use = mesh_use;
+		}
+
 		gi.linkentity(ent);
 		return;
 	}

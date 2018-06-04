@@ -47,6 +47,8 @@
 {"stage", FOFS(stage), F_INT},
 {"depends", FOFS(depends), F_INT},
 {"modelname", FOFS(modelname), F_LSTRING},
+{"maxframes", FOFS(maxframes), F_INT},
+{"animloop", FOFS(animloop), F_INT},
 {"random", FOFS(random), F_FLOAT},
 {"move_origin", FOFS(move_origin), F_VECTOR},
 {"move_angles", FOFS(move_angles), F_VECTOR},
