@@ -42,7 +42,7 @@ WITH_OGG:=yes
 # To use it your system needs libopenal.so.1
 # or openal32.dll (we recommend openal-soft)
 # installed
-WITH_OPENAL:=no
+WITH_OPENAL:=yes
 
 # Enables optional runtime loading of OpenAL (dlopen or
 # similar). If set to "no", the library is linked in at
@@ -880,21 +880,6 @@ endif
 # ----------
 
 REFGL1_OBJS_ := \
-	src/client/refresh/gl1/qgl.o \
-	src/client/refresh/gl1/gl1_draw.o \
-	src/client/refresh/gl1/gl1_image.o \
-	src/client/refresh/gl1/gl1_light.o \
-	src/client/refresh/gl1/gl1_lightmap.o \
-	src/client/refresh/gl1/gl1_main.o \
-	src/client/refresh/gl1/gl1_mesh.o \
-	src/client/refresh/gl1/gl1_misc.o \
-	src/client/refresh/gl1/gl1_model.o \
-	src/client/refresh/gl1/gl1_scrap.o \
-	src/client/refresh/gl1/gl1_surf.o \
-	src/client/refresh/gl1/gl1_warp.o \
-	src/client/refresh/gl1/gl1_sdl.o \
-	src/client/refresh/gl1/gl1_md2.o \
-	src/client/refresh/gl1/gl1_sp2.o \
 	src/client/refresh/files/pcx.o \
 	src/client/refresh/files/stb.o \
 	src/client/refresh/files/wal.o \

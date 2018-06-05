@@ -37,7 +37,7 @@
 
 #ifdef SYSTEMWIDE
  #ifndef SYSTEMDIR
-  #define SYSTEMDIR "/usr/share/games/quake2"
+  #define SYSTEMDIR "/usr/share/games/blade"
  #endif
 #endif
 

@@ -65,6 +65,8 @@
 {"attenuation", FOFS(attenuation), F_FLOAT},
 {"map", FOFS(map), F_LSTRING},
 {"origin", FOFS(s.origin), F_VECTOR},
+{"mins", FOFS(mins), F_VECTOR},
+{"maxs", FOFS(maxs), F_VECTOR},
 {"angles", FOFS(s.angles), F_VECTOR},
 {"angle", FOFS(s.angles), F_ANGLEHACK},
 {"goalentity", FOFS(goalentity), F_EDICT, FFL_NOSPAWN},
