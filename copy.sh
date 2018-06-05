@@ -1,1 +1,3 @@
-cp -R release/* ../
+echo Copying binaries to the gamedir...
+cp -R release/* ../quake2/
+echo Done!
