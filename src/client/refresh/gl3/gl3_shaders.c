@@ -281,9 +281,9 @@ static const char* vertexCommon3D = MULTILINE_STRING(#version 150\n
 			float alpha;
 			float overbrightbits;
 			float particleFadeFactor;
+			int   lightmap;
 			float _pad_1; // AMDs legacy windows driver needs this, otherwise uni3D has wrong size
 			float _pad_2;
-			float _pad_3;
 		};
 );
 
@@ -315,9 +315,9 @@ static const char* fragmentCommon3D = MULTILINE_STRING(#version 150\n
 			float alpha;
 			float overbrightbits;
 			float particleFadeFactor;
+			int   lightmap;
 			float _pad_1; // AMDs legacy windows driver needs this, otherwise uni3D has wrong size
 			float _pad_2;
-			float _pad_3;
 		};
 );
 
@@ -468,7 +468,12 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 
 		void main()
 		{
-			vec4 texel = texture(tex, passTexCoord);
+			vec4 texel = vec4(1.0);
+			
+			if (lightmap == 0)
+			{
+				texel = texture(tex, passTexCoord);
+			}
 
 			// apply intensity
 			texel.rgb *= intensity;

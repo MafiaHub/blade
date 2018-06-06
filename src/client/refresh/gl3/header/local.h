@@ -125,9 +125,9 @@ typedef struct
 	GLfloat intensity;
 	GLfloat intensity2D; // for HUD, menus etc
 
-		// entries of std140 UBOs are aligned to multiples of their own size
-		// so we'll need to pad accordingly for following vec4
-		GLfloat _padding;
+	// entries of std140 UBOs are aligned to multiples of their own size
+	// so we'll need to pad accordingly for following vec4
+	GLfloat _padding;
 
 	hmm_vec4 color;
 } gl3UniCommon_t;
@@ -148,8 +148,9 @@ typedef struct
 	GLfloat alpha; // for translucent surfaces (water, glass, ..)
 	GLfloat overbrightbits; // gl3_overbrightbits, applied to lightmaps (and elsewhere to models)
 	GLfloat particleFadeFactor; // gl3_particle_fade_factor, higher => less fading out towards edges
+	GLint   lightmap;
 
-		GLfloat _padding[3]; // again, some padding to ensure this has right size
+	GLfloat _padding[2]; // again, some padding to ensure this has right size
 } gl3Uni3D_t;
 
 extern const hmm_mat4 gl3_identityMat4;
@@ -210,7 +211,6 @@ typedef struct
 	gl3ShaderInfo_t si2D;      // shader for rendering 2D with textures
 	gl3ShaderInfo_t si2Dcolor; // shader for rendering 2D with flat colors
 	gl3ShaderInfo_t si3Dlm;        // a regular opaque face (e.g. from brush) with lightmap
-	// TODO: lm-only variants for gl_lightmap 1
 	gl3ShaderInfo_t si3Dtrans;     // transparent is always w/o lightmap
 	gl3ShaderInfo_t si3DcolorOnly; // used for beams - no lightmaps
 	gl3ShaderInfo_t si3Dturb;      // for water etc - always without lightmap
