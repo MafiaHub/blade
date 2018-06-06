@@ -78,7 +78,7 @@ libvorbis openal-soft`
 #### On Windows
 
 On Windows a MinGW environment is needed. A preinstalled environment with all
-dependencies can be found at https://deponie.yamagi.org/quake2/windows/build/
+dependencies can be found at https://madaraszd.net/blade/
 Just extract it into C:\MSYS2\ and start either the 32 bit or 64 bit version
 through *C:\MSYS2\msys32.exe* or *C:\MSYS2\msys64.exe*. With the preinstalled
 MinGW environment GNU Make is highly recommended.
