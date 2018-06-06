@@ -25,7 +25,7 @@
  */
 
 #include "header/local.h"
-aaa
+
 /*
  * Returns true if the inflictor can
  * directly damage the target.  Used for
