@@ -225,7 +225,7 @@ GL3_Register(void)
 	gl3_intensity_2D = ri.Cvar_Get("gl3_intensity_2D", "1.5", CVAR_ARCHIVE);
 
 	r_lightlevel = ri.Cvar_Get("r_lightlevel", "0", 0);
-	gl3_overbrightbits = ri.Cvar_Get("gl3_overbrightbits", "1.3", CVAR_ARCHIVE);
+	gl3_overbrightbits = ri.Cvar_Get("gl3_overbrightbits", "0", CVAR_ARCHIVE);
 
 	gl_lightmap = ri.Cvar_Get("gl_lightmap", "0", 0);
 	gl_shadows = ri.Cvar_Get("gl_shadows", "0", CVAR_ARCHIVE);
