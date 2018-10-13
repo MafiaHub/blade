@@ -354,7 +354,6 @@ CL_PrepRefresh(void)
 
 	sscanf(cl.configstrings[CS_FOGCOLOR], "%f %f %f", &fogcolor[0], &fogcolor[1], &fogcolor[2]);
 	sscanf(cl.configstrings[CS_FOGDENSITY], "%f", &fogdensity);
-	Com_Printf("client fog: %f\n", fogdensity);
 	R_SetFogData(fogdensity, fogcolor);
 
 	Com_Printf("                                     \r");

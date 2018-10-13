@@ -2035,21 +2035,6 @@ CL_ClearEffects(void)
 }
 
 void
-CL_Flashlight(int ent, vec3_t pos)
-{
-	cdlight_t *dl;
-
-	dl = CL_AllocDlight(ent);
-	VectorCopy(pos, dl->origin);
-	dl->radius = 400;
-	dl->minlight = 250;
-	dl->die = cl.time + 100;
-	dl->color[0] = 1;
-	dl->color[1] = 1;
-	dl->color[2] = 1;
-}
-
-void
 CL_ColorFlash(vec3_t pos, int ent, float intensity, float r, float g, float b)
 {
 	cdlight_t *dl;

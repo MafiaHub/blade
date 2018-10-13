@@ -921,6 +921,18 @@ light_use(edict_t *self, edict_t *other /* unused */, edict_t *activator /* unus
 }
 
 void
+light_think(edict_t *self)
+{
+	if (!self)
+	{
+		return;
+	}
+
+	gi.linkentity(self);
+	self->nextthink = level.time + 0.1;
+}
+
+void
 SP_light(edict_t *self)
 {
 	if (!self)
@@ -952,6 +964,18 @@ SP_light(edict_t *self)
 			gi.configstring(CS_LIGHTS + self->style, "m");
 		}
 	}
+
+	self->s.effects |= EF_DYNLIGHT;
+    self->movetype = MOVETYPE_NOCLIP;
+    self->solid = SOLID_NOT;
+	self->s.modelindex = gi.modelindex("sprites/s_empty.sp2");
+    self->s.skinnum = 0;
+	self->s.lightdata.intensity = self->light;
+	VectorSet(self->s.lightdata.color, self->color[0]/255.0f, self->color[1]/255.0f, self->color[2]/255.0f);
+
+	gi.linkentity(self);
+	self->think = light_think;
+	self->nextthink = level.time + 0.1;
 }
 
 /* ===================================================== */

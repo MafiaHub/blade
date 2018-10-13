@@ -122,7 +122,7 @@ GL3_PushDlights(void)
 		udl->intensity = l->intensity;
 	}
 
-	assert(MAX_DLIGHTS == 32 && "If MAX_DLIGHTS changes, remember to adjust the uniform buffer definition in the shader!");
+	assert(MAX_DLIGHTS == 512 && "If MAX_DLIGHTS changes, remember to adjust the uniform buffer definition in the shader!");
 
 	if(i < MAX_DLIGHTS)
 	{

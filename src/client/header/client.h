@@ -376,7 +376,6 @@ void CL_BlasterParticles2 (vec3_t org, vec3_t dir, unsigned int color);
 void CL_BlasterTrail2 (vec3_t start, vec3_t end);
 void CL_DebugTrail (vec3_t start, vec3_t end);
 void CL_SmokeTrail (vec3_t start, vec3_t end, int colorStart, int colorRun, int spacing);
-void CL_Flashlight (int ent, vec3_t pos);
 void CL_ForceWall (vec3_t start, vec3_t end, int color);
 void CL_FlameEffects (centity_t *ent, vec3_t origin);
 void CL_GenericParticleEffect (vec3_t org, vec3_t dir, int color, int count, int numcolors, int dirspread, float alphavel);

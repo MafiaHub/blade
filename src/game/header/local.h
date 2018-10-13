@@ -1130,6 +1130,8 @@ struct edict_s
 
 	int style; /* also used as areaportal number */
 	char *cstyle; /* used for custom lightstyles */
+	vec3_t color;
+	int light;
 
 	gitem_t *item; /* for bonus items */
 

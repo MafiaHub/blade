@@ -30,7 +30,7 @@
 #include "../../common/header/common.h"
 #include "vid.h"
 
-#define	MAX_DLIGHTS		32
+#define	MAX_DLIGHTS		512
 #define	MAX_ENTITIES	128
 #define	MAX_PARTICLES	4096
 #define	MAX_LIGHTSTYLES	2048
@@ -74,19 +74,21 @@ typedef struct entity_s {
 
 	struct image_s	*skin; /* NULL for inline skin */
 	int		flags;
-} entity_t;
 
-typedef struct {
-	vec3_t	origin;
-	vec3_t	color;
-	float	intensity;
-} dlight_t;
+	svlight_t lightdata;	
+} entity_t;
 
 typedef struct {
 	vec3_t	origin;
 	int		color;
 	float	alpha;
 } particle_t;
+
+typedef struct {
+	vec3_t	origin;
+	vec3_t	color;
+	float	intensity;
+} dlight_t;
 
 typedef struct {
 	float		rgb[3]; /* 0.0 - 2.0 */
@@ -109,7 +111,7 @@ typedef struct {
 	int			num_entities;
 	entity_t	*entities;
 
-	int			num_dlights; // <= 32 (MAX_DLIGHTS)
+	int			num_dlights; // <= MAX_DLIGHTS
 	dlight_t	*dlights;
 
 	int			num_particles;

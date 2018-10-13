@@ -589,6 +589,7 @@ typedef struct
 #define EF_GRENADE 0x00000020
 #define EF_HYPERBLASTER 0x00000040
 #define EF_FLASHLIGHT 0x00300000
+#define EF_DYNLIGHT 0x50000000
 #define EF_BFG 0x00000080
 #define EF_COLOR_SHELL 0x00000100
 #define EF_POWERSCREEN 0x00000200
@@ -944,7 +945,6 @@ typedef enum
 	TE_LIGHTNING,
 	TE_DEBUGTRAIL,
 	TE_PLAIN_EXPLOSION,
-	TE_FLASHLIGHT,
 	TE_FORCEWALL,
 	TE_HEATBEAM,
 	TE_MONSTER_HEATBEAM,
@@ -1096,6 +1096,12 @@ typedef enum
 	EV_OTHER_TELEPORT
 } entity_event_t;
 
+
+typedef struct {
+	vec3_t	color;
+	float	intensity;
+} svlight_t;
+
 /* entity_state_t is the information conveyed from the server
  * in an update message about entities that the client will
  * need to render in some way */
@@ -1110,6 +1116,7 @@ typedef struct entity_state_s
 	int modelindex2, modelindex3, modelindex4;      /* weapons, CTF flags, etc */
 	int frame;
 	int skinnum;
+	svlight_t lightdata;
 	unsigned int effects;
 	int renderfx;
 	int solid;              /* for client side prediction, 8*(bits 0-4) is x/y radius */

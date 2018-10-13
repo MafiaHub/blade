@@ -544,6 +544,11 @@ CL_AddPacketEntities(frame_t *frame)
 			{
 				V_AddLight(ent.origin, 200, 233/255.0f, 239/255.0f, 244/255.0f);
 			}
+			else if (effects & EF_DYNLIGHT)
+			{
+				//TODO: Until we figure out how to pass normals to aliases
+				//V_AddLight(ent.origin, cent->current.lightdata.intensity, cent->current.lightdata.color[0], cent->current.lightdata.color[1], cent->current.lightdata.color[2]);
+			}
 			else if (effects & EF_GIB)
 			{
 				CL_DiminishingTrail(cent->lerp_origin, ent.origin,

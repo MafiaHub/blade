@@ -588,10 +588,16 @@ MSG_WriteDeltaEntity(entity_state_t *from,
 		bits |= U_SOUND;
 	}
 
+	if (memcmp(&to->lightdata, &from->lightdata, sizeof(to->lightdata)))
+	{
+		bits |= U_LIGHT;
+	}
+
 	if (newentity || (to->renderfx & RF_BEAM))
 	{
 		bits |= U_OLDORIGIN;
 	}
+
 
 	/* write the message */
 	if (!bits && !force)
@@ -759,6 +765,11 @@ MSG_WriteDeltaEntity(entity_state_t *from,
 	if (bits & U_SOUND)
 	{
 		MSG_WriteByte(msg, to->sound);
+	}
+
+	if (bits & U_LIGHT)
+	{
+		SZ_Write(msg, &to->lightdata, sizeof(to->lightdata));	
 	}
 
 	if (bits & U_EVENT)

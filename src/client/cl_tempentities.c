@@ -1152,12 +1152,6 @@ CL_ParseTEnt(void)
 
 			break;
 
-		case TE_FLASHLIGHT:
-			MSG_ReadPos(&net_message, pos);
-			ent = MSG_ReadShort(&net_message);
-			CL_Flashlight(ent, pos);
-			break;
-
 		case TE_FORCEWALL:
 			MSG_ReadPos(&net_message, pos);
 			MSG_ReadPos(&net_message, pos2);

@@ -258,6 +258,11 @@ CL_ParseDelta(entity_state_t *from, entity_state_t *to, int number, int bits)
 		to->sound = MSG_ReadByte(&net_message);
 	}
 
+	if (bits & U_LIGHT)
+	{
+		MSG_ReadData(&net_message, &to->lightdata, sizeof(to->lightdata));
+	}
+
 	if (bits & U_EVENT)
 	{
 		to->event = MSG_ReadByte(&net_message);

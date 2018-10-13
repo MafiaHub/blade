@@ -1479,6 +1479,8 @@ GL3_RenderView(refdef_t *fd)
 
 	GL3_DrawWorld();
 
+	GL3_PushDlights();
+
 	GL3_DrawEntitiesOnList();
 
 	// kick the silly gl1_flashblend poly lights

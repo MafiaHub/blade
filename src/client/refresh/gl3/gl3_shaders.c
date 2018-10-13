@@ -309,6 +309,23 @@ static const char* fragmentCommon3D = MULTILINE_STRING(#version 150\n
 			vec4 color; // really?
 
 		};
+
+		struct DynLight { // gl3UniDynLight in C
+			vec3 lightOrigin;
+			float _pad;
+			//vec3 lightColor;
+			//float lightIntensity;
+			vec4 lightColor; // .a is intensity; this way it also works on OSX...
+			// (otherwise lightIntensity always contained 1 there)
+		};
+
+		layout (std140) uniform uniLights
+		{
+			DynLight dynLights[512];
+			uint numDynLights;
+			uint _pad1; uint _pad2; uint _pad3; // FFS, AMD!
+		};
+
 		// for UBO shared between all 3D shaders
 		layout (std140) uniform uni3D
 		{
@@ -461,22 +478,6 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 
 		// it gets attributes and uniforms from fragmentCommon3D
 
-		struct DynLight { // gl3UniDynLight in C
-			vec3 lightOrigin;
-			float _pad;
-			//vec3 lightColor;
-			//float lightIntensity;
-			vec4 lightColor; // .a is intensity; this way it also works on OSX...
-			// (otherwise lightIntensity always contained 1 there)
-		};
-
-		layout (std140) uniform uniLights
-		{
-			DynLight dynLights[32];
-			uint numDynLights;
-			uint _pad1; uint _pad2; uint _pad3; // FFS, AMD!
-		};
-
 		uniform sampler2D tex;
 
 		uniform sampler2D lightmap0;
@@ -508,6 +509,9 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 			lmTex     += texture(lightmap1, passLMcoord) * lmScales[1];
 			lmTex     += texture(lightmap2, passLMcoord) * lmScales[2];
 			lmTex     += texture(lightmap3, passLMcoord) * lmScales[3];
+			lmTex.rgb *= overbrightbits;
+			
+			vec3 fogColor = vec3(fogColorR, fogColorG, fogColorB);
 
 			if(passLightFlags != 0u)
 			{
@@ -532,10 +536,11 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 
 
 					lmTex.rgb += dynLights[i].lightColor.rgb * fact * (1.0/256.0);
+
+					//lmTex.rgb += mix(fogColor, dynLights[i].lightColor.rgb*lmTex.rgb, fact * (1.0/256.0));
 				}
 			}
 
-			lmTex.rgb *= overbrightbits;
 
 			/* Texture uses per-pixel brightness texturing */
 			if (alpha == 0.666f && texel.a < 1.0f)
@@ -547,8 +552,11 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 				outColor = lmTex*texel;
 			}
 
+			/* float lmIntensity = length(lmTex.rgb);
+			fogColor = mix(fogColor, lmTex.rgb*0.1, lmIntensity);
+ */
 			outColor.rgb = pow(outColor.rgb, vec3(gamma)); // apply gamma correction to result
-			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
+			outColor.rgb = mix(fogColor, outColor.rgb, GetFogFactor());	
 
 			outColor.a = 1; // lightmaps aren't used with translucent surfaces
 		}
@@ -650,11 +658,17 @@ static const char* vertexSrcAlias = MULTILINE_STRING(
 		// it gets attributes and uniforms from vertexCommon3D
 
 		out vec4 passColor;
-
+		out vec3 passWorldCoord;
+		out vec3 passNormal;
+		
 		void main()
 		{
 			passColor = vertColor*overbrightbits;
 			passTexCoord = texCoord;
+			vec4 worldCoord = transModel * vec4(position, 1.0);
+			passWorldCoord = worldCoord.xyz;
+			vec4 worldNormal = transModel * vec4(normal, 0.0f);
+			passNormal = normalize(worldNormal.xyz);
 			passScreenView = transView * transModel * vec4(position, 1.0);
 
 			gl_Position = transProj * passScreenView;
@@ -668,23 +682,47 @@ static const char* fragmentSrcAlias = MULTILINE_STRING(
 		uniform sampler2D tex;
 
 		in vec4 passColor;
+		in vec3 passWorldCoord;
+		in vec3 passNormal;
 
 		void main()
 		{
 			vec4 texel = texture(tex, passTexCoord);
+			vec4 oldTexel = texel;
 
+			//texel *= 0.1;
+
+		
+			for(uint i=0u; i<numDynLights; ++i)
+			{
+				float intens = dynLights[i].lightColor.a;
+
+				vec3 lightToPos = dynLights[i].lightOrigin - passWorldCoord;
+				float distLightToPos = length(lightToPos);
+				float fact = max(0, intens - distLightToPos - 52);
+
+				// also factor in angle between light and point on surface
+				//fact *= max(0, dot(passNormal, lightToPos/distLightToPos));
+
+				texel.rgb += oldTexel.rgb * dynLights[i].lightColor.rgb * fact * (1.0/256.0);
+			}
+			
 			if (texel.a < 1.0f)
 			{
-				outColor.rgb = pow(mix(texel.rgb * (1.0f - texel.a), intensity * min(vec4(3.0), passColor).rgb * texel.rgb, texel.a), vec3(gamma));
+				outColor.rgb = pow(mix(texel.rgb * (1.0f - texel.a), texel.rgb, texel.a), vec3(gamma));
 			}
 			else
 			{
 				texel.rgb *= intensity;
-				texel *= min(vec4(3.0), passColor);
 				outColor.rgb = pow(texel.rgb, vec3(gamma));
 			}
 
-			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
+			outColor.rgb *= min(vec4(3.0), passColor).rgb;
+
+			vec3 fogColor = vec3(fogColorR, fogColorG, fogColorB);
+			//fogColor = mix(fogColor, passColor.rgb, intensity);
+
+			outColor.rgb = mix(fogColor, outColor.rgb, GetFogFactor());	
 
 			// apply gamma correction and intensity
 			//texel.rgb *= intensity;
