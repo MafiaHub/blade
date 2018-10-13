@@ -965,7 +965,7 @@ SP_light(edict_t *self)
 		}
 	}
 
-	self->s.effects |= EF_DYNLIGHT;
+	/* self->s.effects |= EF_DYNLIGHT;
     self->movetype = MOVETYPE_NOCLIP;
     self->solid = SOLID_NOT;
 	self->s.modelindex = gi.modelindex("sprites/s_empty.sp2");
@@ -975,7 +975,7 @@ SP_light(edict_t *self)
 
 	gi.linkentity(self);
 	self->think = light_think;
-	self->nextthink = level.time + 0.1;
+	self->nextthink = level.time + 0.1; */
 }
 
 /* ===================================================== */
