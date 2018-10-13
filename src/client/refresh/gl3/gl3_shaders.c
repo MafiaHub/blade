@@ -547,10 +547,8 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 				outColor = lmTex*texel;
 			}
 
-			float fogFactor = GetFogFactor();
-			
 			outColor.rgb = pow(outColor.rgb, vec3(gamma)); // apply gamma correction to result
-			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, fogFactor);	
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
 
 			outColor.a = 1; // lightmaps aren't used with translucent surfaces
 		}

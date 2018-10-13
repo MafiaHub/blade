@@ -246,7 +246,7 @@ GL3_Register(void)
 
 	r_modulate = ri.Cvar_Get("r_modulate", "1", CVAR_ARCHIVE);
 	gl_zfix = ri.Cvar_Get("gl_zfix", "0", 0);
-	r_clear = ri.Cvar_Get("r_clear", "0", 0);
+	r_clear = ri.Cvar_Get("r_clear", "1", 0);
 	gl_cull = ri.Cvar_Get("gl_cull", "1", 0);
 	r_lockpvs = ri.Cvar_Get("r_lockpvs", "0", 0);
 	r_novis = ri.Cvar_Get("r_novis", "0", 0);
@@ -1603,6 +1603,8 @@ GL3_Clear(void)
 	}
 #endif // 0
 
+	glClearColor(gl3_fog_r->value, gl3_fog_g->value, gl3_fog_b->value, 1.0);
+	glClearDepth(1);
 
 	if (r_clear->value)
 	{
@@ -1647,12 +1649,6 @@ GL3_BeginFrame(float camera_separation)
 	{
 		vid_fullscreen->modified = true;
 	}
-
-	// TODO: change from cvars
-	glClearColor(0.5, 0.5, 0.5, 1);
-	glClearDepth(1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
 
 #if 0 // TODO: stereo stuff
 	gl_state.camera_separation = camera_separation;
