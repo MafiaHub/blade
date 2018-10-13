@@ -241,6 +241,8 @@ CL_PrepRefresh(void)
 	char name[MAX_QPATH];
 	float rotate;
 	vec3_t axis;
+	vec3_t fogcolor;
+	float fogdensity;
 
 	if (!cl.configstrings[CS_MODELS + 1][0])
 	{
@@ -349,6 +351,12 @@ CL_PrepRefresh(void)
 	rotate = (float)strtod(cl.configstrings[CS_SKYROTATE], (char **)NULL);
 	sscanf(cl.configstrings[CS_SKYAXIS], "%f %f %f", &axis[0], &axis[1], &axis[2]);
 	R_SetSky(cl.configstrings[CS_SKY], rotate, axis);
+
+	sscanf(cl.configstrings[CS_FOGCOLOR], "%f %f %f", &fogcolor[0], &fogcolor[1], &fogcolor[2]);
+	sscanf(cl.configstrings[CS_FOGDENSITY], "%f", &fogdensity);
+	Com_Printf("client fog: %f\n", fogdensity);
+	R_SetFogData(fogdensity, fogcolor);
+
 	Com_Printf("                                     \r");
 
 	/* the renderer can now free unneeded stuff */

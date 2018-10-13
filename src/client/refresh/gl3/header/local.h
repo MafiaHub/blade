@@ -149,6 +149,11 @@ typedef struct
 	GLfloat overbrightbits; // gl3_overbrightbits, applied to lightmaps (and elsewhere to models)
 	GLfloat particleFadeFactor; // gl3_particle_fade_factor, higher => less fading out towards edges
 	GLint   lightmap;
+	
+	GLfloat fogColorR;
+	GLfloat fogColorG;
+	GLfloat fogColorB;
+	GLfloat fogDensity;
 
 	GLfloat _padding[2]; // again, some padding to ensure this has right size
 } gl3Uni3D_t;

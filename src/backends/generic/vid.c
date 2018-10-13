@@ -476,6 +476,15 @@ R_SetSky(char *name, float rotate, vec3_t axis)
 }
 
 void
+R_SetFogData(float density, vec3_t color)
+{
+	if (ref_active)
+	{
+		re.SetFogData(density, color);
+	}
+}
+
+void
 R_EndRegistration(void)
 {
 	if(ref_active)

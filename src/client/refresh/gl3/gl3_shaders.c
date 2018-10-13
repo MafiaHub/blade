@@ -268,6 +268,7 @@ static const char* vertexCommon3D = MULTILINE_STRING(#version 150\n
 		in uint lightFlags; // GL3_ATTRIB_LIGHTFLAGS
 
 		out vec2 passTexCoord;
+		out vec4 passScreenView;
 
 		// for UBO shared between all 3D shaders
 		layout (std140) uniform uni3D
@@ -282,6 +283,10 @@ static const char* vertexCommon3D = MULTILINE_STRING(#version 150\n
 			float overbrightbits;
 			float particleFadeFactor;
 			int   lightmap;
+			float fogColorR;
+			float fogColorG;
+			float fogColorB;
+			float fogDensity;
 			float _pad_1; // AMDs legacy windows driver needs this, otherwise uni3D has wrong size
 			float _pad_2;
 		};
@@ -290,6 +295,7 @@ static const char* vertexCommon3D = MULTILINE_STRING(#version 150\n
 static const char* fragmentCommon3D = MULTILINE_STRING(#version 150\n
 
 		in vec2 passTexCoord;
+		in vec4 passScreenView;
 
 		out vec4 outColor;
 
@@ -316,9 +322,22 @@ static const char* fragmentCommon3D = MULTILINE_STRING(#version 150\n
 			float overbrightbits;
 			float particleFadeFactor;
 			int   lightmap;
+			float fogColorR;
+			float fogColorG;
+			float fogColorB;
+			float fogDensity;
 			float _pad_1; // AMDs legacy windows driver needs this, otherwise uni3D has wrong size
 			float _pad_2;
 		};
+
+		float GetFogFactor() 
+		{
+			float fogDist = length(passScreenView);
+			float fogFactor = 1.0 / exp(fogDist*fogDensity);
+			fogFactor = clamp(fogFactor, 0.0, 1.0);
+
+			return fogFactor;
+		}
 );
 
 static const char* vertexSrc3D = MULTILINE_STRING(
@@ -328,7 +347,8 @@ static const char* vertexSrc3D = MULTILINE_STRING(
 		void main()
 		{
 			passTexCoord = texCoord;
-			gl_Position = transProj * transView * transModel * vec4(position, 1.0);
+			passScreenView = transView * transModel * vec4(position, 1.0);
+			gl_Position = transProj * passScreenView;
 		}
 );
 
@@ -339,7 +359,8 @@ static const char* vertexSrc3Dflow = MULTILINE_STRING(
 		void main()
 		{
 			passTexCoord = texCoord + vec2(scroll, 0);
-			gl_Position = transProj * transView * transModel * vec4(position, 1.0);
+			passScreenView = transView * transModel * vec4(position, 1.0);
+			gl_Position = transProj * passScreenView;
 		}
 );
 
@@ -361,6 +382,7 @@ static const char* vertexSrc3Dlm = MULTILINE_STRING(
 			vec4 worldNormal = transModel * vec4(normal, 0.0f);
 			passNormal = normalize(worldNormal.xyz);
 			passLightFlags = lightFlags;
+			passScreenView = transView * worldCoord;
 
 			gl_Position = transProj * transView * worldCoord;
 		}
@@ -384,6 +406,7 @@ static const char* vertexSrc3DlmFlow = MULTILINE_STRING(
 			vec4 worldNormal = transModel * vec4(normal, 0.0f);
 			passNormal = normalize(worldNormal.xyz);
 			passLightFlags = lightFlags;
+			passScreenView = transView * worldCoord;
 
 			gl_Position = transProj * transView * worldCoord;
 		}
@@ -403,6 +426,7 @@ static const char* fragmentSrc3D = MULTILINE_STRING(
 			// apply intensity and gamma
 			texel.rgb *= intensity;
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
 
 			if (old_texel == 0x9f5b53)
 			{
@@ -428,6 +452,7 @@ static const char* fragmentSrc3Dwater = MULTILINE_STRING(
 			// apply intensity and gamma
 			texel.rgb *= intensity*0.5;
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
 			outColor.a = texel.a*alpha; // I think alpha shouldn't be modified by gamma and intensity
 		}
 );
@@ -521,8 +546,11 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 			{
 				outColor = lmTex*texel;
 			}
+
+			float fogFactor = GetFogFactor();
 			
 			outColor.rgb = pow(outColor.rgb, vec3(gamma)); // apply gamma correction to result
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, fogFactor);	
 
 			outColor.a = 1; // lightmaps aren't used with translucent surfaces
 		}
@@ -539,6 +567,7 @@ static const char* fragmentSrc3Dcolor = MULTILINE_STRING(
 			// apply gamma correction and intensity
 			// texel.rgb *= intensity; TODO: use intensity here? (this is used for beams)
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
 			outColor.a = texel.a*alpha; // I think alpha shouldn't be modified by gamma and intensity
 		}
 );
@@ -575,6 +604,7 @@ static const char* fragmentSrc3Dsprite = MULTILINE_STRING(
 			// apply gamma correction and intensity
 			texel.rgb *= intensity;
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
 			outColor.a = texel.a*alpha; // I think alpha shouldn't be modified by gamma and intensity
 		}
 );
@@ -595,6 +625,7 @@ static const char* fragmentSrc3DspriteAlpha = MULTILINE_STRING(
 			// apply gamma correction and intensity
 			texel.rgb *= intensity;
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
 			outColor.a = texel.a*alpha; // I think alpha shouldn't be modified by gamma and intensity
 		}
 );
@@ -610,8 +641,9 @@ static const char* vertexSrc3Dwater = MULTILINE_STRING(
 			tc.t += sin( texCoord.s*0.125 + time ) * 4;
 			tc *= 1.0/64.0; // do this last
 			passTexCoord = tc;
+			passScreenView = transView * transModel * vec4(position, 1.0);
 
-			gl_Position = transProj * transView * transModel * vec4(position, 1.0);
+			gl_Position = transProj * passScreenView;
 		}
 );
 
@@ -625,7 +657,9 @@ static const char* vertexSrcAlias = MULTILINE_STRING(
 		{
 			passColor = vertColor*overbrightbits;
 			passTexCoord = texCoord;
-			gl_Position = transProj * transView * transModel * vec4(position, 1.0);
+			passScreenView = transView * transModel * vec4(position, 1.0);
+
+			gl_Position = transProj * passScreenView;
 		}
 );
 
@@ -652,6 +686,8 @@ static const char* fragmentSrcAlias = MULTILINE_STRING(
 				outColor.rgb = pow(texel.rgb, vec3(gamma));
 			}
 
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
+
 			// apply gamma correction and intensity
 			//texel.rgb *= intensity;
 			//texel.a *= alpha; // is alpha even used here?
@@ -676,6 +712,7 @@ static const char* fragmentSrcAliasColor = MULTILINE_STRING(
 			texel.rgb *= intensity; // TODO: color-only rendering probably shouldn't use intensity?
 			texel.a *= alpha; // is alpha even used here?
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
 			outColor.a = texel.a; // I think alpha shouldn't be modified by gamma and intensity
 		}
 );
@@ -689,7 +726,9 @@ static const char* vertexSrcParticles = MULTILINE_STRING(
 		void main()
 		{
 			passColor = vertColor;
-			gl_Position = transProj * transView * transModel * vec4(position, 1.0);
+			passScreenView = transView * transModel * vec4(position, 1.0);
+
+			gl_Position = transProj * passScreenView;
 
 			// abusing texCoord for pointSize, pointDist for particles
 			float pointDist = texCoord.y*0.1; // with factor 0.1 it looks good.
@@ -716,6 +755,7 @@ static const char* fragmentSrcParticles = MULTILINE_STRING(
 			// apply gamma correction and intensity
 			//texel.rgb *= intensity; TODO: intensity? Probably not?
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());	
 
 			// I want the particles to fade out towards the edge, the following seems to look nice
 			texel.a *= min(1.0, particleFadeFactor*(1.0 - distSquared));

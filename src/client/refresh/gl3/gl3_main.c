@@ -122,6 +122,11 @@ cvar_t *gl_lightmap;
 cvar_t *gl_shadows;
 cvar_t *gl3_debugcontext;
 
+cvar_t *gl3_fog_density;
+cvar_t *gl3_fog_r;
+cvar_t *gl3_fog_g;
+cvar_t *gl3_fog_b;
+
 // Yaw-Pitch-Roll
 // equivalent to R_z * R_y * R_x where R_x is the trans matrix for rotating around X axis for aroundXdeg
 static hmm_mat4 rotAroundAxisZYX(float aroundZdeg, float aroundYdeg, float aroundXdeg)
@@ -148,6 +153,15 @@ static hmm_mat4 rotAroundAxisZYX(float aroundZdeg, float aroundYdeg, float aroun
 	}};
 
 	return ret;
+}
+
+void
+GL3_SetFogData(float density, vec3_t color)
+{
+	gl3_fog_r->value = color[0];	
+	gl3_fog_g->value = color[1];	
+	gl3_fog_b->value = color[2];	
+	gl3_fog_density->value = density;
 }
 
 void
@@ -238,6 +252,11 @@ GL3_Register(void)
 	r_novis = ri.Cvar_Get("r_novis", "0", 0);
 	r_speeds = ri.Cvar_Get("r_speeds", "0", 0);
 	gl_finish = ri.Cvar_Get("gl_finish", "0", CVAR_ARCHIVE);
+
+	gl3_fog_density = ri.Cvar_Get("gl3_fog", "0", 0);
+	gl3_fog_r = ri.Cvar_Get("gl3_fog_r", "0.5", 0);
+	gl3_fog_g = ri.Cvar_Get("gl3_fog_g", "0.5", 0);
+	gl3_fog_b = ri.Cvar_Get("gl3_fog_b", "0.5", 0);
 
 #if 0 // TODO!
 	//gl_lefthand = ri.Cvar_Get("hand", "0", CVAR_USERINFO | CVAR_ARCHIVE);
@@ -1431,6 +1450,31 @@ GL3_RenderView(refdef_t *fd)
 
 	SetupGL();
 
+	if (gl3_fog_density->value != gl3state.uni3DData.fogDensity)
+	{
+		gl3state.uni3DData.fogDensity = gl3_fog_density->value;
+		GL3_UpdateUBO3D();
+	}
+
+	if (gl3_fog_r->value != gl3state.uni3DData.fogColorR)
+	{
+		gl3state.uni3DData.fogColorR = gl3_fog_r->value;
+		GL3_UpdateUBO3D();
+	}
+
+	if (gl3_fog_g->value != gl3state.uni3DData.fogColorG)
+	{
+		gl3state.uni3DData.fogColorG = gl3_fog_g->value;
+		GL3_UpdateUBO3D();
+	}
+
+	if (gl3_fog_b->value != gl3state.uni3DData.fogColorB)
+	{
+		gl3state.uni3DData.fogColorB = gl3_fog_b->value;
+		GL3_UpdateUBO3D();
+	}
+
+
 	GL3_MarkLeaves(); /* done here so we know if we're in water */
 
 	GL3_DrawWorld();
@@ -1604,6 +1648,12 @@ GL3_BeginFrame(float camera_separation)
 		vid_fullscreen->modified = true;
 	}
 
+	// TODO: change from cvars
+	glClearColor(0.5, 0.5, 0.5, 1);
+	glClearDepth(1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+
 #if 0 // TODO: stereo stuff
 	gl_state.camera_separation = camera_separation;
 	// force a vid_restart if gl1_stereo has been modified.
@@ -1754,6 +1804,7 @@ GetRefAPI(refimport_t imp)
 	re.RegisterSkin = GL3_RegisterSkin;
 
 	re.SetSky = GL3_SetSky;
+	re.SetFogData = GL3_SetFogData;
 	re.EndRegistration = GL3_EndRegistration;
 
 	re.RenderFrame = GL3_RenderFrame;

@@ -363,6 +363,9 @@ typedef struct
 	vec3_t skyaxis;
 	char *nextmap;
 
+	vec3_t fogcolor;
+	float fogdensity;
+
 	int lip;
 	int distance;
 	int height;

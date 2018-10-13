@@ -961,6 +961,9 @@ SP_worldspawn(edict_t *ent)
 	gi.configstring(CS_SKYAXIS, va("%f %f %f",
 				st.skyaxis[0], st.skyaxis[1], st.skyaxis[2]));
 
+	gi.configstring(CS_FOGDENSITY, va("%f", st.fogdensity));
+	gi.configstring(CS_FOGCOLOR, va("%f %f %f", st.fogcolor[0], st.fogcolor[1], st.fogcolor[2]));
+
 	gi.configstring(CS_CDTRACK, va("%i", ent->sounds));
 
 	gi.configstring(CS_MAXCLIENTS, va("%i", (int)(maxclients->value)));
