@@ -593,6 +593,7 @@ static const char* fragmentSrc3Dsky = MULTILINE_STRING(
 			// apply gamma correction
 			texel.rgb *= intensity; // TODO: really no intensity for sky?
 			outColor.rgb = pow(texel.rgb, vec3(gamma));
+			outColor.rgb = mix(outColor.rgb, vec3(fogColorR, fogColorG, fogColorB), 0.8);
 			outColor.a = texel.a*alpha; // I think alpha shouldn't be modified by gamma and intensity
 		}
 );
@@ -709,20 +710,16 @@ static const char* fragmentSrcAlias = MULTILINE_STRING(
 			
 			if (texel.a < 1.0f)
 			{
-				outColor.rgb = pow(mix(texel.rgb * (1.0f - texel.a), texel.rgb, texel.a), vec3(gamma));
+				outColor.rgb = pow(mix(texel.rgb * (1.0f - texel.a), intensity * min(vec4(3.0), passColor).rgb * texel.rgb, texel.a), vec3(gamma));
 			}
 			else
 			{
 				texel.rgb *= intensity;
+				texel *= min(vec4(3.0), passColor);
 				outColor.rgb = pow(texel.rgb, vec3(gamma));
 			}
 
-			outColor.rgb *= min(vec4(3.0), passColor).rgb;
-
-			vec3 fogColor = vec3(fogColorR, fogColorG, fogColorB);
-			//fogColor = mix(fogColor, passColor.rgb, intensity);
-
-			outColor.rgb = mix(fogColor, outColor.rgb, GetFogFactor());	
+			outColor.rgb = mix(vec3(fogColorR, fogColorG, fogColorB), outColor.rgb, GetFogFactor());
 
 			// apply gamma correction and intensity
 			//texel.rgb *= intensity;

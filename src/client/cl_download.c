@@ -399,13 +399,15 @@ CL_RequestNextDownload(void)
 			{
 				char fn[MAX_OSPATH];
 
-				sprintf(fn, "textures/%s.wal",
-						map_surfaces[precache_tex++].rname);
+				// sprintf(fn, "textures/%s.wal",
+				// 		map_surfaces[precache_tex++].rname);
 
-				if (!CL_CheckOrDownloadFile(fn))
-				{
-					return; /* started a download */
-				}
+				// if (!CL_CheckOrDownloadFile(fn))
+				// {
+				// 	return; /* started a download */
+				// }
+
+				precache_tex++;
 			}
 		}
 
