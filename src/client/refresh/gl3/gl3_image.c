@@ -669,9 +669,9 @@ GL3_FindImage(char *name, imagetype_t type)
 			}
 
 			/* try to load a tga, png or jpg (in that order/priority) */
-			if (  LoadSTB(namewe, "tga", &pic, &width, &height)
-			   || LoadSTB(namewe, "png", &pic, &width, &height)
-			   || LoadSTB(namewe, "jpg", &pic, &width, &height) )
+			if (  LoadSTB(namewe, "png", &pic, &width, &height)
+			   || LoadSTB(namewe, "jpg", &pic, &width, &height)
+			   || LoadSTB(namewe, "tga", &pic, &width, &height) )
 			{
 				if (!uses_pcx)
 				{
@@ -728,9 +728,9 @@ GL3_FindImage(char *name, imagetype_t type)
 			}
 
 			/* try to load a tga, png or jpg (in that order/priority) */
-			if (  LoadSTB(namewe, "tga", &pic, &width, &height)
-			   || LoadSTB(namewe, "png", &pic, &width, &height)
-			   || LoadSTB(namewe, "jpg", &pic, &width, &height) )
+			if (  LoadSTB(namewe, "png", &pic, &width, &height)
+			   || LoadSTB(namewe, "jpg", &pic, &width, &height)
+			   || LoadSTB(namewe, "tga", &pic, &width, &height) )
 			{
 				if (!uses_wal)
 				{
