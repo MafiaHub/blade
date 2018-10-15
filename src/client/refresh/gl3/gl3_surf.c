@@ -172,6 +172,29 @@ TextureAnimation(mtexinfo_t *tex)
 	return tex->image;
 }
 
+/*
+ * Returns the proper texture for a given time and brightmap texture
+ */
+static gl3image_t *
+TextureBrightmapAnimation(mtexinfo_t *tex)
+{
+	int c;
+
+	if (!tex->next)
+	{
+		return tex->bright_image;
+	}
+
+	c = currententity->frame % tex->numframes;
+
+	while (c)
+	{
+		tex = tex->next;
+		c--;
+	}
+
+	return tex->bright_image;
+}
 
 static void
 SetLightFlags(msurface_t *surf)
@@ -212,18 +235,17 @@ GL3_DrawGLPoly(msurface_t *fa)
 
 	if (fa->texinfo->flags & SURF_TRANS66)
 	{
-		gl3state.uni3DData.alpha = 0.666f;
+		gl3state.uni3DData.useBrightMaps = 1.0f;
 		GL3_UpdateUBO3D();
 	}
 	
-
 	GL3_BindVAO(gl3state.vao3D);
 	GL3_BindVBO(gl3state.vbo3D);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(gl3_3D_vtx_t)*p->numverts, p->vertices, GL_STREAM_DRAW);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, p->numverts);
 
-	gl3state.uni3DData.alpha = 1.0f;
+	gl3state.uni3DData.useBrightMaps = 0.0f;
 	GL3_UpdateUBO3D(); /* optimize this bit */
 }
 
@@ -287,15 +309,17 @@ static void
 RenderBrushPoly(msurface_t *fa)
 {
 	int map;
-	gl3image_t *image;
+	gl3image_t *image, *bright_image;
 
 	c_brush_polys++;
 
 	image = TextureAnimation(fa->texinfo);
+	bright_image = TextureBrightmapAnimation(fa->texinfo);
 
 	if (fa->flags & SURF_DRAWTURB)
 	{
-		GL3_Bind(image->texnum);
+		GL3_Bind(image->texnum,0);
+		GL3_Bind(bright_image->texnum,1);
 
 		GL3_EmitWaterPolys(fa);
 
@@ -303,7 +327,8 @@ RenderBrushPoly(msurface_t *fa)
 	}
 	else
 	{
-		GL3_Bind(image->texnum);
+		GL3_Bind(image->texnum,0);
+		GL3_Bind(bright_image->texnum,1);
 	}
 
 	hmm_vec4 lmScales[MAX_LIGHTMAPS_PER_SURFACE] = {0};
@@ -354,7 +379,8 @@ GL3_DrawAlphaSurfaces(void)
 
 	for (s = gl3_alpha_surfaces; s != NULL; s = s->texturechain)
 	{
-		GL3_Bind(s->texinfo->image->texnum);
+		GL3_Bind(s->texinfo->image->texnum,0);
+		GL3_Bind(s->texinfo->bright_image->texnum,1);
 		c_brush_polys++;
 		
 		if (s->flags & SURF_DRAWTURB)
@@ -420,6 +446,7 @@ RenderLightmappedPoly(msurface_t *surf)
 {
 	int map;
 	gl3image_t *image = TextureAnimation(surf->texinfo);
+	gl3image_t *bright_image = TextureBrightmapAnimation(surf->texinfo);
 
 	hmm_vec4 lmScales[MAX_LIGHTMAPS_PER_SURFACE] = {0};
 	lmScales[0] = HMM_Vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -438,7 +465,8 @@ RenderLightmappedPoly(msurface_t *surf)
 
 	c_brush_polys++;
 
-	GL3_Bind(image->texnum);
+	GL3_Bind(image->texnum,0);
+	GL3_Bind(bright_image->texnum,1);
 	GL3_BindLightmap(surf->lightmaptexturenum);
 
 	gl3state.uni3DData.lightmap = ri.Cvar_Get("gl_lightmap", "0", 0)->value;

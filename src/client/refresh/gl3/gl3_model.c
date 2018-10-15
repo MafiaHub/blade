@@ -361,6 +361,15 @@ Mod_LoadTexinfo(lump_t *l)
 			R_Printf(PRINT_ALL, "Couldn't load %s\n", name);
 			out->image = gl3_notexture;
 		}
+
+		Com_sprintf(name, sizeof(name), "textures/%s_bright.wal", in->texture);
+
+		out->bright_image = GL3_FindImage(name, it_wall);
+
+		if (!out->bright_image)
+		{
+			out->bright_image = gl3_notexture;
+		}
 	}
 
 	/* count animation frames */

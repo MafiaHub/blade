@@ -96,7 +96,7 @@ GL3_TextureMode(char *string)
 		if ((glt->type != it_pic) && (glt->type != it_sky))
 		{
 			GL3_SelectTMU(GL_TEXTURE0);
-			GL3_Bind(glt->texnum);
+			GL3_Bind(glt->texnum, 0);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 
@@ -110,7 +110,7 @@ GL3_TextureMode(char *string)
 }
 
 void
-GL3_Bind(GLuint texnum)
+GL3_Bind(GLuint texnum, GLuint slotindex)
 {
 	extern gl3image_t *draw_chars;
 
@@ -125,7 +125,7 @@ GL3_Bind(GLuint texnum)
 	}
 
 	gl3state.currenttexture = texnum;
-	GL3_SelectTMU(GL_TEXTURE0);
+	GL3_SelectTMU(GL_TEXTURE0+slotindex);
 	glBindTexture(GL_TEXTURE_2D, texnum);
 }
 
@@ -147,9 +147,9 @@ GL3_BindLightmap(int lightmapnum)
 	gl3state.currentlightmap = lightmapnum;
 	for(i=0; i<MAX_LIGHTMAPS_PER_SURFACE; ++i)
 	{
-		// this assumes that GL_TEXTURE<i+1> = GL_TEXTURE<i> + 1
+		// this assumes that GL_TEXTURE<i+2> = GL_TEXTURE<i> + 2
 		// at least for GL_TEXTURE0 .. GL_TEXTURE31 that's true
-		GL3_SelectTMU(GL_TEXTURE1+i);
+		GL3_SelectTMU(GL_TEXTURE2+i);
 		glBindTexture(GL_TEXTURE_2D, gl3state.lightmap_textureIDs[lightmapnum][i]);
 	}
 }
@@ -420,7 +420,7 @@ GL3_LoadPic(char *name, byte *pic, int width, int realwidth,
 	image->texnum = texNum;
 
 	GL3_SelectTMU(GL_TEXTURE0);
-	GL3_Bind(texNum);
+	GL3_Bind(texNum, 0);
 
 	if (bits == 8)
 	{

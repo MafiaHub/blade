@@ -86,7 +86,7 @@ typedef struct mtexinfo_s
 	int flags;
 	int numframes;
 	struct mtexinfo_s *next; /* animation chain */
-	gl3image_t *image;
+	gl3image_t *image, *bright_image;
 } mtexinfo_t;
 
 typedef struct glpoly_s

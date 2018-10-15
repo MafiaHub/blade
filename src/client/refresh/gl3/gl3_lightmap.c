@@ -52,7 +52,7 @@ GL3_LM_UploadBlock(void)
 	// upload all 4 lightmaps
 	for(map=0; map < MAX_LIGHTMAPS_PER_SURFACE; ++map)
 	{
-		GL3_SelectTMU(GL_TEXTURE1+map); // this relies on GL_TEXTURE2 being GL_TEXTURE1+1 etc
+		GL3_SelectTMU(GL_TEXTURE2+map); // this relies on GL_TEXTURE3 being GL_TEXTURE1+2 etc
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

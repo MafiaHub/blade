@@ -719,7 +719,7 @@ GL3_DrawSkyBox(void)
 			continue;
 		}
 
-		GL3_Bind(sky_images[skytexorder[i]]->texnum);
+		GL3_Bind(sky_images[skytexorder[i]]->texnum,0);
 
 		MakeSkyVec( skymins [ 0 ] [ i ], skymins [ 1 ] [ i ], i, &skyVertices[0] );
 		MakeSkyVec( skymins [ 0 ] [ i ], skymaxs [ 1 ] [ i ], i, &skyVertices[1] );

@@ -155,7 +155,7 @@ GL3_Draw_CharScaled(int x, int y, int num, float scale)
 	// TODO: batchen?
 
 	GL3_UseProgram(gl3state.si2D.shaderProgram);
-	GL3_Bind(draw_chars->texnum);
+	GL3_Bind(draw_chars->texnum, 0);
 	drawTexturedRectangle(x, y, scaledSize, scaledSize, fcol, frow, fcol+size, frow+size);
 }
 
@@ -207,7 +207,7 @@ GL3_Draw_StretchPic(int x, int y, int w, int h, char *pic)
 	}
 
 	GL3_UseProgram(gl3state.si2D.shaderProgram);
-	GL3_Bind(gl->texnum);
+	GL3_Bind(gl->texnum, 0);
 
 	drawTexturedRectangle(x, y, w, h, gl->sl, gl->tl, gl->sh, gl->th);
 }
@@ -223,7 +223,7 @@ GL3_Draw_PicScaled(int x, int y, char *pic, float factor)
 	}
 
 	GL3_UseProgram(gl3state.si2D.shaderProgram);
-	GL3_Bind(gl->texnum);
+	GL3_Bind(gl->texnum, 0);
 
 	drawTexturedRectangle(x, y, gl->width*factor, gl->height*factor, gl->sl, gl->tl, gl->sh, gl->th);
 }
@@ -244,7 +244,7 @@ GL3_Draw_TileClear(int x, int y, int w, int h, char *pic)
 	}
 
 	GL3_UseProgram(gl3state.si2D.shaderProgram);
-	GL3_Bind(image->texnum);
+	GL3_Bind(image->texnum, 0);
 
 	drawTexturedRectangle(x, y, w, h, x/64.0f, y/64.0f, (x+w)/64.0f, (y+h)/64.0f);
 }
@@ -340,7 +340,7 @@ GL3_Draw_StretchRaw(int x, int y, int w, int h, int cols, int rows, byte *data)
 {
 	int i, j;
 
-	GL3_Bind(0);
+	GL3_Bind(0,0);
 
 	unsigned image32[320*240]; /* was 256 * 256, but we want a bit more space */
 
@@ -385,7 +385,7 @@ GL3_Draw_StretchRaw(int x, int y, int w, int h, int cols, int rows, byte *data)
 
 	glDeleteTextures(1, &glTex);
 
-	GL3_Bind(0);
+	GL3_Bind(0,0);
 }
 
 int

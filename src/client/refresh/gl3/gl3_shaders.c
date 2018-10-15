@@ -280,6 +280,7 @@ static const char* vertexCommon3D = MULTILINE_STRING(#version 150\n
 			float scroll; // for SURF_FLOWING
 			float time;
 			float alpha;
+			float useBrightMaps;
 			float overbrightbits;
 			float particleFadeFactor;
 			int   lightmap;
@@ -336,6 +337,7 @@ static const char* fragmentCommon3D = MULTILINE_STRING(#version 150\n
 			float scroll; // for SURF_FLOWING
 			float time;
 			float alpha;
+			float useBrightMaps;
 			float overbrightbits;
 			float particleFadeFactor;
 			int   lightmap;
@@ -434,6 +436,7 @@ static const char* fragmentSrc3D = MULTILINE_STRING(
 		// it gets attributes and uniforms from fragmentCommon3D
 
 		uniform sampler2D tex;
+		uniform sampler2D brightMapTex;
 
 		void main()
 		{
@@ -479,6 +482,7 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 		// it gets attributes and uniforms from fragmentCommon3D
 
 		uniform sampler2D tex;
+		uniform sampler2D brightMapTex;
 
 		uniform sampler2D lightmap0;
 		uniform sampler2D lightmap1;
@@ -501,9 +505,13 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 				texel = texture(tex, passTexCoord);
 			}
 
+
 			// apply intensity
 			texel.rgb *= intensity;
 
+			
+			vec4 old_texel = texel;
+			
 			// apply lightmap
 			vec4 lmTex = texture(lightmap0, passLMcoord) * lmScales[0];
 			lmTex     += texture(lightmap1, passLMcoord) * lmScales[1];
@@ -542,22 +550,25 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 			}
 
 
-			/* Texture uses per-pixel brightness texturing */
-			if (alpha == 0.666f && texel.a < 1.0f)
-			{
-				outColor.rgb = mix(texel.rgb*(1.0f - texel.a), lmTex.rgb*texel.rgb, texel.a);
-			}
-			else
-			{
-				outColor = lmTex*texel;
-			}
+			outColor = lmTex*texel;
 
+			/* Texture uses per-pixel brightness texturing */
+			if (useBrightMaps > 0.5f)
+			{
+				vec4 bTexel = texture(brightMapTex, passTexCoord);
+
+				if (bTexel.r > 0.0f)
+				{
+					outColor.rgb = mix(texel.rgb, (lmTex*texel).rgb, 1.0f - bTexel.r);
+				}
+			}
+			
 			/* float lmIntensity = length(lmTex.rgb);
 			fogColor = mix(fogColor, lmTex.rgb*0.1, lmIntensity);
  */
-			outColor.rgb = pow(outColor.rgb, vec3(gamma)); // apply gamma correction to result
+			/* outColor.rgb = pow(outColor.rgb, vec3(gamma)); // apply gamma correction to result
 			outColor.rgb = mix(fogColor, outColor.rgb, GetFogFactor());	
-
+ */
 			outColor.a = 1; // lightmaps aren't used with translucent surfaces
 		}
 );
@@ -1012,6 +1023,13 @@ initShader3D(gl3ShaderInfo_t* shaderInfo, const char* vertSrc, const char* fragS
 		glUniform1i(texLoc, 0);
 	}
 
+	// brightmap texture is stored at GL_TEXTURE1
+	GLint brightMapTexLoc = glGetUniformLocation(prog, "brightMapTex");
+	if (brightMapTexLoc != -1)
+	{
+		glUniform1i(brightMapTexLoc, 1);
+	}
+
 	// ..  and the 4 lightmap texture use GL_TEXTURE1..4
 	char lmName[10] = "lightmapX";
 	for(i=0; i<4; ++i)
@@ -1020,7 +1038,7 @@ initShader3D(gl3ShaderInfo_t* shaderInfo, const char* vertSrc, const char* fragS
 		GLint lmLoc = glGetUniformLocation(prog, lmName);
 		if(lmLoc != -1)
 		{
-			glUniform1i(lmLoc, i+1); // lightmap0 belongs to GL_TEXTURE1, lightmap1 to GL_TEXTURE2 etc
+			glUniform1i(lmLoc, i+2); // lightmap0 belongs to GL_TEXTURE2, lightmap1 to GL_TEXTURE3 etc
 		}
 	}
 

@@ -731,7 +731,7 @@ GL3_DrawSpriteModel(entity_t *e)
 		GL3_UpdateUBO3D();
 	}
 
-	GL3_Bind(currentmodel->skins[e->frame]->texnum);
+	GL3_Bind(currentmodel->skins[e->frame]->texnum,0);
 
 	if (alpha == 1.0)
 	{

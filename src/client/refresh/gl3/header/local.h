@@ -146,6 +146,7 @@ typedef struct
 	GLfloat scroll; // for SURF_FLOWING
 	GLfloat time; // for warping surfaces like water & possibly other things
 	GLfloat alpha; // for translucent surfaces (water, glass, ..)
+	GLfloat useBrightMaps; // for surfaces using brightmaps (neons, devices, ..)
 	GLfloat overbrightbits; // gl3_overbrightbits, applied to lightmaps (and elsewhere to models)
 	GLfloat particleFadeFactor; // gl3_particle_fade_factor, higher => less fading out towards edges
 	GLint   lightmap;
@@ -414,7 +415,7 @@ GL3_SelectTMU(GLenum tmu)
 }
 
 extern void GL3_TextureMode(char *string);
-extern void GL3_Bind(GLuint texnum);
+extern void GL3_Bind(GLuint texnum, GLuint slotindex);
 extern void GL3_BindLightmap(int lightmapnum);
 extern gl3image_t *GL3_LoadPic(char *name, byte *pic, int width, int realwidth,
                                int height, int realheight, imagetype_t type, int bits);
