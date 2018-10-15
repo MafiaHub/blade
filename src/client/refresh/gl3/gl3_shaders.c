@@ -566,9 +566,9 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 			/* float lmIntensity = length(lmTex.rgb);
 			fogColor = mix(fogColor, lmTex.rgb*0.1, lmIntensity);
  */
-			/* outColor.rgb = pow(outColor.rgb, vec3(gamma)); // apply gamma correction to result
+			outColor.rgb = pow(outColor.rgb, vec3(gamma)); // apply gamma correction to result
 			outColor.rgb = mix(fogColor, outColor.rgb, GetFogFactor());	
- */
+
 			outColor.a = 1; // lightmaps aren't used with translucent surfaces
 		}
 );
