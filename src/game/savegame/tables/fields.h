@@ -54,6 +54,7 @@
 {"move_origin", FOFS(move_origin), F_VECTOR},
 {"move_angles", FOFS(move_angles), F_VECTOR},
 {"style", FOFS(style), F_INT},
+{"_color", FOFS(color), F_VECTOR},
 {"lcolor", FOFS(color), F_VECTOR},
 {"cstyle", FOFS(cstyle), F_LSTRING},
 {"count", FOFS(count), F_INT},

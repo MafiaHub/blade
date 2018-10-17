@@ -440,8 +440,6 @@ ED_ParseField(const char *key, const char *value, edict_t *ent)
 			return;
 		}
 	}
-
-	gi.dprintf("%s is not a field\n", key);
 }
 
 /*
@@ -496,14 +494,6 @@ ED_ParseEdict(char *data, edict_t *ent)
 		}
 
 		init = true;
-
-		/* keynames with a leading underscore are
-		   used for utility comments, and are
-		   immediately discarded by quake */
-		if (keyname[0] == '_')
-		{
-			continue;
-		}
 
 		ED_ParseField(keyname, com_token, ent);
 	}
