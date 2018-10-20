@@ -1,3 +1,3 @@
 echo Copying binaries to the gamedir...
-cp -R release/* ../quake2/
+cp -R release/* ../blade_data/
 echo Done!
