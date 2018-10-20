@@ -247,6 +247,16 @@ typedef struct
 #define WEAP_BFG 11
 #define WEAP_PISTOL 12
 
+typedef struct giteminfo_s
+{
+	float speed; /* speed multiplier */
+	float damage; /* damage multiplier */
+	float duration; /* duration multiplier */
+	int max_ammo; /* bonus ammo capacity */
+	int weapmodel; /* optional: weapon model index for better quality or uniques */
+	int rarity; /* Item rarity (common, rare, ...) default: common (0) */
+} giteminfo_t;
+
 typedef struct gitem_s
 {
 	char *classname; /* spawning name */
@@ -274,6 +284,7 @@ typedef struct gitem_s
 	int tag;
 
 	char *precaches; /* string of all models, sounds, and images this item will use */
+	giteminfo_t iteminfo; /* additional item stats */
 } gitem_t;
 
 /* this structure is left intact through an entire game

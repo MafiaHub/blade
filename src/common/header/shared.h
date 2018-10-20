@@ -1039,7 +1039,12 @@ typedef enum
 #define DF_NO_NUKES 0x00080000
 #define DF_NO_SPHERES 0x00100000
 
-#define ROGUE_VERSION_STRING "08/21/1998 Beta 2 for Ensemble"
+#define IC_COMMON 1
+#define IC_IMPROVED 2
+#define IC_RARE 3
+#define IC_EPIC 4
+#define IC_LEGENDARY 5
+#define IC_UNIQUE 10
 
 /*
  * ==========================================================
