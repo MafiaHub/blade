@@ -1,14 +1,32 @@
 # Blade Engine
 
-This game engine and game itself is developed for our WIP title called Runblader.
-We aim to replace the requirements for using Quake 2 data and introduce our own replacements
-to become Quake 2 independent. Our interest is in Quake 2 mechanics and tech itself and Quake 2
-related assets are not planned to be used within our title.
+Blade engine is a generic-purpose game engine used for developing games in classic Quake 1/2 vibe. It offers extra stability, 
+as well as features more suitable for today's world of gaming. 
+
+## Features
+
+- Blade engine is a fork of Yamagi Quake 2, which consists of many bugfixes and QoL improvements.
+- OpenGL 3 support.
+- Full-color support, game engine drops .WAL support (except for animated textures)
+- Simplified map entity models. Map models only need to start with `model_` prefix to be loaded.
+- Map entity code improvements.
+- Quake 2 specific code cleanup. This engine is more generic, hence the reason of quake2 specific code removal.
+- Mirror entity implementation (WIP)
+- OpenGL Render-To-Texture support and Post-FX (WIP)
+- Fog support (easily tweakable.) Fog is configurable via cvars and `worldspawn` entity.
+- Modular weapon ammo counter visualisation (change weapon skin based on ammo status.)
+- Weapon reloading.
+- Revamped weapon and item system.
+- Inventory management, ability to assign items to quickbar.
+
+Note that this engine is specifically made for a game under active development. While it might work without our WIP assets, the process is not optimal.
+If you want to participate in development of the game/game engine, please let me know.
+
+## License
 
 This code is build upon Blade Engine, which itself is based on Yamagi Quake II. 
 Blade Engine is released under the terms of the GPL version 2. See the
 LICENSE file for further information.
-
 
 ## Installation
 
@@ -16,7 +34,6 @@ Blade Engine is installed in 2 steps:
 
 - Game data setup.
 - Download and extract the executables.
-
 
 ### Game data Setup
 
@@ -88,4 +105,4 @@ MinGW environment GNU Make is highly recommended.
 
 Change into the code/ source directory and type *make*. 
 After that copy everything from the release/
-directory to your Runblader installation directory.
+directory to your Game installation directory.
