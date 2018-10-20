@@ -656,5 +656,18 @@
 {"Quest_Setstage", (byte *)Quest_Setstage},
 {"quest_setstage_use", (byte *)quest_setstage_use},
 {"SP_quest_setstage", (byte *)SP_quest_setstage},
+{"SP_target_actor", (byte *)SP_target_actor},
+{"SP_misc_actor", (byte *)SP_misc_actor},
+{"target_actor_touch", (byte *)target_actor_touch},
+{"actor_use", (byte *)actor_use},
+{"actor_attack", (byte *)actor_attack},
+{"actor_fire", (byte *)actor_fire},
+{"actor_die", (byte *)actor_die},
+{"actor_dead", (byte *)actor_dead},
+{"actorMachineGun", (byte *)actorMachineGun},
+{"actor_pain", (byte *)actor_pain},
+{"actor_run", (byte *)actor_run},
+{"actor_walk", (byte *)actor_walk},
+{"actor_stand", (byte *)actor_stand},
 
 {0, 0}
