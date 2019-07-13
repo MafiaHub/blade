@@ -96,16 +96,17 @@ typedef struct
 	const char *vendor_string;
 	const char *version_string;
 	const char *glsl_version_string;
-	//const char *extensions_string; deprecated in GL3
 
 	int major_version;
 	int minor_version;
-	qboolean compat_profile;
 
 	// ----
 
 	qboolean anisotropic; // is GL_EXT_texture_filter_anisotropic supported?
 	qboolean debug_output; // is GL_ARB_debug_output supported?
+	qboolean stencil; // Do we have a stencil buffer?
+
+	qboolean useBigVBO; // workaround for AMDs windows driver for fewer calls to glBufferData()
 
 	// ----
 
@@ -232,7 +233,12 @@ typedef struct
 	// NOTE: make sure siParticle is always the last shaderInfo (or adapt GL3_ShutdownShaders())
 	gl3ShaderInfo_t siParticle; // for particles. surprising, right?
 
-	GLuint vao3D, vbo3D; // for brushes etc, using 1 floats as vertex input (x,y,z, s,t, lms,lmt, normX,normY,normZ)
+	GLuint vao3D, vbo3D; // for brushes etc, using 10 floats and one uint as vertex input (x,y,z, s,t, lms,lmt, normX,normY,normZ ; lightFlags)
+
+	// the next two are for gl3config.useBigVBO == true
+	int vbo3Dsize;
+	int vbo3DcurOffset;
+
 	GLuint vaoAlias, vboAlias, eboAlias; // for models, using 9 floats as (x,y,z, s,t, r,g,b,a)
 	GLuint vaoParticle, vboParticle; // for particles, using 9 floats (x,y,z, size,distance, r,g,b,a)
 
@@ -357,18 +363,18 @@ GL3_BindEBO(GLuint ebo)
 	}
 }
 
+extern void GL3_BufferAndDraw3D(const gl3_3D_vtx_t* verts, int numVerts, GLenum drawMode);
+
 extern qboolean GL3_CullBox(vec3_t mins, vec3_t maxs);
 extern void GL3_RotateForEntity(entity_t *e);
 
 // gl3_sdl.c
-extern qboolean have_stencil;
-
-extern int GL3_PrepareForWindow(void);
 extern int GL3_InitContext(void* win);
-extern void GL3_SetSwapInterval(void);
+extern int GL3_PrepareForWindow(void);
 extern qboolean GL3_IsVsyncActive(void);
 extern void GL3_EndFrame(void);
-extern void GL3_ShutdownWindow(qboolean contextOnly);
+extern void GL3_SetVsync(void);
+extern void GL3_ShutdownContext(void);
 
 // gl3_misc.c
 extern void GL3_InitParticleTexture(void);

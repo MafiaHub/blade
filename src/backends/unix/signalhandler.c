@@ -28,13 +28,14 @@
 
 #include <signal.h>
 
-#ifdef __linux__
-#include <execinfo.h>
+#if defined(__linux__) || defined(__FreeBSD__)
+
 #endif
 
 #include "../../common/header/common.h"
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
+#include <execinfo.h>
 
 void
 printBacktrace(int sig)
@@ -117,10 +118,12 @@ signalhandler(int sig)
 	raise(sig);
 }
 
+extern qboolean quitnextframe;
+
 void
 terminate(int sig)
 {
-	Cbuf_AddText("quit");
+	quitnextframe = true;
 }
 
 void

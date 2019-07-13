@@ -116,6 +116,10 @@ typedef enum
 	AMMO_FLARE
 } ammo_t;
 
+/* Maximum debris / gibs per frame */
+#define MAX_GIBS 20
+#define MAX_DEBRIS 20
+
 /* deadflag */
 #define DEAD_NO 0
 #define DEAD_DYING 1
@@ -479,8 +483,8 @@ extern spawn_temp_t st;
 extern int sm_meat_index;
 extern int snd_fry;
 
+extern int debristhisframe;
 extern int gibsthisframe;
-extern int lastgibframe;
 
 /* means of death */
 #define MOD_UNKNOWN 0
@@ -609,6 +613,7 @@ typedef struct
 	int ofs;
 	fieldtype_t type;
 	int flags;
+	short save_ver;
 } field_t;
 
 extern field_t fields[];

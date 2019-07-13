@@ -731,7 +731,7 @@ WriteClient(FILE *f, gclient_t *client)
  * Read the client struct from a file
  */
 void
-ReadClient(FILE *f, gclient_t *client)
+ReadClient(FILE *f, gclient_t *client, short save_ver)
 {
 	field_t *field;
 
@@ -739,7 +739,14 @@ ReadClient(FILE *f, gclient_t *client)
 
 	for (field = clientfields; field->name; field++)
 	{
-		ReadField(f, field, (byte *)client);
+		if (field->save_ver <= save_ver)
+		{
+			ReadField(f, field, (byte *)client);
+		}
+	}
+	if (save_ver < 3)
+	{
+		InitClientResp(client);
 	}
 }
 
@@ -747,10 +754,10 @@ ReadClient(FILE *f, gclient_t *client)
 
 /*
  * Writes the game struct into
- * a file. This is called when
- * ever the games goes to e new
- * level or the user saves the
- * game. Saved informations are:
+ * a file. This is called whenever
+ * the game goes to a new level or
+ * the user saves the game. The saved
+ * information consists of:
  * - cross level data
  * - client states
  * - help computer info
@@ -820,6 +827,8 @@ ReadGame(const char *filename)
 	char str_os[32];
 	char str_arch[32];
 
+	short save_ver = 0;
+
 	gi.FreeTags(TAG_GAME);
 
 	f = Q_fopen(filename, "rb");
@@ -837,6 +846,8 @@ ReadGame(const char *filename)
 
 	if (!strcmp(str_ver, SAVEGAMEVER))
 	{
+		save_ver = 3;
+
 		if (strcmp(str_game, GAMEVERSION))
 		{
 			fclose(f);
@@ -855,6 +866,8 @@ ReadGame(const char *filename)
 	}
 	else if (!strcmp(str_ver, "BDE-1"))
 	{
+		save_ver = 1;
+
 		if (strcmp(str_game, GAMEVERSION))
 		{
 			fclose(f);
@@ -899,7 +912,7 @@ ReadGame(const char *filename)
 
 	for (i = 0; i < game.maxclients; i++)
 	{
-		ReadClient(f, &game.clients[i]);
+		ReadClient(f, &game.clients[i], save_ver);
 	}
 
 	fclose(f);

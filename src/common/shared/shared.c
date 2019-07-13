@@ -1012,7 +1012,7 @@ done:
 	return com_token;
 }
 
-int paged_total;
+static int paged_total = 0;
 
 void
 Com_PageInMemory(byte *buffer, int size)
@@ -1154,7 +1154,9 @@ Q_strlcat(char *dst, const char *src, int size)
  */
 #ifdef _WIN32
 #include <windows.h>
-
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
 FILE *Q_fopen(const char *file, const char *mode)
 {
 	WCHAR wfile[MAX_OSPATH];
@@ -1166,15 +1168,32 @@ FILE *Q_fopen(const char *file, const char *mode)
 	{
 		if (MultiByteToWideChar(CP_UTF8, 0, mode, -1, wmode, 16) > 0)
 		{
-			FILE *ret;
-			if(_wfopen_s(&ret, wfile, wmode) == 0)
+			// make sure it's a regular file and not a directory or sth, see #394
+			struct _stat buf;
+			int statret = _wstat(wfile, &buf);
+			if((statret == 0 && (buf.st_mode & _S_IFREG) != 0) || (statret == -1 && errno == ENOENT))
 			{
-				return ret;
+				return _wfopen(wfile, wmode);
 			}
 		}
 	}
 
 	return NULL;
+}
+#else
+#include <sys/stat.h>
+#include <errno.h>
+FILE *Q_fopen(const char *file, const char *mode)
+{
+	// make sure it's a regular file and not a directory or sth, see #394
+	struct stat statbuf;
+	int statret = stat(file, &statbuf);
+	// (it's ok if it doesn't exist though, maybe we wanna write/create)
+	if((statret == -1 && errno != ENOENT) || (statret == 0 && (statbuf.st_mode & S_IFREG) == 0))
+	{
+		return NULL;
+	}
+	return fopen(file, mode);
 }
 #endif
 
@@ -1228,11 +1247,6 @@ Info_ValueForKey(char *s, char *key)
 
 		while (*s != '\\' && *s)
 		{
-			if (!*s)
-			{
-				return "";
-			}
-
 			*o++ = *s++;
 		}
 
@@ -1293,11 +1307,6 @@ Info_RemoveKey(char *s, char *key)
 
 		while (*s != '\\' && *s)
 		{
-			if (!*s)
-			{
-				return;
-			}
-
 			*o++ = *s++;
 		}
 
@@ -1351,7 +1360,7 @@ Info_SetValueForKey(char *s, char *key, char *value)
 
 	if (strstr(key, ";"))
 	{
-		Com_Printf("Can't use keys or values with a semicolon\n");
+		Com_Printf("Can't use keys with a semicolon\n");
 		return;
 	}
 

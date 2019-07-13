@@ -104,19 +104,9 @@ void actor_stand (edict_t *self)
 
 mframe_t actor_frames_walk [] =
 {
-	ai_walk, 0,  NULL,
-	ai_walk, 6,  NULL,
-	ai_walk, 10, NULL,
-	ai_walk, 3,  NULL,
-	ai_walk, 2,  NULL,
-	ai_walk, 7,  NULL,
-	ai_walk, 10, NULL,
-	ai_walk, 1,  NULL,
-	ai_walk, 4,  NULL,
-	ai_walk, 0,  NULL,
-	ai_walk, 0,  NULL
+	ai_walk, 10,  NULL,
 };
-mmove_t actor_move_walk = {FRAME_walk01, FRAME_walk08, actor_frames_walk, NULL};
+mmove_t actor_move_walk = {FRAME_walk01, FRAME_walk01, actor_frames_walk, NULL};
 
 void actor_walk (edict_t *self)
 {

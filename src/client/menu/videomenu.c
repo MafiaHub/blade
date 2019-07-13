@@ -32,6 +32,7 @@
 extern void M_ForceMenuOff(void);
 
 static cvar_t *r_mode;
+static cvar_t *vid_displayindex;
 static cvar_t *r_hudscale;
 static cvar_t *r_consolescale;
 static cvar_t *r_menuscale;
@@ -49,6 +50,7 @@ static menuframework_s s_opengl_menu;
 
 static menulist_s s_renderer_list;
 static menulist_s s_mode_list;
+static menulist_s s_display_list;
 static menulist_s s_uiscale_list;
 static menuslider_s s_brightness_slider;
 static menuslider_s s_fov_slider;
@@ -136,6 +138,9 @@ ResetDefaults(void *unused)
 	VID_MenuInit();
 }
 
+#define CUSTOM_MODE_NAME "[Custom    ]"
+#define AUTO_MODE_NAME   "[Auto      ]"
+
 static void
 ApplyChanges(void *unused)
 {
@@ -161,16 +166,29 @@ ApplyChanges(void *unused)
 		}
 	}
 
-	/* custom mode */
-	if (s_mode_list.curvalue != GetCustomValue(&s_mode_list))
+	/* auto mode */
+	if (!strcmp(s_mode_list.itemnames[s_mode_list.curvalue],
+		AUTO_MODE_NAME))
 	{
 		/* Restarts automatically */
-		Cvar_SetValue("r_mode", s_mode_list.curvalue);
+		Cvar_SetValue("r_mode", -2);
+	}
+	else if (!strcmp(s_mode_list.itemnames[s_mode_list.curvalue],
+		CUSTOM_MODE_NAME))
+	{
+		/* Restarts automatically */
+		Cvar_SetValue("r_mode", -1);
 	}
 	else
 	{
 		/* Restarts automatically */
-		Cvar_SetValue("r_mode", -1);
+		Cvar_SetValue("r_mode", s_mode_list.curvalue);
+	}
+
+	if (s_display_list.curvalue != GLimp_GetWindowDisplayIndex() )
+	{
+		Cvar_SetValue( "vid_displayindex", s_display_list.curvalue );
+		restart = true;
 	}
 
 	/* UI scaling */
@@ -234,10 +252,12 @@ VID_MenuInit(void)
 	static const char *renderers[] = {
 			"[OpenGL 1.4]",
 			"[OpenGL 3.2]",
-			"[Custom    ]",
+			"[Software  ]",
+			CUSTOM_MODE_NAME,
 			0
 	};
 
+	// must be kept in sync with vid_modes[] in vid.c
 	static const char *resolutions[] = {
 		"[320 240   ]",
 		"[400 300   ]",
@@ -271,7 +291,8 @@ VID_MenuInit(void)
 		"[3840 2160 ]",
 		"[4096 2160 ]",
 		"[5120 2880 ]",
-		"[custom    ]",
+		AUTO_MODE_NAME,
+		CUSTOM_MODE_NAME,
 		0
 	};
 
@@ -312,6 +333,11 @@ VID_MenuInit(void)
 	if (!r_mode)
 	{
 		r_mode = Cvar_Get("r_mode", "4", 0);
+	}
+
+	if (!vid_displayindex)
+	{
+		vid_displayindex = Cvar_Get("vid_displayindex", "0", CVAR_ARCHIVE);
 	}
 
 	if (!r_hudscale)
@@ -384,9 +410,25 @@ VID_MenuInit(void)
 	{
 		s_mode_list.curvalue = r_mode->value;
 	}
+	else if (r_mode->value == -2)
+	{
+		// 'auto' is before 'custom'
+		s_mode_list.curvalue = GetCustomValue(&s_mode_list) - 1;
+	}
 	else
 	{
+		// 'custom'
 		s_mode_list.curvalue = GetCustomValue(&s_mode_list);
+	}
+
+	if (GLimp_GetNumVideoDisplays() > 1)
+	{
+		s_display_list.generic.type = MTYPE_SPINCONTROL;
+		s_display_list.generic.name = "display index";
+		s_display_list.generic.x = 0;
+		s_display_list.generic.y = (y += 10);
+		s_display_list.itemnames = GLimp_GetDisplayIndices();
+		s_display_list.curvalue = GLimp_GetWindowDisplayIndex();
 	}
 
 	s_brightness_slider.generic.type = MTYPE_SLIDER;
@@ -494,6 +536,13 @@ VID_MenuInit(void)
 
 	Menu_AddItem(&s_opengl_menu, (void *)&s_renderer_list);
 	Menu_AddItem(&s_opengl_menu, (void *)&s_mode_list);
+
+	// only show this option if we have multiple displays
+	if (GLimp_GetNumVideoDisplays() > 1)
+	{
+		Menu_AddItem(&s_opengl_menu, (void *)&s_display_list);
+	}
+
 	Menu_AddItem(&s_opengl_menu, (void *)&s_brightness_slider);
 	Menu_AddItem(&s_opengl_menu, (void *)&s_fov_slider);
 	Menu_AddItem(&s_opengl_menu, (void *)&s_uiscale_list);

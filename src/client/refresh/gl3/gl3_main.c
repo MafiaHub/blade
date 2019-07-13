@@ -26,7 +26,7 @@
  */
 
 
-#include "../../header/ref.h"
+#include "../ref_shared.h"
 #include "header/local.h"
 
 #define HANDMADE_MATH_IMPLEMENTATION
@@ -121,6 +121,7 @@ cvar_t *r_modulate;
 cvar_t *gl_lightmap;
 cvar_t *gl_shadows;
 cvar_t *gl3_debugcontext;
+cvar_t *gl3_usebigvbo;
 
 cvar_t *gl3_fog_density;
 cvar_t *gl3_fog_r;
@@ -220,6 +221,11 @@ GL3_Register(void)
 	gl3_particle_size = ri.Cvar_Get("gl3_particle_size", "40", CVAR_ARCHIVE);
 	gl3_particle_fade_factor = ri.Cvar_Get("gl3_particle_fade_factor", "1.2", CVAR_ARCHIVE);
 	gl3_particle_square = ri.Cvar_Get("gl3_particle_square", "0", CVAR_ARCHIVE);
+
+	//  0: use lots of calls to glBufferData()
+	//  1: reduce calls to glBufferData() with one big VBO (see GL3_BufferAndDraw3D())
+	// -1: auto (let yq2 choose to enable/disable this based on detected driver)
+	gl3_usebigvbo = ri.Cvar_Get("gl3_usebigvbo", "-1", CVAR_ARCHIVE);
 
 	r_norefresh = ri.Cvar_Get("r_norefresh", "0", 0);
 	r_drawentities = ri.Cvar_Get("r_drawentities", "1", 0);
@@ -351,13 +357,24 @@ SetMode_impl(int *pwidth, int *pheight, int mode, int fullscreen)
 
 	/* mode -1 is not in the vid mode table - so we keep the values in pwidth
 	   and pheight and don't even try to look up the mode info */
-	if ((mode != -1) && !ri.Vid_GetModeInfo(pwidth, pheight, mode))
+	if ((mode >= 0) && !ri.Vid_GetModeInfo(pwidth, pheight, mode))
 	{
 		R_Printf(PRINT_ALL, " invalid mode\n");
 		return rserr_invalid_mode;
 	}
 
+	/* We trying to get resolution from desktop */
+	if (mode == -2)
+	{
+		if(!ri.GLimp_GetDesktopMode(pwidth, pheight))
+		{
+			R_Printf( PRINT_ALL, " can't detect mode\n" );
+			return rserr_invalid_mode;
+		}
+	}
+
 	R_Printf(PRINT_ALL, " %d %d\n", *pwidth, *pheight);
+
 
 	if (!ri.GLimp_InitGraphics(fullscreen, pwidth, pheight))
 	{
@@ -383,8 +400,7 @@ GL3_SetMode(void)
 	vid.width = r_customwidth->value;
 	vid.height = r_customheight->value;
 
-	if ((err = SetMode_impl(&vid.width, &vid.height, r_mode->value,
-					 fullscreen)) == rserr_ok)
+	if ((err = SetMode_impl(&vid.width, &vid.height, r_mode->value, fullscreen)) == rserr_ok)
 	{
 		if (r_mode->value == -1)
 		{
@@ -456,11 +472,6 @@ GL3_Init(void)
 	R_Printf(PRINT_ALL, "Refresh: " REF_VERSION "\n");
 	R_Printf(PRINT_ALL, "Client: " BDEVERSION "\n\n");
 
-	/* Options */
-	R_Printf(PRINT_ALL, "Refresher build options:\n");
-	R_Printf(PRINT_ALL, " + Retexturing support\n\n");
-
-
 	if(sizeof(float) != sizeof(GLfloat))
 	{
 		// if this ever happens, things would explode because we feed vertex arrays and UBO data
@@ -473,13 +484,6 @@ GL3_Init(void)
 	GL3_Draw_GetPalette();
 
 	GL3_Register();
-
-	/* initialize OS-specific parts of OpenGL */
-	if (!ri.GLimp_Init())
-	{
-		//QGL_Shutdown();
-		return false;
-	}
 
 	/* set our "safe" mode */
 	gl3state.prev_mode = 4;
@@ -535,7 +539,6 @@ GL3_Init(void)
 		R_Printf(PRINT_ALL, "Not supported\n");
 	}
 
-#ifdef SDL2
 	if(gl3config.debug_output)
 	{
 		R_Printf(PRINT_ALL, " - OpenGL Debug Output: Supported ");
@@ -552,17 +555,46 @@ GL3_Init(void)
 	{
 		R_Printf(PRINT_ALL, " - OpenGL Debug Output: Not Supported\n");
 	}
-#else // SDL1.2 - no debug output
-	R_Printf(PRINT_ALL, " - OpenGL Debug Output: Not Supported when using SDL1.2\n");
-#endif
 
-	if(gl3config.compat_profile)
+	gl3config.useBigVBO = false;
+	if(gl3_usebigvbo->value == 1.0f)
 	{
-		// for some fucking reason particles (GL_POINT) don't work in compatibility profiles
-		// without setting this.. SDL1.2 only gives compat profiles and we might wanna support
-		// them for SDL2 as well, so broken screengrab software etc that uses GL1 functions still works
-		// (GL_POINT_SPRITE is not even part of 3.2core, it was only in GL2 and was deprecated afterwards)
-		glEnable(QGL_POINT_SPRITE);
+		R_Printf(PRINT_ALL, "Enabling useBigVBO workaround because gl3_usebigvbo = 1\n");
+		gl3config.useBigVBO = true;
+	}
+	else if(gl3_usebigvbo->value == -1.0f)
+	{
+		// enable for AMDs proprietary Windows and Linux drivers
+#ifdef _WIN32
+		if(gl3config.version_string != NULL && gl3config.vendor_string != NULL
+		   && strstr(gl3config.vendor_string, "ATI Technologies Inc") != NULL)
+		{
+			int a, b, ver;
+			if(sscanf(gl3config.version_string, " %d.%d.%d ", &a, &b, &ver) >= 3 && ver >= 13431)
+			{
+				// turns out the legacy driver is a lot faster *without* the workaround :-/
+				// GL_VERSION for legacy 16.2.1 Beta driver: 3.2.13399 Core Profile Forward-Compatible Context 15.200.1062.1004
+				//            (this is the last version that supports the Radeon HD 6950)
+				// GL_VERSION for (non-legacy) 16.3.1 driver on Radeon R9 200: 4.5.13431 Compatibility Profile Context 16.150.2111.0
+				// GL_VERSION for non-legacy 17.7.2 WHQL driver: 4.5.13491 Compatibility Profile/Debug Context 22.19.662.4
+				// GL_VERSION for 18.10.1 driver: 4.6.13541 Compatibility Profile/Debug Context 25.20.14003.1010
+				// GL_VERSION for (current) 19.3.2 driver: 4.6.13547 Compatibility Profile/Debug Context 25.20.15027.5007
+				// (the 3.2/4.5/4.6 can probably be ignored, might depend on the card and what kind of context was requested
+				//  but AFAIK the number behind that can be used to roughly match the driver version)
+				// => let's try matching for x.y.z with z >= 13431
+				// (no, I don't feel like testing which release since 16.2.1 has introduced the slowdown.)
+				R_Printf(PRINT_ALL, "Detected AMD Windows GPU driver, enabling useBigVBO workaround\n");
+				gl3config.useBigVBO = true;
+			}
+		}
+#elif defined(__linux__)
+		if(gl3config.vendor_string != NULL && strstr(gl3config.vendor_string, "Advanced Micro Devices, Inc.") != NULL)
+		{
+			R_Printf(PRINT_ALL, "Detected proprietary AMD GPU driver, enabling useBigVBO workaround\n");
+			R_Printf(PRINT_ALL, "(consider using the open source RadeonSI drivers, they tend to work better overall)\n");
+			gl3config.useBigVBO = true;
+		}
+#endif
 	}
 
 	// generate texture handles for all possible lightmaps
@@ -615,7 +647,81 @@ GL3_Shutdown(void)
 	}
 
 	/* shutdown OS specific OpenGL stuff like contexts, etc.  */
-	GL3_ShutdownWindow(false);
+	GL3_ShutdownContext();
+}
+
+// assumes gl3state.v[ab]o3D are bound
+// buffers and draws gl3_3D_vtx_t vertices
+// drawMode is something like GL_TRIANGLE_STRIP or GL_TRIANGLE_FAN or whatever
+void
+GL3_BufferAndDraw3D(const gl3_3D_vtx_t* verts, int numVerts, GLenum drawMode)
+{
+	if(!gl3config.useBigVBO)
+	{
+		glBufferData( GL_ARRAY_BUFFER, sizeof(gl3_3D_vtx_t)*numVerts, verts, GL_STREAM_DRAW );
+		glDrawArrays( drawMode, 0, numVerts );
+	}
+	else // gl3config.useBigVBO == true
+	{
+		/*
+		 * For some reason, AMD's Windows driver doesn't seem to like lots of
+		 * calls to glBufferData() (some of them seem to take very long then).
+		 * GL3_BufferAndDraw3D() is called a lot when drawing world geometry
+		 * (once for each visible face I think?).
+		 * The simple code above caused noticeable slowdowns - even a fast
+		 * quadcore CPU and a Radeon RX580 weren't able to maintain 60fps..
+		 * The workaround is to not call glBufferData() with small data all the time,
+		 * but to allocate a big buffer and on each call to GL3_BufferAndDraw3D()
+		 * to use a different region of that buffer, resulting in a lot less calls
+		 * to glBufferData() (=> a lot less buffer allocations in the driver).
+		 * Only when the buffer is full and at the end of a frame (=> GL3_EndFrame())
+		 * we get a fresh buffer.
+		 *
+		 * BTW, we couldn't observe this kind of problem with any other driver:
+		 * Neither nvidias driver, nor AMDs or Intels Open Source Linux drivers,
+		 * not even Intels Windows driver seem to care that much about the
+		 * glBufferData() calls.. However, at least nvidias driver doesn't like
+		 * this workaround (with glMapBufferRange()), the framerate dropped
+		 * significantly - that's why both methods are available and
+		 * selectable at runtime.
+		 */
+#if 0
+		// I /think/ doing it with glBufferSubData() didn't really help
+		const int bufSize = gl3state.vbo3Dsize;
+		int neededSize = numVerts*sizeof(gl3_3D_vtx_t);
+		int curOffset = gl3state.vbo3DcurOffset;
+		if(curOffset + neededSize > gl3state.vbo3Dsize)
+			curOffset = 0;
+		int curIdx = curOffset / sizeof(gl3_3D_vtx_t);
+
+		gl3state.vbo3DcurOffset = curOffset + neededSize;
+
+		glBufferSubData( GL_ARRAY_BUFFER, curOffset, neededSize, verts );
+		glDrawArrays( drawMode, curIdx, numVerts );
+#else
+		int curOffset = gl3state.vbo3DcurOffset;
+		int neededSize = numVerts*sizeof(gl3_3D_vtx_t);
+		if(curOffset+neededSize > gl3state.vbo3Dsize)
+		{
+			// buffer is full, need to start again from the beginning
+			// => need to sync or get fresh buffer
+			// (getting fresh buffer seems easier)
+			glBufferData(GL_ARRAY_BUFFER, gl3state.vbo3Dsize, NULL, GL_STREAM_DRAW);
+			curOffset = 0;
+		}
+
+		// as we make sure to use a previously unused part of the buffer,
+		// doing it unsynchronized should be safe..
+		GLbitfield accessBits = GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT;
+		void* data = glMapBufferRange(GL_ARRAY_BUFFER, curOffset, neededSize, accessBits);
+		memcpy(data, verts, neededSize);
+		glUnmapBuffer(GL_ARRAY_BUFFER);
+
+		glDrawArrays(drawMode, curOffset/sizeof(gl3_3D_vtx_t), numVerts);
+
+		gl3state.vbo3DcurOffset = curOffset + neededSize; // TODO: padding or sth needed?
+#endif
+	}
 }
 
 static void
@@ -693,8 +799,7 @@ GL3_DrawBeam(entity_t *e)
 	GL3_BindVAO(gl3state.vao3D);
 	GL3_BindVBO(gl3state.vbo3D);
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STREAM_DRAW);
-	glDrawArrays( GL_TRIANGLE_STRIP, 0, NUM_BEAM_SEGS*4 );
+	GL3_BufferAndDraw3D(verts, NUM_BEAM_SEGS*4, GL_TRIANGLE_STRIP);
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
@@ -769,8 +874,7 @@ GL3_DrawSpriteModel(entity_t *e)
 	GL3_BindVAO(gl3state.vao3D);
 	GL3_BindVBO(gl3state.vbo3D);
 
-	glBufferData(GL_ARRAY_BUFFER, 4*sizeof(gl3_3D_vtx_t), verts, GL_STREAM_DRAW);
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	GL3_BufferAndDraw3D(verts, 4, GL_TRIANGLE_FAN);
 
 	if (alpha != 1.0F)
 	{
@@ -814,16 +918,14 @@ GL3_DrawNullModel(void)
 		{{16 * cos( 4 * M_PI / 2 ), 16 * sin( 4 * M_PI / 2 ), 0}, {0,0}, {0,0}}
 	};
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vtxA), vtxA, GL_STREAM_DRAW);
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+	GL3_BufferAndDraw3D(vtxA, 6, GL_TRIANGLE_FAN);
 
 	gl3_3D_vtx_t vtxB[6] = {
 		{{0, 0, 16}, {0,0}, {0,0}},
 		vtxA[5], vtxA[4], vtxA[3], vtxA[2], vtxA[1]
 	};
 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vtxB), vtxB, GL_STREAM_DRAW);
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
+	GL3_BufferAndDraw3D(vtxB, 6, GL_TRIANGLE_FAN);
 
 	gl3state.uni3DData.transModelMat4 = origModelMat;
 	GL3_UpdateUBO3D();
@@ -1636,7 +1738,7 @@ GL3_Clear(void)
 	}
 
 	/* stencilbuffer shadows */
-	if (gl_shadows->value && have_stencil)
+	if (gl_shadows->value && gl3config.stencil)
 	{
 		glClearStencil(1);
 		glClear(GL_STENCIL_BUFFER_BIT);
@@ -1739,10 +1841,10 @@ GL3_BeginFrame(float camera_separation)
 		gl_anisotropic->modified = false;
 	}
 
-	if(r_vsync->modified)
+	if (r_vsync->modified)
 	{
 		r_vsync->modified = false;
-		GL3_SetSwapInterval();
+		GL3_SetVsync();
 	}
 
 	/* clear screen if desired */
@@ -1794,7 +1896,7 @@ GetRefAPI(refimport_t imp)
 	re.Shutdown = GL3_Shutdown;
 	re.PrepareForWindow = GL3_PrepareForWindow;
 	re.InitContext = GL3_InitContext;
-	re.ShutdownWindow = GL3_ShutdownWindow;
+	re.ShutdownContext = GL3_ShutdownContext;
 	re.IsVSyncActive = GL3_IsVsyncActive;
 
 	re.BeginRegistration = GL3_BeginRegistration;

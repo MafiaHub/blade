@@ -29,8 +29,8 @@
  */
 
 #include "../header/client.h"
-#include "../../backends/generic/header/qal.h"
 #include "header/local.h"
+#include "header/qal.h"
 #include "header/vorbis.h"
 
 /* During registration it is possible to have more sounds
@@ -1059,10 +1059,6 @@ S_Init(void)
 	Cmd_AddCommand("stopsound", S_StopAllSounds);
 	Cmd_AddCommand("soundlist", S_SoundList);
 	Cmd_AddCommand("soundinfo", S_SoundInfo_f);
-#ifdef OGG
-	Cmd_AddCommand("ogg_init", OGG_Init);
-	Cmd_AddCommand("ogg_shutdown", OGG_Shutdown);
-#endif
 
 #if USE_OPENAL
 	cv = Cvar_Get("s_openal", "1", CVAR_ARCHIVE);
@@ -1088,9 +1084,7 @@ S_Init(void)
 	num_sfx = 0;
 	paintedtime = 0;
 
-#ifdef OGG
 	OGG_Init();
-#endif
 
 	Com_Printf("Sound sampling rate: %i\n", sound.speed);
 	S_StopAllSounds();
@@ -1114,10 +1108,7 @@ S_Shutdown(void)
 	}
 
 	S_StopAllSounds();
-
-#ifdef OGG
 	OGG_Shutdown();
-#endif
 
 	/* free all sounds */
 	for (i = 0, sfx = known_sfx; i < num_sfx; i++, sfx++)
@@ -1169,9 +1160,5 @@ S_Shutdown(void)
 	Cmd_RemoveCommand("soundinfo");
 	Cmd_RemoveCommand("play");
 	Cmd_RemoveCommand("stopsound");
-#ifdef OGG
-	Cmd_RemoveCommand("ogg_init");
-	Cmd_RemoveCommand("ogg_shutdown");
-#endif
 }
 

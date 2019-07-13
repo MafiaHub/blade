@@ -329,11 +329,12 @@ const char *
 Default_MenuKey(menuframework_s *m, int key)
 {
     const char *sound = NULL;
-    menucommon_s *item;
     int menu_key = Key_GetMenuKey(key);
 
     if (m)
     {
+        menucommon_s *item;
+
         if ((item = Menu_ItemAtCursor(m)) != 0)
         {
             if (item->type == MTYPE_FIELD)
@@ -456,8 +457,8 @@ M_DrawPic(int x, int y, char *pic)
 {
 	float scale = SCR_GetMenuScale();
 
-    Draw_PicScaled((x + ((viddef.width - 320) >> 1)) * scale,
-             (y + ((viddef.height - 240) >> 1)) * scale, pic, scale);
+	Draw_PicScaled((x + ((viddef.width - 320) >> 1)) * scale,
+		       (y + ((viddef.height - 240) >> 1)) * scale, pic, scale);
 }
 
 /*
@@ -548,7 +549,7 @@ static int m_popup_endtime;
 static void
 M_Popup(void)
 {
-    int x, y, width, lines;
+    int width, lines;
     int n;
     char *str;
 
@@ -587,6 +588,7 @@ M_Popup(void)
 
     if (width)
     {
+        int x, y;
         width += 2;
 
         x = (320 - (width + 2) * 8) / 2;
@@ -844,7 +846,8 @@ char *bindnames[][2] =
     {"invdrop", "drop item"},
     {"invprev", "prev item"},
     {"invnext", "next item"},
-    {"cmd help", "help computer"}
+    {"cmd help", "help computer"},
+    {"+joyaltselector", "enable alt joy keys"}
 };
 #define NUM_BINDNAMES (sizeof bindnames / sizeof bindnames[0])
 
@@ -859,12 +862,12 @@ M_UnbindCommand(char *command)
 {
     int j;
     int l;
-    char *b;
 
     l = strlen(command);
 
     for (j = 0; j < 256; j++)
     {
+        char *b;
         b = keybindings[j];
 
         if (!b)
@@ -885,7 +888,6 @@ M_FindKeysForCommand(char *command, int *twokeys)
     int count;
     int j;
     int l;
-    char *b;
 
     twokeys[0] = twokeys[1] = -1;
     l = strlen(command);
@@ -893,6 +895,7 @@ M_FindKeysForCommand(char *command, int *twokeys)
 
     for (j = 0; j < 256; j++)
     {
+        char *b;
         b = keybindings[j];
 
         if (!b)
@@ -1076,16 +1079,10 @@ static menulist_s s_options_invertmouse_box;
 static menulist_s s_options_lookstrafe_box;
 static menulist_s s_options_crosshair_box;
 static menuslider_s s_options_sfxvolume_slider;
-#ifdef SDL2
 static menuslider_s s_options_haptic_slider;
-#endif
-#if defined(OGG) || defined(CDA)
-static menulist_s s_options_cdshuffle_box;
-#endif
-#ifdef OGG
+static menulist_s s_options_oggshuffle_box;
 static menuslider_s s_options_oggvolume_slider;
-static menulist_s s_options_enableogg_box;
-#endif
+static menulist_s s_options_oggenable_box;
 static menulist_s s_options_quality_list;
 static menulist_s s_options_console_action;
 
@@ -1095,13 +1092,11 @@ CrosshairFunc(void *unused)
     Cvar_SetValue("crosshair", (float)s_options_crosshair_box.curvalue);
 }
 
-#ifdef SDL2
 static void
 HapticMagnitudeFunc(void *unused)
 {
     Cvar_SetValue("joy_haptic_magnitude", s_options_haptic_slider.curvalue / 10.0F);
 }
-#endif
 
 static void
 CustomizeControlsFunc(void *unused)
@@ -1147,45 +1142,17 @@ static void
 ControlsSetMenuItemValues(void)
 {
     s_options_sfxvolume_slider.curvalue = Cvar_VariableValue("s_volume") * 10;
-
-#if defined(OGG) || defined(CDA)
-    s_options_cdshuffle_box.curvalue = (Cvar_VariableValue("cd_shuffle") != 0);
-#endif
-
-#ifdef OGG
+    s_options_oggshuffle_box.curvalue = (Cvar_VariableValue("ogg_shuffle") != 0);
     s_options_oggvolume_slider.curvalue = Cvar_VariableValue("ogg_volume") * 10;
-    s_options_enableogg_box.curvalue = (Cvar_VariableValue("ogg_enable") != 0);
-
-    cvar_t *ogg;
-    ogg = Cvar_Get("ogg_sequence", "loop", CVAR_ARCHIVE);
-
-    if (!strcmp(ogg->string, "random"))
-    {
-        s_options_cdshuffle_box.curvalue = 1;
-    }
-    else
-    {
-        s_options_cdshuffle_box.curvalue = 0;
-    }
-#endif
-
+    s_options_oggenable_box.curvalue = (Cvar_VariableValue("ogg_enable") != 0);
     s_options_quality_list.curvalue = (Cvar_VariableValue("s_loadas8bit") == 0);
-
     s_options_sensitivity_slider.curvalue = sensitivity->value * 2;
-
     s_options_alwaysrun_box.curvalue = (cl_run->value != 0);
-
     s_options_invertmouse_box.curvalue = (m_pitch->value < 0);
-
     s_options_lookstrafe_box.curvalue = (lookstrafe->value != 0);
-
     s_options_freelook_box.curvalue = (freelook->value != 0);
-
     s_options_crosshair_box.curvalue = ClampCvar(0, 3, crosshair->value);
-
-#ifdef SDL2
     s_options_haptic_slider.curvalue = Cvar_VariableValue("joy_haptic_magnitude") * 10.0F;
-#endif
 }
 
 static void
@@ -1216,49 +1183,28 @@ UpdateVolumeFunc(void *unused)
     Cvar_SetValue("s_volume", s_options_sfxvolume_slider.curvalue / 10);
 }
 
-#if defined(OGG) || defined(CDA)
 static void
-CDShuffleFunc(void *unused)
+OGGShuffleFunc(void *unused)
 {
-    Cvar_SetValue("cd_shuffle", s_options_cdshuffle_box.curvalue);
+    Cvar_SetValue("ogg_shuffle", s_options_oggshuffle_box.curvalue);
 
-#ifdef OGG
-    cvar_t *ogg;
-    ogg = Cvar_Get("ogg_enable", "1", CVAR_ARCHIVE);
+    cvar_t *ogg_enable= Cvar_Get("ogg_enable", "1", CVAR_ARCHIVE);
+	int track = (int)strtol(cl.configstrings[CS_CDTRACK], (char **)NULL, 10);
 
-    if (s_options_cdshuffle_box.curvalue)
+    if (s_options_oggshuffle_box.curvalue)
     {
-        Cvar_Set("ogg_sequence", "random");
-
-        if (ogg->value)
-        {
-            OGG_ParseCmd("?");
-        }
+        Cvar_Set("ogg_shuffle", "1");
     }
     else
     {
-        Cvar_Set("ogg_sequence", "loop");
-
-        if (ogg->value)
-        {
-            if ((int)strtol(cl.configstrings[CS_CDTRACK], (char **)NULL, 10) < 10)
-            {
-                char tmp[3] = {'0', cl.configstrings[CS_CDTRACK][0], '\0'};
-                OGG_ParseCmd(tmp);
-            }
-            else
-            {
-                OGG_ParseCmd(cl.configstrings[CS_CDTRACK]);
-            }
-        }
+        Cvar_Set("ogg_shuffle", "0");
     }
 
-#endif
+	if (ogg_enable->value)
+	{
+		OGG_PlayTrack(track);
+	}
 }
-
-#endif
-
-#ifdef OGG
 
 static void
 UpdateOggVolumeFunc(void *unused)
@@ -1269,36 +1215,22 @@ UpdateOggVolumeFunc(void *unused)
 static void
 EnableOGGMusic(void *unused)
 {
-    Cvar_SetValue("ogg_enable", (float)s_options_enableogg_box.curvalue);
-#ifdef CDA
-    Cvar_SetValue("cd_nocd", 1);
-#endif
+    Cvar_SetValue("ogg_enable", (float)s_options_oggenable_box.curvalue);
 
-    if (s_options_enableogg_box.curvalue)
+    if (s_options_oggenable_box.curvalue)
     {
-#ifdef CDA
-        CDAudio_Stop();
-#endif
         OGG_Init();
+        OGG_InitTrackList();
         OGG_Stop();
 
-        if ((int)strtol(cl.configstrings[CS_CDTRACK], (char **)NULL, 10) < 10)
-        {
-            char tmp[3] = "0";
-            OGG_ParseCmd(strcat(tmp, cl.configstrings[CS_CDTRACK]));
-        }
-        else
-        {
-            OGG_ParseCmd(cl.configstrings[CS_CDTRACK]);
-        }
+        int track = (int)strtol(cl.configstrings[CS_CDTRACK], (char **)NULL, 10);
+        OGG_PlayTrack(track);
     }
     else
     {
         OGG_Shutdown();
     }
 }
-
-#endif
 
 extern void Key_ClearTyping(void);
 
@@ -1355,24 +1287,19 @@ UpdateSoundQualityFunc(void *unused)
 static void
 Options_MenuInit(void)
 {
-
-#ifdef OGG
     static const char *ogg_music_items[] =
     {
         "disabled",
         "enabled",
         0
     };
-#endif
 
-#if defined(OGG) || defined(CDA)
-    static const char *cd_shuffle[] =
+    static const char *ogg_shuffle[] =
     {
         "disabled",
         "enabled",
         0
     };
-#endif
 
     static const char *quality_items[] =
     {
@@ -1396,10 +1323,7 @@ Options_MenuInit(void)
     };
 
     float scale = SCR_GetMenuScale();
-
-#ifdef SDL2
     extern qboolean show_haptic;
-#endif
 
     /* configure controls menu and menu items */
     s_options_menu.x = viddef.width / 2;
@@ -1414,7 +1338,6 @@ Options_MenuInit(void)
     s_options_sfxvolume_slider.minvalue = 0;
     s_options_sfxvolume_slider.maxvalue = 10;
 
-#ifdef OGG
     s_options_oggvolume_slider.generic.type = MTYPE_SLIDER;
     s_options_oggvolume_slider.generic.x = 0;
     s_options_oggvolume_slider.generic.y = 10;
@@ -1423,22 +1346,19 @@ Options_MenuInit(void)
     s_options_oggvolume_slider.minvalue = 0;
     s_options_oggvolume_slider.maxvalue = 10;
 
-    s_options_enableogg_box.generic.type = MTYPE_SPINCONTROL;
-    s_options_enableogg_box.generic.x = 0;
-    s_options_enableogg_box.generic.y = 20;
-    s_options_enableogg_box.generic.name = "OGG music";
-    s_options_enableogg_box.generic.callback = EnableOGGMusic;
-    s_options_enableogg_box.itemnames = ogg_music_items;
-#endif
+    s_options_oggenable_box.generic.type = MTYPE_SPINCONTROL;
+    s_options_oggenable_box.generic.x = 0;
+    s_options_oggenable_box.generic.y = 20;
+    s_options_oggenable_box.generic.name = "OGG music";
+    s_options_oggenable_box.generic.callback = EnableOGGMusic;
+    s_options_oggenable_box.itemnames = ogg_music_items;
 
-#if defined(OGG) || defined(CDA)
-    s_options_cdshuffle_box.generic.type = MTYPE_SPINCONTROL;
-    s_options_cdshuffle_box.generic.x = 0;
-    s_options_cdshuffle_box.generic.y = 30;
-    s_options_cdshuffle_box.generic.name = "Shuffle";
-    s_options_cdshuffle_box.generic.callback = CDShuffleFunc;
-    s_options_cdshuffle_box.itemnames = cd_shuffle;
-#endif
+    s_options_oggshuffle_box.generic.type = MTYPE_SPINCONTROL;
+    s_options_oggshuffle_box.generic.x = 0;
+    s_options_oggshuffle_box.generic.y = 30;
+    s_options_oggshuffle_box.generic.name = "Shuffle";
+    s_options_oggshuffle_box.generic.callback = OGGShuffleFunc;
+    s_options_oggshuffle_box.itemnames = ogg_shuffle;
 
     s_options_quality_list.generic.type = MTYPE_SPINCONTROL;
     s_options_quality_list.generic.x = 0;
@@ -1490,7 +1410,6 @@ Options_MenuInit(void)
     s_options_crosshair_box.generic.callback = CrosshairFunc;
     s_options_crosshair_box.itemnames = crosshair_names;
 
-#ifdef SDL2
     s_options_haptic_slider.generic.type = MTYPE_SLIDER;
     s_options_haptic_slider.generic.x = 0;
     s_options_haptic_slider.generic.y = 120;
@@ -1498,7 +1417,6 @@ Options_MenuInit(void)
     s_options_haptic_slider.generic.callback = HapticMagnitudeFunc;
     s_options_haptic_slider.minvalue = 0;
     s_options_haptic_slider.maxvalue = 22;
-#endif
 
     s_options_customize_options_action.generic.type = MTYPE_ACTION;
     s_options_customize_options_action.generic.x = 0;
@@ -1522,13 +1440,9 @@ Options_MenuInit(void)
 
     Menu_AddItem(&s_options_menu, (void *)&s_options_sfxvolume_slider);
 
-#ifdef OGG
     Menu_AddItem(&s_options_menu, (void *)&s_options_oggvolume_slider);
-    Menu_AddItem(&s_options_menu, (void *)&s_options_enableogg_box);
-#endif
-#if defined(OGG) || defined(CDA)
-    Menu_AddItem(&s_options_menu, (void *)&s_options_cdshuffle_box);
-#endif
+    Menu_AddItem(&s_options_menu, (void *)&s_options_oggenable_box);
+    Menu_AddItem(&s_options_menu, (void *)&s_options_oggshuffle_box);
     Menu_AddItem(&s_options_menu, (void *)&s_options_quality_list);
     Menu_AddItem(&s_options_menu, (void *)&s_options_sensitivity_slider);
     Menu_AddItem(&s_options_menu, (void *)&s_options_alwaysrun_box);
@@ -1537,10 +1451,8 @@ Options_MenuInit(void)
     Menu_AddItem(&s_options_menu, (void *)&s_options_freelook_box);
     Menu_AddItem(&s_options_menu, (void *)&s_options_crosshair_box);
 
-#ifdef SDL2
     if (show_haptic)
         Menu_AddItem(&s_options_menu, (void *)&s_options_haptic_slider);
-#endif
 
     Menu_AddItem(&s_options_menu, (void *)&s_options_customize_options_action);
     Menu_AddItem(&s_options_menu, (void *)&s_options_defaults_action);
@@ -1589,9 +1501,10 @@ M_Menu_Video_f(void)
  * END GAME MENU
  */
 
+#define CREDITS_SIZE 256
 static int credits_start_time;
 static const char **credits;
-static char *creditsIndex[256];
+static char *creditsIndex[CREDITS_SIZE];
 static char *creditsBuffer;
 static const char *v4credits[] = {
     "+RUNBLADER BY V4 GAMES",
@@ -1714,7 +1627,6 @@ M_Credits_Key(int key)
 static void
 M_Menu_Credits_f(void)
 {
-    int n;
     int count;
     char *p;
 
@@ -1725,9 +1637,11 @@ M_Menu_Credits_f(void)
 
     if (count != -1)
     {
+        int n;
         p = creditsBuffer;
 
-        for (n = 0; n < 255; n++)
+        // CREDITS_SIZE - 1 - last pointer should be NULL
+        for (n = 0; n < CREDITS_SIZE - 1; n++)
         {
             creditsIndex[n] = p;
 
@@ -1755,11 +1669,14 @@ M_Menu_Credits_f(void)
 
             if (--count == 0)
             {
+                // no credits any more
+                // move one step futher for set NULL
+                n ++;
                 break;
             }
         }
 
-        creditsIndex[++n] = 0;
+        creditsIndex[n] = 0;
         credits = (const char **)creditsIndex;
     }
     else
@@ -1945,6 +1862,89 @@ M_Menu_Game_f(void)
 }
 
 /*
+ * CONFIRM DELETE MENU
+ */
+
+static void LoadGame_MenuInit(void);
+
+static menuframework_s s_confirmdeletesavegame_menu;
+static menuseparator_s s_deletesavegame_label;
+static menuaction_s s_confirmdeletesavegame_action;
+static menuaction_s s_canceldeletesavegame_action;
+
+void (*ParentInitFunc)(void);
+
+static void
+DeleteSaveGameCallback(void *self)
+{
+	char name[MAX_OSPATH];
+	menuaction_s *item = (menuaction_s *)self;
+
+	Com_sprintf(name, sizeof(name), "%s/save/save%d/", FS_Gamedir(), item->generic.localdata[0]);
+	Sys_RemoveDir(name);
+
+	ParentInitFunc();
+	M_PopMenu();
+}
+
+static void
+CancelDeleteSaveGameCallback(void *unused)
+{
+	M_PopMenu();
+}
+
+static const char *
+DeleteSaveGame_MenuKey(int key)
+{
+    return Default_MenuKey(&s_confirmdeletesavegame_menu, key);
+}
+
+static void
+DeleteSaveGame_MenuDraw(void)
+{
+    Menu_AdjustCursor(&s_confirmdeletesavegame_menu, 1);
+    Menu_Draw(&s_confirmdeletesavegame_menu);
+}
+
+static void
+ConfirmDeleteSaveGame_MenuInit(int i, void (*callback)(void))
+{
+	float scale = SCR_GetMenuScale();
+
+	ParentInitFunc = callback;
+
+	// 32 = strlen("Are you sure...")
+	s_confirmdeletesavegame_menu.x = viddef.width / 2 - (8 * 32 * scale / 2);
+	s_confirmdeletesavegame_menu.y = viddef.height / (2 * scale) - 58;
+	s_confirmdeletesavegame_menu.nitems = 0;
+
+	s_deletesavegame_label.generic.type = MTYPE_SEPARATOR;
+	s_deletesavegame_label.generic.name = "Are you sure you want to delete?";
+	s_deletesavegame_label.generic.x = 8 * scale * 32;
+	s_deletesavegame_label.generic.y = 0;
+	s_deletesavegame_label.generic.flags = QMF_LEFT_JUSTIFY;
+	Menu_AddItem(&s_confirmdeletesavegame_menu, &s_deletesavegame_label);
+
+	s_confirmdeletesavegame_action.generic.type = MTYPE_ACTION;
+	s_confirmdeletesavegame_action.generic.name = "yes";
+	s_confirmdeletesavegame_action.generic.x = scale * 32;
+	s_confirmdeletesavegame_action.generic.y = 20;
+	s_confirmdeletesavegame_action.generic.localdata[0] = i;
+	s_confirmdeletesavegame_action.generic.flags = QMF_LEFT_JUSTIFY;
+	s_confirmdeletesavegame_action.generic.callback = DeleteSaveGameCallback;
+	Menu_AddItem(&s_confirmdeletesavegame_menu, &s_confirmdeletesavegame_action);
+
+	s_canceldeletesavegame_action.generic.type = MTYPE_ACTION;
+	s_canceldeletesavegame_action.generic.name = "no";
+	s_canceldeletesavegame_action.generic.x = scale * 32;
+	s_canceldeletesavegame_action.generic.y = 30;
+	s_canceldeletesavegame_action.generic.flags = QMF_LEFT_JUSTIFY;
+	s_canceldeletesavegame_action.generic.callback = CancelDeleteSaveGameCallback;
+	Menu_AddItem(&s_confirmdeletesavegame_menu, &s_canceldeletesavegame_action);
+}
+
+
+/*
  * LOADGAME MENU
  */
 
@@ -1993,7 +1993,6 @@ static void
 LoadSave_AdjustPage(int dir)
 {
 	int i;
-	char *str;
 
 	m_loadsave_page += dir;
 
@@ -2010,6 +2009,7 @@ LoadSave_AdjustPage(int dir)
 
 	for (i = 0; i < MAX_SAVEPAGES; i++)
 	{
+		char *str;
 		str = va("%c%d%c",
 				i == m_loadsave_page ? '[' : ' ',
 				i + 1,
@@ -2082,6 +2082,7 @@ LoadGame_MenuKey(int key)
 {
     static menuframework_s *m = &s_loadgame_menu;
     int menu_key = Key_GetMenuKey(key);
+    menucommon_s *item;
 
     switch (menu_key)
     {
@@ -2110,6 +2111,20 @@ LoadGame_MenuKey(int key)
         LoadSave_AdjustPage(1);
         LoadGame_MenuInit();
         return menu_move_sound;
+
+    case K_BACKSPACE:
+    case K_DEL:
+    case K_KP_DEL:
+		if ((item = Menu_ItemAtCursor(m)) != NULL)
+		{
+			if (item->type == MTYPE_ACTION)
+			{
+				ConfirmDeleteSaveGame_MenuInit(item->localdata[0], LoadGame_MenuInit);
+				M_PushMenu(DeleteSaveGame_MenuDraw, DeleteSaveGame_MenuKey);
+			}
+		}
+
+		return menu_move_sound;
 
     default:
         s_savegame_menu.cursor = s_loadgame_menu.cursor;
@@ -2193,6 +2208,7 @@ SaveGame_MenuKey(int key)
 {
     static menuframework_s *m = &s_savegame_menu;
     int menu_key = Key_GetMenuKey(key);
+    menucommon_s *item;
 
     if (m_popup_string)
     {
@@ -2228,6 +2244,19 @@ SaveGame_MenuKey(int key)
         SaveGame_MenuInit();
         return menu_move_sound;
 
+    case K_BACKSPACE:
+    case K_DEL:
+    case K_KP_DEL:
+		if ((item = Menu_ItemAtCursor(m)) != NULL)
+		{
+			if (item->type == MTYPE_ACTION)
+			{
+				ConfirmDeleteSaveGame_MenuInit(item->localdata[0], SaveGame_MenuInit);
+				M_PushMenu(DeleteSaveGame_MenuDraw, DeleteSaveGame_MenuKey);
+			}
+		}
+
+		return menu_move_sound;
     default:
         s_loadgame_menu.cursor = s_savegame_menu.cursor;
         break;
@@ -2462,6 +2491,7 @@ static menuaction_s s_startserver_start_action;
 static menuaction_s s_startserver_dmoptions_action;
 static menufield_s s_timelimit_field;
 static menufield_s s_fraglimit_field;
+static menufield_s s_capturelimit_field;
 static menufield_s s_maxclients_field;
 static menufield_s s_hostname_field;
 static menulist_s s_startmap_list;
@@ -2500,6 +2530,7 @@ StartServerActionFunc(void *self)
     char startmap[1024];
     float timelimit;
     float fraglimit;
+    float capturelimit;
     float maxclients;
     char *spot;
 
@@ -2508,6 +2539,12 @@ StartServerActionFunc(void *self)
     maxclients = (float)strtod(s_maxclients_field.buffer, (char **)NULL);
     timelimit = (float)strtod(s_timelimit_field.buffer, (char **)NULL);
     fraglimit = (float)strtod(s_fraglimit_field.buffer, (char **)NULL);
+
+    if (M_IsGame("ctf"))
+    {
+        capturelimit = (float)strtod(s_capturelimit_field.buffer, (char **)NULL);
+        Cvar_SetValue("capturelimit", ClampCvar(0, capturelimit, capturelimit));
+    }
 
     Cvar_SetValue("maxclients", ClampCvar(0, maxclients, maxclients));
     Cvar_SetValue("timelimit", ClampCvar(0, timelimit, timelimit));
@@ -2607,13 +2644,13 @@ StartServer_MenuInit(void)
 
     char *buffer;
     char *s;
-    int length;
-    int i;
     float scale = SCR_GetMenuScale();
 
     /* initialize list of maps once, reuse it afterwards (=> it isn't freed) */
     if (mapnames == NULL)
     {
+        int i, length;
+
         /* load the list of map names */
         if ((length = FS_LoadFile("maps.lst", (void **)&buffer)) == -1)
         {
@@ -2625,7 +2662,7 @@ StartServer_MenuInit(void)
 
         while (i < length)
         {
-            if (s[i] == '\r')
+            if (s[i] == '\n')
             {
                 nummaps++;
             }
@@ -2675,35 +2712,55 @@ StartServer_MenuInit(void)
 
     s_startmap_list.generic.type = MTYPE_SPINCONTROL;
     s_startmap_list.generic.x = 0;
-    s_startmap_list.generic.y = 0;
+
+    if (M_IsGame("ctf"))
+        s_startmap_list.generic.y = -8;
+    else
+        s_startmap_list.generic.y = 0;
+
     s_startmap_list.generic.name = "initial map";
     s_startmap_list.itemnames = (const char **)mapnames;
 
-    s_rules_box.generic.type = MTYPE_SPINCONTROL;
-    s_rules_box.generic.x = 0;
-    s_rules_box.generic.y = 20;
-    s_rules_box.generic.name = "rules";
-
-    /* Ground Zero games only available with rogue game */
-    if (M_IsGame("rogue"))
+    if (M_IsGame("ctf"))
     {
-        s_rules_box.itemnames = dm_coop_names_rogue;
+        s_capturelimit_field.generic.type = MTYPE_FIELD;
+        s_capturelimit_field.generic.name = "capture limit";
+        s_capturelimit_field.generic.flags = QMF_NUMBERSONLY;
+        s_capturelimit_field.generic.x = 0;
+        s_capturelimit_field.generic.y = 18;
+        s_capturelimit_field.generic.statusbar = "0 = no limit";
+        s_capturelimit_field.length = 3;
+        s_capturelimit_field.visible_length = 3;
+        strcpy(s_capturelimit_field.buffer, Cvar_VariableString("capturelimit"));
     }
     else
     {
-        s_rules_box.itemnames = dm_coop_names;
-    }
+        s_rules_box.generic.type = MTYPE_SPINCONTROL;
+        s_rules_box.generic.x = 0;
+        s_rules_box.generic.y = 20;
+        s_rules_box.generic.name = "rules";
 
-    if (Cvar_VariableValue("coop"))
-    {
-        s_rules_box.curvalue = 1;
-    }
-    else
-    {
-        s_rules_box.curvalue = 0;
-    }
+        /* Ground Zero games only available with rogue game */
+        if (M_IsGame("rogue"))
+        {
+            s_rules_box.itemnames = dm_coop_names_rogue;
+        }
+        else
+        {
+            s_rules_box.itemnames = dm_coop_names;
+        }
 
-    s_rules_box.generic.callback = RulesChangeFunc;
+        if (Cvar_VariableValue("coop"))
+        {
+            s_rules_box.curvalue = 1;
+        }
+        else
+        {
+            s_rules_box.curvalue = 0;
+        }
+
+        s_rules_box.generic.callback = RulesChangeFunc;
+    }
 
     s_timelimit_field.generic.type = MTYPE_FIELD;
     s_timelimit_field.generic.name = "time limit";
@@ -2756,6 +2813,7 @@ StartServer_MenuInit(void)
     s_hostname_field.length = 12;
     s_hostname_field.visible_length = 12;
     strcpy(s_hostname_field.buffer, Cvar_VariableString("hostname"));
+    s_hostname_field.cursor = strlen(s_hostname_field.buffer);
 
     s_startserver_dmoptions_action.generic.type = MTYPE_ACTION;
     s_startserver_dmoptions_action.generic.name = " deathmatch flags";
@@ -2773,7 +2831,12 @@ StartServer_MenuInit(void)
     s_startserver_start_action.generic.callback = StartServerActionFunc;
 
     Menu_AddItem(&s_startserver_menu, &s_startmap_list);
-    Menu_AddItem(&s_startserver_menu, &s_rules_box);
+
+    if (M_IsGame("ctf"))
+        Menu_AddItem(&s_startserver_menu, &s_capturelimit_field);
+    else
+        Menu_AddItem(&s_startserver_menu, &s_rules_box);
+
     Menu_AddItem(&s_startserver_menu, &s_timelimit_field);
     Menu_AddItem(&s_startserver_menu, &s_fraglimit_field);
     Menu_AddItem(&s_startserver_menu, &s_maxclients_field);
@@ -2987,6 +3050,21 @@ DMFlagCallback(void *self)
             bit = DF_NO_SPHERES;
         }
     }
+    else if (M_IsGame("ctf"))
+    {
+        if (f == &s_no_mines_box)
+        {
+            bit = DF_NO_MINES;          /* Equivalent to DF_CTF_FORCEJOIN in CTF */
+        }
+        else if (f == &s_no_nukes_box)
+        {
+            bit = DF_NO_NUKES;          /* Equivalent to DF_CTF_NO_TECH   in CTF */
+        }
+        else if (f == &s_stack_double_box)
+        {
+            bit = DF_NO_STACK_DOUBLE;   /* Equivalent to DF_ARMOR_PROTECT in CTF */
+        }
+    }
 
     if (f)
     {
@@ -3097,12 +3175,15 @@ DMOptions_MenuInit(void)
     s_force_respawn_box.itemnames = yes_no_names;
     s_force_respawn_box.curvalue = (dmflags & DF_FORCE_RESPAWN) != 0;
 
-    s_teamplay_box.generic.type = MTYPE_SPINCONTROL;
-    s_teamplay_box.generic.x = 0;
-    s_teamplay_box.generic.y = y += 10;
-    s_teamplay_box.generic.name = "teamplay";
-    s_teamplay_box.generic.callback = DMFlagCallback;
-    s_teamplay_box.itemnames = teamplay_names;
+    if (!M_IsGame("ctf"))
+    {
+        s_teamplay_box.generic.type = MTYPE_SPINCONTROL;
+        s_teamplay_box.generic.x = 0;
+        s_teamplay_box.generic.y = y += 10;
+        s_teamplay_box.generic.name = "teamplay";
+        s_teamplay_box.generic.callback = DMFlagCallback;
+        s_teamplay_box.itemnames = teamplay_names;
+    }
 
     s_allow_exit_box.generic.type = MTYPE_SPINCONTROL;
     s_allow_exit_box.generic.x = 0;
@@ -3136,13 +3217,16 @@ DMOptions_MenuInit(void)
     s_quad_drop_box.itemnames = yes_no_names;
     s_quad_drop_box.curvalue = (dmflags & DF_QUAD_DROP) != 0;
 
-    s_friendlyfire_box.generic.type = MTYPE_SPINCONTROL;
-    s_friendlyfire_box.generic.x = 0;
-    s_friendlyfire_box.generic.y = y += 10;
-    s_friendlyfire_box.generic.name = "friendly fire";
-    s_friendlyfire_box.generic.callback = DMFlagCallback;
-    s_friendlyfire_box.itemnames = yes_no_names;
-    s_friendlyfire_box.curvalue = (dmflags & DF_NO_FRIENDLY_FIRE) == 0;
+    if (!M_IsGame("ctf"))
+    {
+        s_friendlyfire_box.generic.type = MTYPE_SPINCONTROL;
+        s_friendlyfire_box.generic.x = 0;
+        s_friendlyfire_box.generic.y = y += 10;
+        s_friendlyfire_box.generic.name = "friendly fire";
+        s_friendlyfire_box.generic.callback = DMFlagCallback;
+        s_friendlyfire_box.itemnames = yes_no_names;
+        s_friendlyfire_box.curvalue = (dmflags & DF_NO_FRIENDLY_FIRE) == 0;
+    }
 
     if (M_IsGame("rogue"))
     {
@@ -3178,6 +3262,32 @@ DMOptions_MenuInit(void)
         s_no_spheres_box.itemnames = yes_no_names;
         s_no_spheres_box.curvalue = (dmflags & DF_NO_SPHERES) != 0;
     }
+    else if (M_IsGame("ctf"))
+    {
+        s_no_mines_box.generic.type = MTYPE_SPINCONTROL;
+        s_no_mines_box.generic.x = 0;
+        s_no_mines_box.generic.y = y += 10;
+        s_no_mines_box.generic.name = "force join";
+        s_no_mines_box.generic.callback = DMFlagCallback;
+        s_no_mines_box.itemnames = yes_no_names;
+        s_no_mines_box.curvalue = (dmflags & DF_NO_MINES) != 0;
+
+        s_stack_double_box.generic.type = MTYPE_SPINCONTROL;
+        s_stack_double_box.generic.x = 0;
+        s_stack_double_box.generic.y = y += 10;
+        s_stack_double_box.generic.name = "armor protect";
+        s_stack_double_box.generic.callback = DMFlagCallback;
+        s_stack_double_box.itemnames = yes_no_names;
+        s_stack_double_box.curvalue = (dmflags & DF_NO_STACK_DOUBLE) != 0;
+
+        s_no_nukes_box.generic.type = MTYPE_SPINCONTROL;
+        s_no_nukes_box.generic.x = 0;
+        s_no_nukes_box.generic.y = y += 10;
+        s_no_nukes_box.generic.name = "techs off";
+        s_no_nukes_box.generic.callback = DMFlagCallback;
+        s_no_nukes_box.itemnames = yes_no_names;
+        s_no_nukes_box.curvalue = (dmflags & DF_NO_NUKES) != 0;
+    }
 
     Menu_AddItem(&s_dmoptions_menu, &s_falls_box);
     Menu_AddItem(&s_dmoptions_menu, &s_weapons_stay_box);
@@ -3188,19 +3298,30 @@ DMOptions_MenuInit(void)
     Menu_AddItem(&s_dmoptions_menu, &s_spawn_farthest_box);
     Menu_AddItem(&s_dmoptions_menu, &s_samelevel_box);
     Menu_AddItem(&s_dmoptions_menu, &s_force_respawn_box);
-    Menu_AddItem(&s_dmoptions_menu, &s_teamplay_box);
+
+    if (!M_IsGame("ctf"))
+        Menu_AddItem(&s_dmoptions_menu, &s_teamplay_box);
+
     Menu_AddItem(&s_dmoptions_menu, &s_allow_exit_box);
     Menu_AddItem(&s_dmoptions_menu, &s_infinite_ammo_box);
     Menu_AddItem(&s_dmoptions_menu, &s_fixed_fov_box);
     Menu_AddItem(&s_dmoptions_menu, &s_quad_drop_box);
-    Menu_AddItem(&s_dmoptions_menu, &s_friendlyfire_box);
 
-    if (M_IsGame("rogueg"))
+    if (!M_IsGame("ctf"))
+        Menu_AddItem(&s_dmoptions_menu, &s_friendlyfire_box);
+
+    if (M_IsGame("rogue"))
     {
         Menu_AddItem(&s_dmoptions_menu, &s_no_mines_box);
         Menu_AddItem(&s_dmoptions_menu, &s_no_nukes_box);
         Menu_AddItem(&s_dmoptions_menu, &s_stack_double_box);
         Menu_AddItem(&s_dmoptions_menu, &s_no_spheres_box);
+    }
+    else if (M_IsGame("ctf"))
+    {
+        Menu_AddItem(&s_dmoptions_menu, &s_no_mines_box);
+        Menu_AddItem(&s_dmoptions_menu, &s_stack_double_box);
+        Menu_AddItem(&s_dmoptions_menu, &s_no_nukes_box);
     }
 
     Menu_Center(&s_dmoptions_menu);
@@ -3237,6 +3358,11 @@ static menuframework_s s_downloadoptions_menu;
 
 static menuseparator_s s_download_title;
 static menulist_s s_allow_download_box;
+
+#ifdef USE_CURL
+static menulist_s s_allow_download_http_box;
+#endif
+
 static menulist_s s_allow_download_maps_box;
 static menulist_s s_allow_download_models_box;
 static menulist_s s_allow_download_players_box;
@@ -3251,6 +3377,12 @@ DownloadCallback(void *self)
     {
         Cvar_SetValue("allow_download", (float)f->curvalue);
     }
+#ifdef USE_CURL
+	else if (f == &s_allow_download_http_box)
+	{
+		Cvar_SetValue("cl_http_downloads", f->curvalue);
+	}
+#endif
     else if (f == &s_allow_download_maps_box)
     {
         Cvar_SetValue("allow_download_maps", (float)f->curvalue);
@@ -3295,9 +3427,21 @@ DownloadOptions_MenuInit(void)
     s_allow_download_box.itemnames = yes_no_names;
     s_allow_download_box.curvalue = (Cvar_VariableValue("allow_download") != 0);
 
+#ifdef USE_CURL
+	s_allow_download_http_box.generic.type = MTYPE_SPINCONTROL;
+	s_allow_download_http_box.generic.x	= 0;
+	s_allow_download_http_box.generic.y	= y += 20;
+	s_allow_download_http_box.generic.name	= "http downloading";
+	s_allow_download_http_box.generic.callback = DownloadCallback;
+	s_allow_download_http_box.itemnames = yes_no_names;
+	s_allow_download_http_box.curvalue = (Cvar_VariableValue("cl_http_downloads") != 0);
+#else
+	y += 10;
+#endif
+
     s_allow_download_maps_box.generic.type = MTYPE_SPINCONTROL;
     s_allow_download_maps_box.generic.x = 0;
-    s_allow_download_maps_box.generic.y = y += 20;
+    s_allow_download_maps_box.generic.y = y += 10;
     s_allow_download_maps_box.generic.name = "maps";
     s_allow_download_maps_box.generic.callback = DownloadCallback;
     s_allow_download_maps_box.itemnames = yes_no_names;
@@ -3333,6 +3477,11 @@ DownloadOptions_MenuInit(void)
 
     Menu_AddItem(&s_downloadoptions_menu, &s_download_title);
     Menu_AddItem(&s_downloadoptions_menu, &s_allow_download_box);
+
+#ifdef USE_CURL
+	Menu_AddItem(&s_downloadoptions_menu, &s_allow_download_http_box);
+#endif
+
     Menu_AddItem(&s_downloadoptions_menu, &s_allow_download_maps_box);
     Menu_AddItem(&s_downloadoptions_menu, &s_allow_download_players_box);
     Menu_AddItem(&s_downloadoptions_menu, &s_allow_download_models_box);
@@ -3572,7 +3721,6 @@ PlayerConfig_ScanDirectories(void)
 	for (i = 0; i < npms; i++)
 	{
 		int k, s;
-		char *a, *b, *c;
 		char **pcxnames;
 		char **skinnames;
 		fileHandle_t f;
@@ -3633,12 +3781,11 @@ PlayerConfig_ScanDirectories(void)
 		/* copy the valid skins */
 		for (s = 0, k = 0; k < npcxfiles - 1; k++)
 		{
-			char *a, *b, *c;
-
 			if (!strstr(pcxnames[k], "_i.pcx"))
 			{
 				if (IconOfSkinExists(pcxnames[k], pcxnames, npcxfiles - 1))
 				{
+					char *a, *b, *c;
 					a = strrchr(pcxnames[k], '/');
 					b = strrchr(pcxnames[k], '\\');
 
@@ -3669,23 +3816,25 @@ PlayerConfig_ScanDirectories(void)
 		s_pmi[s_numplayermodels].nskins = nskins;
 		s_pmi[s_numplayermodels].skindisplaynames = skinnames;
 
-		/* make short name for the model */
-		a = strrchr(dirnames[i], '/');
-		b = strrchr(dirnames[i], '\\');
-
-		if (a > b)
 		{
-			c = a;
+			char *a, *b, *c;
+			/* make short name for the model */
+			a = strrchr(dirnames[i], '/');
+			b = strrchr(dirnames[i], '\\');
+
+			if (a > b)
+			{
+				c = a;
+			}
+
+			else
+			{
+				c = b;
+			}
+
+			Q_strlcpy(s_pmi[s_numplayermodels].displayname, c + 1, sizeof(s_pmi[s_numplayermodels].displayname));
+			Q_strlcpy(s_pmi[s_numplayermodels].directory, c + 1, sizeof(s_pmi[s_numplayermodels].directory));
 		}
-
-		else
-		{
-			c = b;
-		}
-
-		Q_strlcpy(s_pmi[s_numplayermodels].displayname, c + 1, sizeof(s_pmi[s_numplayermodels].displayname));
-		Q_strlcpy(s_pmi[s_numplayermodels].directory, c + 1, sizeof(s_pmi[s_numplayermodels].directory));
-
 		FreeFileList(pcxnames, npcxfiles);
 
 		s_numplayermodels++;
@@ -3907,8 +4056,7 @@ static void
 PlayerConfig_MenuDraw(void)
 {
     refdef_t refdef;
-    char scratch[MAX_QPATH];
-	float scale = SCR_GetMenuScale();
+    float scale = SCR_GetMenuScale();
 
     memset(&refdef, 0, sizeof(refdef));
 
@@ -3924,6 +4072,7 @@ PlayerConfig_MenuDraw(void)
     {
         static int yaw;
         entity_t entity;
+        char scratch[MAX_QPATH];
 
         memset(&entity, 0, sizeof(entity));
 
@@ -3976,11 +4125,10 @@ PlayerConfig_MenuDraw(void)
 static const char *
 PlayerConfig_MenuKey(int key)
 {
-    int i;
-
     if (key == K_ESCAPE)
     {
         char scratch[1024];
+        int i;
 
         Cvar_Set("name", s_player_name_field.buffer);
 
@@ -4202,10 +4350,9 @@ M_Draw(void)
 void
 M_Keydown(int key)
 {
-    const char *s;
-
     if (m_keyfunc)
     {
+        const char *s;
         if ((s = m_keyfunc(key)) != 0)
         {
             S_StartLocalSound((char *)s);

@@ -1657,7 +1657,7 @@ SpawnItem(edict_t *ent, gitem_t *item)
 
 /* ====================================================================== */
 
-gitem_t itemlist[] = {
+static const gitem_t gameitemlist[] = {
 	{
 		NULL
 	}, /* leave index 0 alone */
@@ -1667,6 +1667,8 @@ gitem_t itemlist[] = {
 	/* end of list marker */
 	{NULL}
 };
+
+gitem_t itemlist[MAX_ITEMS];
 
 /*
  * QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16)
@@ -1765,7 +1767,9 @@ SP_item_health_mega(edict_t *self)
 void
 InitItems(void)
 {
-	game.num_items = sizeof(itemlist) / sizeof(itemlist[0]) - 1;
+	memset(itemlist, 0, sizeof(itemlist));
+	memcpy(itemlist, gameitemlist, sizeof(gameitemlist));
+	game.num_items = sizeof(gameitemlist) / sizeof(gameitemlist[0]) - 1;
 
 	for (int i = 0; i < game.num_items; i++)
 	{

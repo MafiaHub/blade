@@ -42,19 +42,19 @@ SV_WipeSavegame(char *savename)
 	Com_sprintf(name, sizeof(name), "%s/save/%s/server.ssv",
 				FS_Gamedir(), savename);
 
-	remove(name);
+	Sys_Remove(name);
 
 	Com_sprintf(name, sizeof(name), "%s/save/%s/game.ssv",
 				FS_Gamedir(), savename);
 
-	remove(name);
+	Sys_Remove(name);
 
 	Com_sprintf(name, sizeof(name), "%s/save/%s/*.sav", FS_Gamedir(), savename);
 	s = Sys_FindFirst(name, 0, 0);
 
 	while (s)
 	{
-		remove(s);
+		Sys_Remove(s);
 		s = Sys_FindNext(0, 0);
 	}
 
@@ -64,7 +64,7 @@ SV_WipeSavegame(char *savename)
 
 	while (s)
 	{
-		remove(s);
+		Sys_Remove(s);
 		s = Sys_FindNext(0, 0);
 	}
 
@@ -388,6 +388,25 @@ SV_ReadServerFile(void)
 	}
 
 	ge->ReadGame("game.ssv");
+
+	/* While loading a savegame the global edict arrays is free()ed
+	   and newly malloc()ed to reset all entity states. When the game
+	   puts the first client into the server it sends it's entity
+	   state to us, so as long as there's only one client (the game
+	   is running in single player mode) everything's okay. But when
+	   there're more clients (the game is running in coop mode) the
+	   entity states if all clients >1 are dangeling. hack around
+	   that by reconnecting them here. */
+	cvar_t *coop = Cvar_Get("coop", "0", CVAR_LATCH);
+
+	if (coop->value)
+	{
+		for (int i = 0; i < maxclients->value; i++)
+		{
+			edict_t *ent = EDICT_NUM(i + 1);
+			svs.clients[i].edict = ent;
+		}
+	}
 
 	Sys_SetWorkDir(workdir);
 }
