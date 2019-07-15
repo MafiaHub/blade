@@ -82,7 +82,7 @@ typedef unsigned char byte;
 
  // by default dlls don't export any functions, use this to
  // make a function visible (for GetGameAPI(), GetRefAPI() and similar)
- #define Q2_DLL_EXPORTED  __declspec(dllexport)
+ #define BDE_DLL_EXPORTED  __declspec(dllexport)
 
 #else // not Win32 (Linux, BSD, Mac, ..)
 
@@ -91,7 +91,7 @@ typedef unsigned char byte;
 
  // by default our .so/.dylibs don't export any functions, use this to
  // make a function visible (for GetGameAPI(), GetRefAPI() and similar)
- #define Q2_DLL_EXPORTED  __attribute__((__visibility__("default")))
+ #define BDE_DLL_EXPORTED  __attribute__((__visibility__("default")))
 #endif
 
 /* per-level limits */

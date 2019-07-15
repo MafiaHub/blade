@@ -1536,7 +1536,7 @@ static const char *v4credits[] = {
     "Denis Pauk",
     "Dave \"Zoid\" Kirsch",
     "",
-    "Blade Engine (C)2018 V4 Games.",
+    "Blade Engine (C) 2019 V4 Games.",
     "All Rights Reserved.",
     "Quake II(tm), the Id Software name,",
     "the \"Q II\"(tm) logo and id(tm)",

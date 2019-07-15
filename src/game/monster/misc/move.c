@@ -625,12 +625,12 @@ SV_CloseEnough(edict_t *ent, edict_t *goal, float dist)
 
 	for (i = 0; i < 3; i++)
 	{
-		if (goal->absmin[i] > ent->absmax[i] + dist)
+		if (goal->absmin[i] > ent->absmax[i] + dist + ent->stopping_dist)
 		{
 			return false;
 		}
 
-		if (goal->absmax[i] < ent->absmin[i] - dist)
+		if (goal->absmax[i] < ent->absmin[i] - dist - ent->stopping_dist)
 		{
 			return false;
 		}
@@ -643,6 +643,8 @@ void
 M_MoveToGoal(edict_t *ent, float dist)
 {
 	edict_t *goal;
+	// trace_t tr;
+	// vec3_t v;
 
 	if (!ent)
 	{
@@ -651,25 +653,68 @@ M_MoveToGoal(edict_t *ent, float dist)
 
 	goal = ent->goalentity;
 
-	if (!ent->groundentity && !(ent->flags & (FL_FLY | FL_SWIM)))
-	{
-		return;
-	}
+	// if (ent->linkaid)
+	// {
+	// 	goal = ent->linkaid;
+	// }
 
-	/* if the next step hits the enemy, return immediately */
-	if (ent->enemy && SV_CloseEnough(ent, ent->enemy, dist))
+	// tr = gi.trace(ent->s.origin, NULL, NULL, goal->s.origin, ent, CONTENTS_SOLID);
+
+	// if (ent->linkaid && (SV_CloseEnough(ent, ent->linkaid, dist) || tr.fraction != 1))
+	// {
+	// 	ent->linkaid = ent->linktrails[ent->trailnum];
+	// 	ent->trailnum++;
+
+	// 	if (ent->trailnum > ent->num_linktrails)
+	// 	{
+	// 		ent->linkaid = NULL;
+	// 	}	
+	// }
+
+
+	// if (tr.fraction != 1)
+	// {
+	// 	if (!ent->linkaid)
+	// 	{
+	// 		ent->linkaid = PickClosestNode(ent, ent->goalentity->s.origin);
+	// 		ent->linkaid = ent->linktrails[ent->trailnum];
+	// 		ent->trailnum++;
+	// 		/* VectorSubtract (goal->s.origin, ent->s.origin, v);
+	// 		ent->ideal_yaw = ent->s.angles[YAW] = vectoyaw(v); */
+	// 	}
+		
+	// 	if (ent->linkaid)
+	// 	{
+	// 		goal = ent->linkaid;
+	// 	}
+	// }
+
+	// if (ent->linkaid && !SV_StepDirection(ent, ent->ideal_yaw, dist))
+	// {	
+	// 	VectorCopy(ent->linkaid->s.origin, ent->s.origin);
+	// }
+
+	if ((ent->followentity || ent->enemy) && SV_CloseEnough(ent, goal, dist))
 	{
 		return;
 	}
 
 	/* bump around... */
-	if (((randk() & 3) == 1) || !SV_StepDirection(ent, ent->ideal_yaw, dist))
+	//if (/* ((randk() & 3) == 1) ||  */!SV_StepDirection(ent, ent->ideal_yaw, dist))
 	{
-		if (ent->inuse)
+		if (!SV_StepDirection(ent, ent->ideal_yaw, dist))
+		{
+			ent->last_bump_time = level.time + 1;
+			SV_NewChaseDir(ent, goal, dist);
+		}
+
+		if (ent->inuse && ent->last_bump_time <= level.time)
 		{
 			SV_NewChaseDir(ent, goal, dist);
 		}
 	}
+
+
 }
 
 qboolean

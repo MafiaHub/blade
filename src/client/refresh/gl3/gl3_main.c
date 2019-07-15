@@ -1387,6 +1387,11 @@ SetupGL(void)
 	gl3state.uni3DData.transModelMat4 = gl3_identityMat4;
 
 	gl3state.uni3DData.time = gl3_newrefdef.time;
+	gl3state.uni3DData.lightmap = gl_lightmap->value;
+	gl3state.uni3DData.fogDensity = gl3_fog_density->value;
+	gl3state.uni3DData.fogColorR = gl3_fog_r->value;
+	gl3state.uni3DData.fogColorG = gl3_fog_g->value;
+	gl3state.uni3DData.fogColorB = gl3_fog_b->value;
 
 	GL3_UpdateUBO3D();
 
@@ -1411,116 +1416,6 @@ extern int c_visible_lightmaps, c_visible_textures;
 static void
 GL3_RenderView(refdef_t *fd)
 {
-#if 0 // TODO: keep stereo stuff?
-	if ((gl_state.stereo_mode != STEREO_MODE_NONE) && gl_state.camera_separation) {
-
-		qboolean drawing_left_eye = gl_state.camera_separation < 0;
-		switch (gl_state.stereo_mode) {
-			case STEREO_MODE_ANAGLYPH:
-				{
-
-					// Work out the colour for each eye.
-					int anaglyph_colours[] = { 0x4, 0x3 }; // Left = red, right = cyan.
-
-					if (strlen(gl1_stereo_anaglyph_colors->string) == 2) {
-						int eye, colour, missing_bits;
-						// Decode the colour name from its character.
-						for (eye = 0; eye < 2; ++eye) {
-							colour = 0;
-							switch (toupper(gl1_stereo_anaglyph_colors->string[eye])) {
-								case 'B': ++colour; // 001 Blue
-								case 'G': ++colour; // 010 Green
-								case 'C': ++colour; // 011 Cyan
-								case 'R': ++colour; // 100 Red
-								case 'M': ++colour; // 101 Magenta
-								case 'Y': ++colour; // 110 Yellow
-									anaglyph_colours[eye] = colour;
-									break;
-							}
-						}
-						// Fill in any missing bits.
-						missing_bits = ~(anaglyph_colours[0] | anaglyph_colours[1]) & 0x3;
-						for (eye = 0; eye < 2; ++eye) {
-							anaglyph_colours[eye] |= missing_bits;
-						}
-					}
-
-					// Set the current colour.
-					glColorMask(
-						!!(anaglyph_colours[drawing_left_eye] & 0x4),
-						!!(anaglyph_colours[drawing_left_eye] & 0x2),
-						!!(anaglyph_colours[drawing_left_eye] & 0x1),
-						GL_TRUE
-					);
-				}
-				break;
-			case STEREO_MODE_ROW_INTERLEAVED:
-			case STEREO_MODE_COLUMN_INTERLEAVED:
-			case STEREO_MODE_PIXEL_INTERLEAVED:
-				{
-					qboolean flip_eyes = true;
-					int client_x, client_y;
-
-					//GLimp_GetClientAreaOffset(&client_x, &client_y);
-					client_x = 0;
-					client_y = 0;
-
-					GL3_SetGL2D();
-
-					glEnable(GL_STENCIL_TEST);
-					glStencilMask(GL_TRUE);
-					glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-					glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP);
-					glStencilFunc(GL_NEVER, 0, 1);
-
-					glBegin(GL_QUADS);
-					{
-						glVertex2i(0, 0);
-						glVertex2i(vid.width, 0);
-						glVertex2i(vid.width, vid.height);
-						glVertex2i(0, vid.height);
-					}
-					glEnd();
-
-					glStencilOp(GL_INVERT, GL_KEEP, GL_KEEP);
-					glStencilFunc(GL_NEVER, 1, 1);
-
-					glBegin(GL_LINES);
-					{
-						if (gl_state.stereo_mode == STEREO_MODE_ROW_INTERLEAVED || gl_state.stereo_mode == STEREO_MODE_PIXEL_INTERLEAVED) {
-							int y;
-							for (y = 0; y <= vid.height; y += 2) {
-								glVertex2f(0, y - 0.5f);
-								glVertex2f(vid.width, y - 0.5f);
-							}
-							flip_eyes ^= (client_y & 1);
-						}
-
-						if (gl_state.stereo_mode == STEREO_MODE_COLUMN_INTERLEAVED || gl_state.stereo_mode == STEREO_MODE_PIXEL_INTERLEAVED) {
-							int x;
-							for (x = 0; x <= vid.width; x += 2) {
-								glVertex2f(x - 0.5f, 0);
-								glVertex2f(x - 0.5f, vid.height);
-							}
-							flip_eyes ^= (client_x & 1);
-						}
-					}
-					glEnd();
-
-					glStencilMask(GL_FALSE);
-					glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
-					glStencilFunc(GL_EQUAL, drawing_left_eye ^ flip_eyes, 1);
-					glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-				}
-				break;
-			default:
-				break;
-		}
-	}
-#endif // 0 (stereo stuff)
-
 	if (r_norefresh->value)
 	{
 		return;
@@ -1552,31 +1447,6 @@ GL3_RenderView(refdef_t *fd)
 
 	SetupGL();
 
-	if (gl3_fog_density->value != gl3state.uni3DData.fogDensity)
-	{
-		gl3state.uni3DData.fogDensity = gl3_fog_density->value;
-		GL3_UpdateUBO3D();
-	}
-
-	if (gl3_fog_r->value != gl3state.uni3DData.fogColorR)
-	{
-		gl3state.uni3DData.fogColorR = gl3_fog_r->value;
-		GL3_UpdateUBO3D();
-	}
-
-	if (gl3_fog_g->value != gl3state.uni3DData.fogColorG)
-	{
-		gl3state.uni3DData.fogColorG = gl3_fog_g->value;
-		GL3_UpdateUBO3D();
-	}
-
-	if (gl3_fog_b->value != gl3state.uni3DData.fogColorB)
-	{
-		gl3state.uni3DData.fogColorB = gl3_fog_b->value;
-		GL3_UpdateUBO3D();
-	}
-
-
 	GL3_MarkLeaves(); /* done here so we know if we're in water */
 
 	GL3_DrawWorld();
@@ -1600,44 +1470,7 @@ GL3_RenderView(refdef_t *fd)
 				c_brush_polys, c_alias_polys, c_visible_textures,
 				c_visible_lightmaps);
 	}
-
-#if 0 // TODO: stereo stuff
-	switch (gl_state.stereo_mode) {
-		case STEREO_MODE_NONE:
-			break;
-		case STEREO_MODE_ANAGLYPH:
-			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-			break;
-		case STEREO_MODE_ROW_INTERLEAVED:
-		case STEREO_MODE_COLUMN_INTERLEAVED:
-		case STEREO_MODE_PIXEL_INTERLEAVED:
-			glDisable(GL_STENCIL_TEST);
-			break;
-		default:
-			break;
-	}
-#endif // 0
 }
-
-#if 0 // TODO: stereo
-enum opengl_special_buffer_modes
-GL3_GetSpecialBufferModeForStereoMode(enum stereo_modes stereo_mode) {
-	switch (stereo_mode) {
-		case STEREO_MODE_NONE:
-		case STEREO_SPLIT_HORIZONTAL:
-		case STEREO_SPLIT_VERTICAL:
-		case STEREO_MODE_ANAGLYPH:
-			return OPENGL_SPECIAL_BUFFER_MODE_NONE;
-		case STEREO_MODE_OPENGL:
-			return OPENGL_SPECIAL_BUFFER_MODE_STEREO;
-		case STEREO_MODE_ROW_INTERLEAVED:
-		case STEREO_MODE_COLUMN_INTERLEAVED:
-		case STEREO_MODE_PIXEL_INTERLEAVED:
-			return OPENGL_SPECIAL_BUFFER_MODE_STENCIL;
-	}
-	return OPENGL_SPECIAL_BUFFER_MODE_NONE;
-}
-#endif // 0
 
 static void
 GL3_SetLightLevel(void)
@@ -1700,12 +1533,6 @@ GL3_Clear(void)
 {
 	// Check whether the stencil buffer needs clearing, and do so if need be.
 	GLbitfield stencilFlags = 0;
-#if 0 // TODO: stereo stuff
-	if (gl3state.stereo_mode >= STEREO_MODE_ROW_INTERLEAVED && gl_state.stereo_mode <= STEREO_MODE_PIXEL_INTERLEAVED) {
-		glClearStencil(0);
-		stencilFlags |= GL_STENCIL_BUFFER_BIT;
-	}
-#endif // 0
 
 	glClearColor(gl3_fog_r->value, gl3_fog_g->value, gl3_fog_b->value, 1.0);
 	glClearDepth(1);
@@ -1753,22 +1580,6 @@ GL3_BeginFrame(float camera_separation)
 	{
 		vid_fullscreen->modified = true;
 	}
-
-#if 0 // TODO: stereo stuff
-	gl_state.camera_separation = camera_separation;
-	// force a vid_restart if gl1_stereo has been modified.
-	if ( gl_state.stereo_mode != gl1_stereo->value ) {
-		// If we've gone from one mode to another with the same special buffer requirements there's no need to restart.
-		if ( GL_GetSpecialBufferModeForStereoMode( gl_state.stereo_mode ) == GL_GetSpecialBufferModeForStereoMode( gl1_stereo->value )  ) {
-			gl_state.stereo_mode = gl1_stereo->value;
-		}
-		else
-		{
-			R_Printf(PRINT_ALL, "stereo supermode changed, restarting video!\n");
-			vid_fullscreen->modified = true;
-		}
-	}
-#endif // 0
 
 	if (vid_gamma->modified || gl3_intensity->modified || gl3_intensity_2D->modified)
 	{
@@ -1819,8 +1630,6 @@ GL3_BeginFrame(float camera_separation)
 	{
 		gl_drawbuffer->modified = false;
 
-		// TODO: stereo stuff
-		//if ((gl3state.camera_separation == 0) || gl3state.stereo_mode != STEREO_MODE_OPENGL)
 		{
 			if (Q_stricmp(gl_drawbuffer->string, "GL_FRONT") == 0)
 			{
@@ -1883,7 +1692,7 @@ GL3_SetPalette(const unsigned char *palette)
 	glClearColor(1, 0, 0.5, 0.5);
 }
 
-Q2_DLL_EXPORTED refexport_t
+BDE_DLL_EXPORTED refexport_t
 GetRefAPI(refimport_t imp)
 {
 	refexport_t re = {0};

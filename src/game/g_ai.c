@@ -404,7 +404,14 @@ HuntTarget(edict_t *self)
 		return;
 	}
 
-	self->goalentity = self->enemy;
+	if (self->enemy)
+	{
+		self->goalentity = self->enemy;
+	}
+	else if (self->followentity)
+	{
+		self->goalentity = self->followentity;
+	}
 
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 	{
@@ -423,7 +430,7 @@ HuntTarget(edict_t *self)
 	self->ideal_yaw = vectoyaw(vec);
 
 	/* wait a while before first attack */
-	if (!(self->monsterinfo.aiflags & AI_STAND_GROUND))
+	if (self->enemy && !(self->monsterinfo.aiflags & AI_STAND_GROUND))
 	{
 		AttackFinished(self, 1);
 	}
@@ -1123,6 +1130,7 @@ ai_run(edict_t *self, float dist)
 	vec3_t v;
 	edict_t *tempgoal;
 	edict_t *save;
+	edict_t *target;
 	qboolean new;
 	edict_t *marker;
 	float d1, d2;
@@ -1131,7 +1139,25 @@ ai_run(edict_t *self, float dist)
 	float left, center, right;
 	vec3_t left_target, right_target;
 
-	if (!self || !self->enemy || !self->enemy->inuse)
+	if (!self)
+	{
+		return;
+	}
+
+	if (self->enemy)
+	{
+		target = self->enemy;
+
+		if (!target->inuse)
+		{
+			return;
+		}
+	}
+	else if (self->followentity)
+	{
+		target = self->followentity;
+	}
+	else
 	{
 		return;
 	}
@@ -1174,11 +1200,11 @@ ai_run(edict_t *self, float dist)
 		return;
 	}
 
-	if (enemy_vis)
+	if (enemy_vis || (self->followentity && visible(self, self->followentity)))
 	{
 		M_MoveToGoal(self, dist);
 		self->monsterinfo.aiflags &= ~AI_LOST_SIGHT;
-		VectorCopy(self->enemy->s.origin, self->monsterinfo.last_sighting);
+		VectorCopy(target->s.origin, self->monsterinfo.last_sighting);
 		self->monsterinfo.trail_time = level.time;
 		return;
 	}

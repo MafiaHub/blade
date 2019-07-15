@@ -474,7 +474,7 @@ RenderLightmappedPoly(msurface_t *surf)
 	GL3_Bind(bright_image->texnum,1);
 	GL3_BindLightmap(surf->lightmaptexturenum);
 
-	gl3state.uni3DData.lightmap = ri.Cvar_Get("gl_lightmap", "0", 0)->value;
+	gl3state.uni3DData.lightmap = gl_lightmap->value;
 
 	if (surf->texinfo->flags & SURF_FLOWING)
 	{

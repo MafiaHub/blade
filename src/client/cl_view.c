@@ -373,18 +373,10 @@ CL_PrepRefresh(void)
 	/* start the cd track */
 	if (Cvar_VariableValue("cd_shuffle"))
 	{
- #ifdef CDA
-		CDAudio_RandomPlay();
- #endif
+		// not supported anymore
 	}
 	else
 	{
- #ifdef CDA
-		CDAudio_Play((int)strtol(cl.configstrings[CS_CDTRACK], (char **)NULL, 10), true);
- #endif
-
- #ifdef OGG
-
 		/* OGG/Vorbis */
 		if ((int)strtol(cl.configstrings[CS_CDTRACK], (char **)NULL, 10) < 10)
 		{
@@ -395,8 +387,6 @@ CL_PrepRefresh(void)
 		{
 			OGG_ParseCmd(cl.configstrings[CS_CDTRACK]);
 		}
-
- #endif
 	}
 
 #endif

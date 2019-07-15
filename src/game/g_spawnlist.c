@@ -68,6 +68,9 @@
 {"info_notnull", SP_info_notnull},
 {"path_corner", SP_path_corner},
 {"point_combat", SP_point_combat},
+{"ai_node", SP_ai_node},
+
+{"actor_bartender", SP_actor_bartender},
 
 {"misc_actor", SP_misc_actor},
 {"misc_explobox", SP_misc_explobox},

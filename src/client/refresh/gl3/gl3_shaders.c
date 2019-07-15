@@ -307,8 +307,9 @@ static const char* fragmentCommon3D = MULTILINE_STRING(#version 150\n
 			float intensity;
 			float intensity2D; // for HUD, menus etc
 
-			vec4 color; // really?
+			float _padding;
 
+			vec4 color; // really?
 		};
 
 		struct DynLight { // gl3UniDynLight in C
@@ -500,7 +501,7 @@ static const char* fragmentSrc3Dlm = MULTILINE_STRING(
 		{
 			vec4 texel = vec4(1.0);
 			
-			if (lightmap == 0)
+			if (lightmap <= 0.0001)
 			{
 				texel = texture(tex, passTexCoord);
 			}
@@ -1111,6 +1112,7 @@ static void initUBOs(void)
 	gl3state.uni3DData.alpha = 1.0f;
 	// gl3_overbrightbits 0 means "no scaling" which is equivalent to multiplying with 1
 	gl3state.uni3DData.overbrightbits = (gl3_overbrightbits->value <= 0.0f) ? 1.0f : gl3_overbrightbits->value;
+	gl3state.uni3DData.lightmap = gl_lightmap->value;
 	gl3state.uni3DData.particleFadeFactor = gl3_particle_fade_factor->value;
 
 	glGenBuffers(1, &gl3state.uni3DUBO);

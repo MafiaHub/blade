@@ -24,6 +24,10 @@
 # User configurable options
 # -------------------------
 
+# Enables HTTP support through cURL. Used for
+# HTTP download.
+WITH_CURL:=yes
+
 # Enables the optional OpenAL sound system.
 # To use it your system needs libopenal.so.1
 # or openal32.dll (we recommend openal-soft)
@@ -308,6 +312,7 @@ config:
 	@echo "Build configuration"
 	@echo "============================"
 	@echo "WITH_OPENAL = $(WITH_OPENAL)"
+	@echo "WITH_CURL = $(WITH_CURL)"
 	@echo "WITH_SYSTEMWIDE = $(WITH_SYSTEMWIDE)"
 	@echo "WITH_SYSTEMDIR = $(WITH_SYSTEMDIR)"
 	@echo "============================"
@@ -353,6 +358,10 @@ build/client/%.o: %.c
 	${Q}mkdir -p $(@D)
 	${Q}$(CC) -c $(CFLAGS) $(SDLCFLAGS) $(ZIPCFLAGS) $(INCLUDE) -o $@ $<
 
+ifeq ($(WITH_CURL),yes)
+release/blade.exe : CFLAGS += -DUSE_CURL
+endif
+
 ifeq ($(WITH_OPENAL),yes)
 release/blade.exe : CFLAGS += -DUSE_OPENAL -DDEFAULT_OPENAL_DRIVER='"openal32.dll"'
 endif
@@ -396,6 +405,10 @@ else
 release/quake2 : CFLAGS += -DUSE_OPENAL -DDEFAULT_OPENAL_DRIVER='"libopenal.so.1"'
 endif
 endif # WITH_OPENAL
+
+ifeq ($(WITH_CURL),yes)
+release/quake2 : CFLAGS += -DUSE_CURL
+endif
 
 ifneq ($(BDE_OSTYPE), Darwin)
 release/ref_gl1.so : LDFLAGS += -lGL
@@ -511,6 +524,7 @@ build/baseb/%.o: %.c
 	${Q}$(CC) -c $(CFLAGS) $(INCLUDE) -o $@ $<
 
 release/baseb/game.dll : LDFLAGS += -shared
+
 else ifeq ($(BDE_OSTYPE), Darwin)
 game:
 	@echo "===> Building baseb/game.dylib"
@@ -546,7 +560,7 @@ GAME_OBJS_ = \
 	src/common/shared/flash.o \
 	src/common/shared/rand.o \
 	src/common/shared/shared.o \
-	src/game/g_actor.o \
+	src/game/g_nav.o \
 	src/game/g_ai.o \
 	src/game/g_chase.o \
 	src/game/g_cmds.o \
@@ -563,6 +577,8 @@ GAME_OBJS_ = \
 	src/game/g_trigger.o \
 	src/game/g_utils.o \
 	src/game/g_weapon.o \
+	src/game/monster/actor/bartender.o \
+	src/game/monster/misc/actor.o \
 	src/game/monster/misc/move.o \
 	src/game/g_quest.o \
 	src/game/player/client.o \
@@ -600,6 +616,8 @@ CLIENT_OBJS_ := \
 	src/client/menu/menu.o \
 	src/client/menu/qmenu.o \
 	src/client/menu/videomenu.o \
+	src/client/curl/qcurl.o \
+	src/client/curl/download.o \
 	src/client/sound/sdl.o \
 	src/client/sound/ogg.o \
 	src/client/sound/openal.o \
@@ -776,11 +794,11 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/blade.exe : $(CLIENT_OBJS) icon
 	@echo "===> LD $@"
 	${Q}$(CC) build/icon/icon.res $(CLIENT_OBJS) $(LDFLAGS) $(SDLLDFLAGS) -o $@
-	$(Q)strip $@
+	# $(Q)strip $@
 # the wrappper, quick'n'dirty
 release/quake2.exe : src/win-wrapper/wrapper.c icon
 	$(Q)$(CC) -Wall -mwindows build/icon/icon.res src/win-wrapper/wrapper.c -o $@
-	$(Q)strip $@
+	# $(Q)strip $@
 else
 release/quake2 : $(CLIENT_OBJS)
 	@echo "===> LD $@"
@@ -792,7 +810,7 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/bded.exe : $(SERVER_OBJS) icon
 	@echo "===> LD $@.exe"
 	${Q}$(CC) build/icon/icon.res $(SERVER_OBJS) $(LDFLAGS) $(SDLLDFLAGS) -o $@
-	$(Q)strip $@
+	# $(Q)strip $@
 else
 release/bded : $(SERVER_OBJS)
 	@echo "===> LD $@"
@@ -804,7 +822,7 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/ref_gl3.dll : $(REFGL3_OBJS)
 	@echo "===> LD $@"
 	${Q}$(CC) $(REFGL3_OBJS) $(LDFLAGS) $(DLL_SDLLDFLAGS) -o $@
-	$(Q)strip $@
+	# $(Q)strip $@
 else ifeq ($(BDE_OSTYPE), Darwin)
 release/ref_gl3.dylib : $(REFGL3_OBJS)
 	@echo "===> LD $@"
@@ -820,7 +838,7 @@ ifeq ($(BDE_OSTYPE), Windows)
 release/baseb/game.dll : $(GAME_OBJS)
 	@echo "===> LD $@"
 	${Q}$(CC) $(GAME_OBJS) $(LDFLAGS) -o $@
-	$(Q)strip $@
+	# $(Q)strip $@
 else ifeq ($(BDE_OSTYPE), Darwin)
 release/baseb/game.dylib : $(GAME_OBJS)
 	@echo "===> LD $@"

@@ -965,10 +965,6 @@ void GL3_DrawAliasShadows(void)
 	{
 		gl3_shadowinfo_t* si = &shadowModels.p[i]; // XXX da_getptr(shadowModels, i);
 		entity_t* e = si->entity;
-
-		/* don't rotate shadows on ungodly axes */
-		//glTranslatef(e->origin[0], e->origin[1], e->origin[2]);
-		//glRotatef(e->angles[1], 0, 0, 1);
 		hmm_mat4 rotTransMat = HMM_Rotate(e->angles[1], HMM_Vec3(0, 0, 1));
 		VectorCopy(e->origin, rotTransMat.Elements[3]);
 		gl3state.uni3DData.transModelMat4 = HMM_MultiplyMat4(oldMat, rotTransMat);

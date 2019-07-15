@@ -80,6 +80,10 @@
 
 #define MAX_MIRRORED_EDICTS 16
 
+/* navigation system */
+#define MAX_NAV_LINKS 512
+#define MAX_LINK_TRAIL 512
+
 /* memory tags to allow dynamic memory to be cleaned up */
 #define TAG_GAME 765 /* clear when unloading the dll */
 #define TAG_LEVEL 766 /* clear when loading a new level */
@@ -648,6 +652,7 @@ void Touch_Item(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 
 /* g_utils.c */
 qboolean KillBox(edict_t *ent);
+trace_t RaycastFromClient(edict_t *ent, float dist, int flags);
 void G_ProjectSource(vec3_t point, vec3_t distance, vec3_t forward,
 		vec3_t right, vec3_t result);
 edict_t *G_Find(edict_t *from, int fieldofs, char *match);
@@ -732,6 +737,13 @@ void ThrowClientHead(edict_t *self, int damage);
 void ThrowGib(edict_t *self, char *gibname, int damage, int type);
 void BecomeExplosion1(edict_t *self);
 
+/* g_nav.c */
+edict_t *FindClosestNode(vec3_t target);
+void ClearNavlinkStates();
+int IsNodeALinkOf(edict_t *parent, edict_t *node);
+edict_t *PickClosestNode(edict_t* ent, vec3_t target);
+void GenerateNavigationGrid();
+
 /* g_ai.c */
 void AI_SetSightClient(void);
 
@@ -744,6 +756,7 @@ void ai_charge(edict_t *self, float dist);
 int range(edict_t *self, edict_t *other);
 
 void FoundTarget(edict_t *self);
+void HuntTarget(edict_t *self);
 qboolean infront(edict_t *self, edict_t *other);
 qboolean visible(edict_t *self, edict_t *other);
 qboolean FacingIdeal(edict_t *self);
@@ -1071,9 +1084,21 @@ struct edict_s
 				      use for lowgrav artifact, flares */
 
 	edict_t *goalentity;
+	edict_t *followentity;
 	edict_t *movetarget;
+	edict_t *oldmovetarget;
+	edict_t *navlinks[MAX_NAV_LINKS];
+	edict_t *linktrails[MAX_LINK_TRAIL];
+	edict_t *shortestpath[MAX_LINK_TRAIL];
+	edict_t *linkaid;
+	int was_swept;
+	int num_linktrails;
+	int num_shortesttrails;
+	int trailnum;
+	int num_navlinks;
 	float yaw_speed;
 	float ideal_yaw;
+	float stopping_dist;
 
 	float nextthink;
 	void (*prethink)(edict_t *ent);
@@ -1091,6 +1116,7 @@ struct edict_s
 	float damage_debounce_time;
 	float fly_sound_debounce_time;
 	float last_move_time;
+	float last_bump_time;
 	float last_reset_time;
 
 	int health;

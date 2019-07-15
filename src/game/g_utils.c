@@ -688,3 +688,18 @@ KillBox(edict_t *ent)
 
 	return true; /* all clear */
 }
+
+trace_t
+RaycastFromClient(edict_t *ent, float dist, int flags)
+{
+	vec3_t start, end, offset;
+    vec3_t fwd, right, up;
+	
+    AngleVectors(ent->client->v_angle, fwd, right, up);
+
+    VectorSet(offset, 0, 0, ent->viewheight - 7);
+    G_ProjectSource(ent->s.origin, offset, fwd, right, start);
+    VectorMA(start, 64, fwd, end);
+
+    return gi.trace(start, NULL, NULL, end, ent, CONTENTS_SOLID | CONTENTS_MONSTER | CONTENTS_DEADMONSTER);
+}

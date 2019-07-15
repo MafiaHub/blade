@@ -452,7 +452,7 @@
     3,
     50,
     NULL,
-    IT_AMMO,
+    IT_AMMO | IT_STAY_COOP,
     0,
     NULL,
     AMMO_BULLETS,

@@ -574,12 +574,21 @@ Cmd_Noclip_f(edict_t *ent)
 void
 Cmd_UseWorld_f(edict_t *ent)
 {
-	if (!ent)
+	if (!ent || !ent->client)
 	{
 		return;
 	}
 
-	ent->usehands = 1;
+	trace_t tr;
+	tr = RaycastFromClient(ent, 64, CONTENTS_SOLID | CONTENTS_MONSTER | CONTENTS_DEADMONSTER);
+
+	if (tr.fraction != 1)
+	{
+		if (tr.ent && tr.ent->use)
+		{
+			tr.ent->use(tr.ent, ent, ent);
+		}
+    }
 }
 
 void

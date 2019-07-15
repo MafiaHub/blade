@@ -101,6 +101,9 @@ void SP_info_null(edict_t *self);
 void SP_info_notnull(edict_t *self);
 void SP_path_corner(edict_t *self);
 void SP_point_combat(edict_t *self);
+void SP_ai_node(edict_t *self);
+
+void SP_actor_bartender(edict_t *self);
 
 void SP_misc_actor(edict_t *self);
 void SP_misc_explobox(edict_t *self);
@@ -638,6 +641,7 @@ SpawnEntities(const char *mapname, char *entities, const char *spawnpoint)
 	G_FindTeams();
 
 	PlayerTrail_Init();
+	GenerateNavigationGrid();
 }
 
 /* =================================================================== */
