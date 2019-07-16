@@ -240,10 +240,15 @@ ChangeWeapon(edict_t *ent)
 	ent->client->newweapon = NULL;
 	ent->client->machinegun_shots = 0;
 
+	if (ent->client->pers.weapon == WEAPON_HOLSTERED)
+	{
+		ent->client->pers.weapon = NULL;
+	}
+
 	/* set visible model */
 	if (ent->s.modelindex == 255)
 	{
-		if (ent->client->pers.weapon)
+		if (ent->client->pers.weapon && ent->client->pers.weapon)
 		{
 			i = ((ent->client->pers.weapon->weapmodel & 0xff) << 8);
 		}
@@ -299,7 +304,16 @@ HolsterWeapon(edict_t *ent)
 		return;
 	}
 
-	ent->client->newweapon = WEAPON_HOLSTERED;
+	if (ent->client->newweapon != WEAPON_HOLSTERED && 
+		ent->client->pers.weapon == NULL && 
+		ent->client->pers.lastweapon != NULL)
+	{
+		ent->client->newweapon = ent->client->pers.lastweapon;
+	}
+	else
+	{
+		ent->client->newweapon = WEAPON_HOLSTERED;
+	}
 }
 
 void
