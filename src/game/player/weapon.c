@@ -148,6 +148,7 @@ qboolean
 Pickup_Weapon(edict_t *ent, edict_t *other)
 {
 	int index;
+	int *itemcount;
 
 	if (!ent || !other)
 	{
@@ -155,9 +156,10 @@ Pickup_Weapon(edict_t *ent, edict_t *other)
 	}
 
 	index = ITEM_INDEX(ent->item);
+	itemcount = &other->client->pers.inventory[index];
 
 	if ((((int)(dmflags->value) & DF_WEAPONS_STAY) || coop->value) &&
-		other->client->pers.inventory[index])
+		*itemcount)
 	{
 		if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM)))
 		{
@@ -165,42 +167,7 @@ Pickup_Weapon(edict_t *ent, edict_t *other)
 		}
 	}
 
-	other->client->pers.inventory[index]++;
-
-	/* this would give some ammo with the gun, avoid doing this! */
-	/* if (!(ent->spawnflags & DROPPED_ITEM))
-	{
-		ammo = FindItem(ent->item->ammo);
-
-		if ((int)dmflags->value & DF_INFINITE_AMMO)
-		{
-			Add_Ammo(other, ammo, 1000);
-		}
-		else
-		{
-			Add_Ammo(other, ammo, ammo->quantity);
-		}
-
-		if (!(ent->spawnflags & DROPPED_PLAYER_ITEM))
-		{
-			if (deathmatch->value)
-			{
-				if ((int)(dmflags->value) & DF_WEAPONS_STAY)
-				{
-					ent->flags |= FL_RESPAWN;
-				}
-				else
-				{
-					SetRespawn(ent, 30);
-				}
-			}
-
-			if (coop->value)
-			{
-				ent->flags |= FL_RESPAWN;
-			}
-		}
-	} */
+	*itemcount += 1;
 
 	if ((other->client->pers.weapon != ent->item) &&
 		(other->client->pers.inventory[index] == 1) &&
@@ -208,7 +175,13 @@ Pickup_Weapon(edict_t *ent, edict_t *other)
 		 (other->client->pers.weapon == FindItem("blaster"))))
 	{
 		other->client->newweapon = ent->item;
+		
+		if (*itemcount == 1)
+		{
+			AssignFirstSlot(other, ent->item->pickup_name);
+		}
 	}
+	
 
 	return true;
 }

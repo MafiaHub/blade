@@ -797,6 +797,7 @@ void InitClientResp(gclient_t *client);
 void InitBodyQue(void);
 void ClientBeginServerFrame(edict_t *ent);
 void AssignHotkey(edict_t *ent, int slot, char *name);
+void AssignFirstSlot(edict_t *ent, char *name);
 void ForceClientCommand(edict_t *end, char *cmd);
 
 /* g_player.c */

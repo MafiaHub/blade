@@ -2595,7 +2595,7 @@ AssignHotkey(edict_t *ent, int slot, char *name)
 		return;
 	}
 
-	if (!slot)
+	if (slot == 0)
 		slot = 10;
 
 	slot--;
@@ -2646,6 +2646,50 @@ AssignHotkey(edict_t *ent, int slot, char *name)
 
 		ent->client->pers.hotbar[slot] = index;
 		ent->client->pers.hotbar[old_slot] = old_value;
+	}
+
+	/* update client-side inventory and hotbar */
+	InventoryMessage(ent);
+	gi.unicast(ent, true);
+}
+
+/* Assign an item to a quick slot */
+void 
+AssignFirstSlot(edict_t *ent, char *name)
+{
+	int i;
+	int index;
+	gitem_t *item;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	if (name)
+	{
+		item = FindItem(name);
+
+		if (!item)
+		{
+			Com_Printf("Unknown Item: %s\n", name);
+			return;
+		}
+	}
+	else
+	{
+		item = itemlist + ent->client->pers.selected_item;
+	}
+
+	index = ITEM_INDEX(item) + 1;
+	
+	for (i = 0; i < 10; i++)
+	{
+		if (ent->client->pers.hotbar[i] == 0)
+		{
+			ent->client->pers.hotbar[i] = index;
+			break;
+		}
 	}
 
 	/* update client-side inventory and hotbar */
