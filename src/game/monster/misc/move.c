@@ -85,7 +85,7 @@ realcheck:
 	start[1] = stop[1] = (mins[1] + maxs[1]) * 0.5;
 	stop[2] = start[2] - 2 * STEPSIZE;
 	trace = gi.trace(start, vec3_origin, vec3_origin,
-			stop, ent, MASK_MONSTERSOLID);
+					 stop, ent, MASK_MONSTERSOLID);
 
 	if (trace.fraction == 1.0)
 	{
@@ -103,7 +103,7 @@ realcheck:
 			start[1] = stop[1] = y ? maxs[1] : mins[1];
 
 			trace = gi.trace(start, vec3_origin, vec3_origin,
-					stop, ent, MASK_MONSTERSOLID);
+							 stop, ent, MASK_MONSTERSOLID);
 
 			if ((trace.fraction != 1.0) && (trace.endpos[2] > bottom))
 			{
@@ -203,7 +203,7 @@ SV_movestep(edict_t *ent, vec3_t move, qboolean relink)
 			}
 
 			trace = gi.trace(ent->s.origin, ent->mins, ent->maxs,
-					neworg, ent, MASK_MONSTERSOLID);
+							 neworg, ent, MASK_MONSTERSOLID);
 
 			/* fly monsters don't enter water voluntarily */
 			if (ent->flags & FL_FLY)
@@ -286,7 +286,7 @@ SV_movestep(edict_t *ent, vec3_t move, qboolean relink)
 	{
 		neworg[2] -= stepsize;
 		trace = gi.trace(neworg, ent->mins, ent->maxs,
-				end, ent, MASK_MONSTERSOLID);
+						 end, ent, MASK_MONSTERSOLID);
 
 		if (trace.allsolid || trace.startsolid)
 		{
@@ -334,7 +334,7 @@ SV_movestep(edict_t *ent, vec3_t move, qboolean relink)
 	if (!M_CheckBottom(ent))
 	{
 		if (ent->flags & FL_PARTIALGROUND)
-		{   /* entity had floor mostly pulled out
+		{ /* entity had floor mostly pulled out
 			   from underneath it and is trying to
 			   correct */
 			if (relink)
@@ -370,8 +370,7 @@ SV_movestep(edict_t *ent, vec3_t move, qboolean relink)
 
 /* ============================================================================ */
 
-void
-M_ChangeYaw(edict_t *ent)
+void M_ChangeYaw(edict_t *ent)
 {
 	float ideal;
 	float current;
@@ -477,8 +476,7 @@ SV_StepDirection(edict_t *ent, float yaw, float dist)
 	return false;
 }
 
-void
-SV_FixCheckBottom(edict_t *ent)
+void SV_FixCheckBottom(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -488,8 +486,7 @@ SV_FixCheckBottom(edict_t *ent)
 	ent->flags |= FL_PARTIALGROUND;
 }
 
-void
-SV_NewChaseDir(edict_t *actor, edict_t *enemy, float dist)
+void SV_NewChaseDir(edict_t *actor, edict_t *enemy, float dist)
 {
 	float deltax, deltay;
 	float d[3];
@@ -639,12 +636,9 @@ SV_CloseEnough(edict_t *ent, edict_t *goal, float dist)
 	return true;
 }
 
-void
-M_MoveToGoal(edict_t *ent, float dist)
+void M_MoveToGoal(edict_t *ent, float dist)
 {
 	edict_t *goal;
-	// trace_t tr;
-	// vec3_t v;
 
 	if (!ent)
 	{
@@ -653,68 +647,25 @@ M_MoveToGoal(edict_t *ent, float dist)
 
 	goal = ent->goalentity;
 
-	// if (ent->linkaid)
-	// {
-	// 	goal = ent->linkaid;
-	// }
+	if (!ent->groundentity && !(ent->flags & (FL_FLY | FL_SWIM)))
+	{
+		return;
+	}
 
-	// tr = gi.trace(ent->s.origin, NULL, NULL, goal->s.origin, ent, CONTENTS_SOLID);
-
-	// if (ent->linkaid && (SV_CloseEnough(ent, ent->linkaid, dist) || tr.fraction != 1))
-	// {
-	// 	ent->linkaid = ent->linktrails[ent->trailnum];
-	// 	ent->trailnum++;
-
-	// 	if (ent->trailnum > ent->num_linktrails)
-	// 	{
-	// 		ent->linkaid = NULL;
-	// 	}	
-	// }
-
-
-	// if (tr.fraction != 1)
-	// {
-	// 	if (!ent->linkaid)
-	// 	{
-	// 		ent->linkaid = PickClosestNode(ent, ent->goalentity->s.origin);
-	// 		ent->linkaid = ent->linktrails[ent->trailnum];
-	// 		ent->trailnum++;
-	// 		/* VectorSubtract (goal->s.origin, ent->s.origin, v);
-	// 		ent->ideal_yaw = ent->s.angles[YAW] = vectoyaw(v); */
-	// 	}
-		
-	// 	if (ent->linkaid)
-	// 	{
-	// 		goal = ent->linkaid;
-	// 	}
-	// }
-
-	// if (ent->linkaid && !SV_StepDirection(ent, ent->ideal_yaw, dist))
-	// {	
-	// 	VectorCopy(ent->linkaid->s.origin, ent->s.origin);
-	// }
-
-	if ((ent->followentity || ent->enemy) && SV_CloseEnough(ent, goal, dist))
+	/* if the next step hits the enemy, return immediately */
+	if (ent->enemy && SV_CloseEnough(ent, ent->enemy, dist))
 	{
 		return;
 	}
 
 	/* bump around... */
-	//if (/* ((randk() & 3) == 1) ||  */!SV_StepDirection(ent, ent->ideal_yaw, dist))
+	if (((randk() & 3) == 1) || !SV_StepDirection(ent, ent->ideal_yaw, dist))
 	{
-		if (!SV_StepDirection(ent, ent->ideal_yaw, dist))
-		{
-			ent->last_bump_time = level.time + 1;
-			SV_NewChaseDir(ent, goal, dist);
-		}
-
-		if (ent->inuse && ent->last_bump_time <= level.time)
+		if (ent->inuse)
 		{
 			SV_NewChaseDir(ent, goal, dist);
 		}
 	}
-
-
 }
 
 qboolean

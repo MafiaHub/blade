@@ -83,7 +83,7 @@ CreateSDLWindow(int flags, int w, int h)
 		last_position_x = last_position_y = SDL_WINDOWPOS_UNDEFINED_DISPLAY((int)vid_displayindex->value);
 	}
 
-	window = SDL_CreateWindow("Yamagi Quake II", last_position_x, last_position_y, w, h, flags);
+	window = SDL_CreateWindow("Blade", last_position_x, last_position_y, w, h, flags);
 
 	if (window)
 	{
