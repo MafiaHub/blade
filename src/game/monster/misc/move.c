@@ -639,6 +639,7 @@ SV_CloseEnough(edict_t *ent, edict_t *goal, float dist)
 void M_MoveToGoal(edict_t *ent, float dist)
 {
 	edict_t *goal;
+	int c1, c2;
 
 	if (!ent)
 	{
@@ -652,8 +653,11 @@ void M_MoveToGoal(edict_t *ent, float dist)
 		return;
 	}
 
+	c1 = SV_CloseEnough(ent, ent->enemy, dist);
+	c2 = SV_CloseEnough(ent, ent->followentity, dist);
+
 	/* if the next step hits the enemy, return immediately */
-	if (ent->enemy && SV_CloseEnough(ent, ent->enemy, dist))
+	if ((ent->followentity || ent->enemy) && (c1 || c2))
 	{
 		return;
 	}

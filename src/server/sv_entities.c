@@ -19,7 +19,7 @@
  *
  * =======================================================================
  *
- * Server entity handling. Just encodes the entties of a client side
+ * Server entity handling. Just encodes the entities of a client side
  * frame into network / local communication packages and sends them to
  * the appropriate clients.
  *
@@ -33,8 +33,7 @@ byte fatpvs[65536 / 8];
 /*
  * Writes a delta update of an entity_state_t list to the message.
  */
-void
-SV_EmitPacketEntities(client_frame_t *from, client_frame_t *to, sizebuf_t *msg)
+void SV_EmitPacketEntities(client_frame_t *from, client_frame_t *to, sizebuf_t *msg)
 {
 	entity_state_t *oldent, *newent;
 	int oldindex, newindex;
@@ -72,7 +71,8 @@ SV_EmitPacketEntities(client_frame_t *from, client_frame_t *to, sizebuf_t *msg)
 		else
 		{
 			newent = &svs.client_entities[(to->first_entity +
-					 newindex) % svs.num_client_entities];
+										   newindex) %
+										  svs.num_client_entities];
 			newnum = newent->number;
 		}
 
@@ -83,7 +83,8 @@ SV_EmitPacketEntities(client_frame_t *from, client_frame_t *to, sizebuf_t *msg)
 		else
 		{
 			oldent = &svs.client_entities[(from->first_entity +
-					 oldindex) % svs.num_client_entities];
+										   oldindex) %
+										  svs.num_client_entities];
 			oldnum = oldent->number;
 		}
 
@@ -95,7 +96,7 @@ SV_EmitPacketEntities(client_frame_t *from, client_frame_t *to, sizebuf_t *msg)
 			   note that players are always 'newentities', this
 			   updates their oldorigin always and prevents warping */
 			MSG_WriteDeltaEntity(oldent, newent, msg,
-					false, newent->number <= maxclients->value);
+								 false, newent->number <= maxclients->value);
 			oldindex++;
 			newindex++;
 			continue;
@@ -143,9 +144,8 @@ SV_EmitPacketEntities(client_frame_t *from, client_frame_t *to, sizebuf_t *msg)
 	MSG_WriteShort(msg, 0);
 }
 
-void
-SV_WritePlayerstateToClient(client_frame_t *from, client_frame_t *to,
-		sizebuf_t *msg)
+void SV_WritePlayerstateToClient(client_frame_t *from, client_frame_t *to,
+								 sizebuf_t *msg)
 {
 	int i;
 	int pflags;
@@ -389,8 +389,7 @@ SV_WritePlayerstateToClient(client_frame_t *from, client_frame_t *to,
 	}
 }
 
-void
-SV_WriteFrameToClient(client_t *client, sizebuf_t *msg)
+void SV_WriteFrameToClient(client_t *client, sizebuf_t *msg)
 {
 	client_frame_t *frame, *oldframe;
 	int lastframe;
@@ -419,7 +418,7 @@ SV_WriteFrameToClient(client_t *client, sizebuf_t *msg)
 
 	MSG_WriteByte(msg, svc_frame);
 	MSG_WriteLong(msg, sv.framenum);
-	MSG_WriteLong(msg, lastframe); /* what we are delta'ing from */
+	MSG_WriteLong(msg, lastframe);			   /* what we are delta'ing from */
 	MSG_WriteByte(msg, client->surpressCount); /* rate dropped packets */
 	client->surpressCount = 0;
 
@@ -438,8 +437,7 @@ SV_WriteFrameToClient(client_t *client, sizebuf_t *msg)
  * The client will interpolate the view position,
  * so we can't use a single PVS point
  */
-void
-SV_FatPVS(vec3_t org)
+void SV_FatPVS(vec3_t org)
 {
 	int leafs[64];
 	int i, j, count;
@@ -499,8 +497,7 @@ SV_FatPVS(vec3_t org)
  * Decides which entities are going to be visible to the client, and
  * copies off the playerstat and areabits.
  */
-void
-SV_BuildClientFrame(client_t *client)
+void SV_BuildClientFrame(client_t *client)
 {
 	int e, i;
 	vec3_t org;
@@ -564,7 +561,7 @@ SV_BuildClientFrame(client_t *client)
 		}
 
 		/* ignore ents without visible models unless they have an effect */
-		if (!ent->s.modelindex && !ent->s.effects && 
+		if (!ent->s.modelindex && !ent->s.effects &&
 			!ent->s.sound && !ent->s.event)
 		{
 			continue;
@@ -648,7 +645,7 @@ SV_BuildClientFrame(client_t *client)
 
 		/* add it to the circular client_entities array */
 		state = &svs.client_entities[svs.next_client_entities %
-				svs.num_client_entities];
+									 svs.num_client_entities];
 
 		if (ent->s.number != e)
 		{
@@ -673,8 +670,7 @@ SV_BuildClientFrame(client_t *client)
  * Save everything in the world out without deltas.
  * Used for recording footage for merged or assembled demos
  */
-void
-SV_RecordDemoMessage(void)
+void SV_RecordDemoMessage(void)
 {
 	int e;
 	edict_t *ent;
@@ -706,7 +702,8 @@ SV_RecordDemoMessage(void)
 		/* ignore ents without visible models unless they have an effect */
 		if (ent->inuse && ent->s.number &&
 			(ent->s.modelindex || ent->s.effects || ent->s.sound ||
-			 ent->s.event) && !(ent->svflags & SVF_NOCLIENT))
+			 ent->s.event) &&
+			!(ent->svflags & SVF_NOCLIENT))
 		{
 			MSG_WriteDeltaEntity(&nostate, &ent->s, &buf, false, true);
 		}
@@ -726,4 +723,3 @@ SV_RecordDemoMessage(void)
 	fwrite(&len, 4, 1, svs.demofile);
 	fwrite(buf.data, buf.cursize, 1, svs.demofile);
 }
-

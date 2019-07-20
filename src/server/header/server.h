@@ -19,7 +19,7 @@
  *
  * =======================================================================
  *
- * Main header file for the client
+ * Main header file for the server
  *
  * =======================================================================
  */
@@ -45,9 +45,9 @@
 
 typedef enum
 {
-	ss_dead,            /* no map loaded */
-	ss_loading,         /* spawning level edicts */
-	ss_game,            /* actively running */
+	ss_dead,	/* no map loaded */
+	ss_loading, /* spawning level edicts */
+	ss_game,	/* actively running */
 	ss_cinematic,
 	ss_demo,
 	ss_pic
@@ -55,15 +55,15 @@ typedef enum
 
 typedef struct
 {
-	server_state_t state;           /* precache commands are only valid during load */
+	server_state_t state; /* precache commands are only valid during load */
 
-	qboolean attractloop;           /* running cinematics and demos for the local system only */
-	qboolean loadgame;              /* client begins should reuse existing entity */
+	qboolean attractloop; /* running cinematics and demos for the local system only */
+	qboolean loadgame;	/* client begins should reuse existing entity */
 
-	unsigned time;                  /* always sv.framenum * 100 msec */
+	unsigned time; /* always sv.framenum * 100 msec */
 	int framenum;
 
-	char name[MAX_QPATH];           /* map name, or cinematic name */
+	char name[MAX_QPATH]; /* map name, or cinematic name */
 	struct cmodel_s *models[MAX_MODELS];
 
 	char configstrings[MAX_CONFIGSTRINGS][MAX_QPATH];
@@ -81,61 +81,61 @@ typedef struct
 
 typedef enum
 {
-	cs_free,        /* can be reused for a new connection */
-	cs_zombie,      /* client has been disconnected, but don't reuse 
+	cs_free,	  /* can be reused for a new connection */
+	cs_zombie,	/* client has been disconnected, but don't reuse 
 					   connection for a couple seconds */
-	cs_connected,   /* has been assigned to a client_t, but not in game yet */
-	cs_spawned      /* client is fully in game */
+	cs_connected, /* has been assigned to a client_t, but not in game yet */
+	cs_spawned	/* client is fully in game */
 } client_state_t;
 
 typedef struct
 {
 	int areabytes;
-	byte areabits[MAX_MAP_AREAS / 8];       /* portalarea visibility bits */
+	byte areabits[MAX_MAP_AREAS / 8]; /* portalarea visibility bits */
 	player_state_t ps;
 	int num_entities;
-	int first_entity;                       /* into the circular sv_packet_entities[] */
-	int senttime;                           /* for ping calculations */
+	int first_entity; /* into the circular sv_packet_entities[] */
+	int senttime;	 /* for ping calculations */
 } client_frame_t;
 
 typedef struct client_s
 {
 	client_state_t state;
 
-	char userinfo[MAX_INFO_STRING];     /* name, etc */
+	char userinfo[MAX_INFO_STRING]; /* name, etc */
 
-	int lastframe;                      /* for delta compression */
-	usercmd_t lastcmd;                  /* for filling in big drops */
+	int lastframe;	 /* for delta compression */
+	usercmd_t lastcmd; /* for filling in big drops */
 
-	int commandMsec;                    /* every seconds this is reset, if user */
-										/* commands exhaust it, assume time cheating */
+	int commandMsec; /* every seconds this is reset, if user */
+					 /* commands exhaust it, assume time cheating */
 
 	int frame_latency[LATENCY_COUNTS];
 	int ping;
 
-	int message_size[RATE_MESSAGES];    /* used to rate drop packets */
+	int message_size[RATE_MESSAGES]; /* used to rate drop packets */
 	int rate;
-	int surpressCount;                  /* number of messages rate supressed */
+	int surpressCount; /* number of messages rate supressed */
 
-	edict_t *edict;                     /* EDICT_NUM(clientnum+1) */
-	char name[32];                      /* extracted from userinfo, high bits masked */
-	int messagelevel;                   /* for filtering printed messages */
+	edict_t *edict;   /* EDICT_NUM(clientnum+1) */
+	char name[32];	/* extracted from userinfo, high bits masked */
+	int messagelevel; /* for filtering printed messages */
 
 	/* The datagram is written to by sound calls, prints, 
 	   temp ents, etc. It can be harmlessly overflowed. */
 	sizebuf_t datagram;
 	byte datagram_buf[MAX_MSGLEN];
 
-	client_frame_t frames[UPDATE_BACKUP];     /* updates can be delta'd from here */
+	client_frame_t frames[UPDATE_BACKUP]; /* updates can be delta'd from here */
 
-	byte *download;                     /* file being downloaded */
-	int downloadsize;                   /* total bytes (can't use EOF because of paks) */
-	int downloadcount;                  /* bytes sent */
+	byte *download;	/* file being downloaded */
+	int downloadsize;  /* total bytes (can't use EOF because of paks) */
+	int downloadcount; /* bytes sent */
 
-	int lastmessage;                    /* sv.framenum when packet was last received */
+	int lastmessage; /* sv.framenum when packet was last received */
 	int lastconnect;
 
-	int challenge;                      /* challenge of this user, randomly generated */
+	int challenge; /* challenge of this user, randomly generated */
 
 	netchan_t netchan;
 } client_t;
@@ -149,22 +149,22 @@ typedef struct
 
 typedef struct
 {
-	qboolean initialized;               /* sv_init has completed */
-	int realtime;                       /* always increasing, no clamping, etc */
+	qboolean initialized; /* sv_init has completed */
+	int realtime;		  /* always increasing, no clamping, etc */
 
-	char mapcmd[MAX_TOKEN_CHARS];       /* ie: *intro.cin+base */
+	char mapcmd[MAX_TOKEN_CHARS]; /* ie: *intro.cin+base */
 
-	int spawncount;                     /* incremented each server start */
-										/* used to check late spawns */
+	int spawncount; /* incremented each server start */
+					/* used to check late spawns */
 
-	client_t *clients;                  /* [maxclients->value]; */
-	int num_client_entities;            /* maxclients->value*UPDATE_BACKUP*MAX_PACKET_ENTITIES */
-	int next_client_entities;           /* next client_entity to use */
-	entity_state_t *client_entities;    /* [num_client_entities] */
+	client_t *clients;				 /* [maxclients->value]; */
+	int num_client_entities;		 /* maxclients->value*UPDATE_BACKUP*MAX_PACKET_ENTITIES */
+	int next_client_entities;		 /* next client_entity to use */
+	entity_state_t *client_entities; /* [num_client_entities] */
 
 	int last_heartbeat;
 
-	challenge_t challenges[MAX_CHALLENGES];    /* to prevent invalid IPs from connecting */
+	challenge_t challenges[MAX_CHALLENGES]; /* to prevent invalid IPs from connecting */
 
 	/* serverrecord values */
 	FILE *demofile;
@@ -175,18 +175,18 @@ typedef struct
 extern netadr_t net_from;
 extern sizebuf_t net_message;
 
-extern netadr_t master_adr[MAX_MASTERS];    /* address of the master server */
+extern netadr_t master_adr[MAX_MASTERS]; /* address of the master server */
 
-extern server_static_t svs;                 /* persistant server info */
-extern server_t sv;                         /* local server */
+extern server_static_t svs; /* persistant server info */
+extern server_t sv;			/* local server */
 
 extern cvar_t *sv_paused;
 extern cvar_t *maxclients;
-extern cvar_t *sv_noreload;                 /* don't reload level state when reentering */
-extern cvar_t *sv_airaccelerate;            /* don't reload level state when reentering */
-											/* development tool */
+extern cvar_t *sv_noreload;		 /* don't reload level state when reentering */
+extern cvar_t *sv_airaccelerate; /* don't reload level state when reentering */
+								 /* development tool */
 extern cvar_t *sv_enforcetime;
-extern cvar_t *sv_downloadserver;			/* Download server. */
+extern cvar_t *sv_downloadserver; /* Download server. */
 
 extern client_t *sv_client;
 extern edict_t *sv_player;
@@ -214,7 +214,12 @@ void SV_Map(qboolean attractloop, char *levelstring, qboolean loadgame);
 
 void SV_PrepWorldFrame(void);
 
-typedef enum {RD_NONE, RD_CLIENT, RD_PACKET} redirect_t;
+typedef enum
+{
+	RD_NONE,
+	RD_CLIENT,
+	RD_PACKET
+} redirect_t;
 
 extern char sv_outputbuf[SV_OUTPUTBUF_LENGTH];
 
@@ -225,8 +230,8 @@ void SV_SendClientMessages(void);
 
 void SV_Multicast(vec3_t origin, multicast_t to);
 void SV_StartSound(vec3_t origin, edict_t *entity, int channel,
-		int soundindex, float volume, float attenuation,
-		float timeofs);
+				   int soundindex, float volume, float attenuation,
+				   float timeofs);
 void SV_ClientPrintf(client_t *cl, int level, char *fmt, ...);
 void SV_BroadcastPrintf(int level, char *fmt, ...);
 void SV_BroadcastCommand(char *fmt, ...);
@@ -272,12 +277,11 @@ void SV_LinkEdict(edict_t *ent);
    ent->v.absmax sets ent->leafnums[] for pvs determination even if 
    the entity is not solid */
 int SV_AreaEdicts(vec3_t mins, vec3_t maxs, edict_t **list,
-		int maxcount, int areatype);
+				  int maxcount, int areatype);
 
 int SV_PointContents(vec3_t p);
 
 trace_t SV_Trace(vec3_t start, vec3_t mins, vec3_t maxs,
-		vec3_t end, edict_t *passedict, int contentmask);
+				 vec3_t end, edict_t *passedict, int contentmask);
 
 #endif
-

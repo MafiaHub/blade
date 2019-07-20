@@ -19,11 +19,10 @@
  *
  * =======================================================================
  *
- * Quake IIs legendary physic engine.
+ * Quake II's legendary physics engine.
  *
  * =======================================================================
  */
-
 
 #include "header/local.h"
 
@@ -72,11 +71,11 @@ SV_TestEntityPosition(edict_t *ent)
 	}
 
 	trace = gi.trace(ent->s.origin, ent->mins, ent->maxs,
-			ent->s.origin, ent, mask);
+					 ent->s.origin, ent, mask);
 
 	if (trace.startsolid)
 	{
-        if ((ent->svflags & SVF_DEADMONSTER) && (trace.ent->client || (trace.ent->svflags & SVF_MONSTER)))
+		if ((ent->svflags & SVF_DEADMONSTER) && (trace.ent->client || (trace.ent->svflags & SVF_MONSTER)))
 		{
 			return NULL;
 		}
@@ -87,8 +86,7 @@ SV_TestEntityPosition(edict_t *ent)
 	return NULL;
 }
 
-void
-SV_CheckVelocity(edict_t *ent)
+void SV_CheckVelocity(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -144,8 +142,7 @@ SV_RunThink(edict_t *ent)
  * Two entities have touched, so
  * run their touch functions
  */
-void
-SV_Impact(edict_t *e1, trace_t *trace)
+void SV_Impact(edict_t *e1, trace_t *trace)
 {
 	edict_t *e2;
 
@@ -172,8 +169,7 @@ SV_Impact(edict_t *e1, trace_t *trace)
  * returns the blocked flags (1 = floor,
  * 2 = step / wall)
  */
-int
-ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
+int ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
 {
 	float backoff;
 	float change;
@@ -217,8 +213,7 @@ ClipVelocity(vec3_t in, vec3_t normal, vec3_t out, float overbounce)
  * 2 = wall / step
  * 4 = dead stop
  */
-int
-SV_FlyMove(edict_t *ent, float time, int mask)
+int SV_FlyMove(edict_t *ent, float time, int mask)
 {
 	edict_t *hit;
 	int bumpcount, numbumps;
@@ -372,8 +367,7 @@ SV_FlyMove(edict_t *ent, float time, int mask)
 	return blocked;
 }
 
-void
-SV_AddGravity(edict_t *ent)
+void SV_AddGravity(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -393,8 +387,7 @@ SV_AddGravity(edict_t *ent)
  * This leads to a lot of false block tests in SV_Push
  * if another bmodel is in the vicinity.
  */
-void
-RealBoundingBox(edict_t *ent, vec3_t mins, vec3_t maxs)
+void RealBoundingBox(edict_t *ent, vec3_t mins, vec3_t maxs)
 {
 	vec3_t forward, left, up, f1, l1, u1;
 	vec3_t p[8];
@@ -483,7 +476,7 @@ RealBoundingBox(edict_t *ent, vec3_t mins, vec3_t maxs)
 			maxs[0] = p[i][0];
 		}
 
- 		if (maxs[1] < p[i][1])
+		if (maxs[1] < p[i][1])
 		{
 			maxs[1] = p[i][1];
 		}
@@ -529,7 +522,7 @@ retry:
 	if (trace.startsolid || trace.allsolid)
 	{
 		mask ^= CONTENTS_DEADMONSTER;
-		trace = gi.trace (start, ent->mins, ent->maxs, end, ent, mask);
+		trace = gi.trace(start, ent->mins, ent->maxs, end, ent, mask);
 	}
 
 	VectorCopy(trace.endpos, ent->s.origin);
@@ -637,7 +630,7 @@ SV_Push(edict_t *pusher, vec3_t move, vec3_t amove)
 
 	/* Create a real bounding box for
 	   rotating brush models. */
-	RealBoundingBox(pusher,realmins,realmaxs);
+	RealBoundingBox(pusher, realmins, realmaxs);
 
 	/* see if any solid entities
 	   are inside the final position */
@@ -721,7 +714,7 @@ SV_Push(edict_t *pusher, vec3_t move, vec3_t amove)
 
 			if (!block)
 
-			{   /* pushed ok */
+			{ /* pushed ok */
 				gi.linkentity(check);
 				continue;
 			}
@@ -775,8 +768,7 @@ SV_Push(edict_t *pusher, vec3_t move, vec3_t amove)
  * Bmodel objects don't interact with each
  * other, but push all box objects
  */
-void
-SV_Physics_Pusher(edict_t *ent)
+void SV_Physics_Pusher(edict_t *ent)
 {
 	vec3_t move, amove;
 	edict_t *part, *mv;
@@ -814,7 +806,7 @@ SV_Physics_Pusher(edict_t *ent)
 		}
 	}
 
-	if (pushed_p > &pushed[MAX_EDICTS -1 ])
+	if (pushed_p > &pushed[MAX_EDICTS - 1])
 	{
 		gi.error("pushed_p > &pushed[MAX_EDICTS - 1], memory corrupted");
 	}
@@ -854,8 +846,7 @@ SV_Physics_Pusher(edict_t *ent)
 /*
  * Non moving objects can only think
  */
-void
-SV_Physics_None(edict_t *ent)
+void SV_Physics_None(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -869,8 +860,7 @@ SV_Physics_None(edict_t *ent)
 /*
  * A moving object that doesn't obey physics
  */
-void
-SV_Physics_Noclip(edict_t *ent)
+void SV_Physics_Noclip(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -897,8 +887,7 @@ SV_Physics_Noclip(edict_t *ent)
  * Toss, bounce, and fly movement.
  * When onground, do nothing.
  */
-void
-SV_Physics_Toss(edict_t *ent)
+void SV_Physics_Toss(edict_t *ent)
 {
 	trace_t trace;
 	vec3_t move;
@@ -1009,12 +998,12 @@ SV_Physics_Toss(edict_t *ent)
 	if (!wasinwater && isinwater)
 	{
 		gi.positioned_sound(old_origin, g_edicts, CHAN_AUTO,
-				gi.soundindex("misc/h2ohit1.wav"), 1, 1, 0);
+							gi.soundindex("misc/h2ohit1.wav"), 1, 1, 0);
 	}
 	else if (wasinwater && !isinwater)
 	{
 		gi.positioned_sound(ent->s.origin, g_edicts, CHAN_AUTO,
-				gi.soundindex("misc/h2ohit1.wav"), 1, 1, 0);
+							gi.soundindex("misc/h2ohit1.wav"), 1, 1, 0);
 	}
 
 	/* move teamslaves */
@@ -1038,8 +1027,7 @@ SV_Physics_Toss(edict_t *ent)
  * still on the ground, but  will fall if the floor
  * is pulled out from under them.
  */
-void
-SV_AddRotationalFriction(edict_t *ent)
+void SV_AddRotationalFriction(edict_t *ent)
 {
 	int n;
 	float adjustment;
@@ -1075,8 +1063,7 @@ SV_AddRotationalFriction(edict_t *ent)
 	}
 }
 
-void
-SV_Physics_Step(edict_t *ent)
+void SV_Physics_Step(edict_t *ent)
 {
 	qboolean wasonground;
 	qboolean hitsound = false;
@@ -1238,8 +1225,7 @@ SV_Physics_Step(edict_t *ent)
 
 /* ================================================================== */
 
-void
-G_RunEntity(edict_t *ent)
+void G_RunEntity(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -1253,26 +1239,26 @@ G_RunEntity(edict_t *ent)
 
 	switch ((int)ent->movetype)
 	{
-		case MOVETYPE_PUSH:
-		case MOVETYPE_STOP:
-			SV_Physics_Pusher(ent);
-			break;
-		case MOVETYPE_NONE:
-			SV_Physics_None(ent);
-			break;
-		case MOVETYPE_NOCLIP:
-			SV_Physics_Noclip(ent);
-			break;
-		case MOVETYPE_STEP:
-			SV_Physics_Step(ent);
-			break;
-		case MOVETYPE_TOSS:
-		case MOVETYPE_BOUNCE:
-		case MOVETYPE_FLY:
-		case MOVETYPE_FLYMISSILE:
-			SV_Physics_Toss(ent);
-			break;
-		default:
-			gi.error("SV_Physics: bad movetype %i", (int)ent->movetype);
+	case MOVETYPE_PUSH:
+	case MOVETYPE_STOP:
+		SV_Physics_Pusher(ent);
+		break;
+	case MOVETYPE_NONE:
+		SV_Physics_None(ent);
+		break;
+	case MOVETYPE_NOCLIP:
+		SV_Physics_Noclip(ent);
+		break;
+	case MOVETYPE_STEP:
+		SV_Physics_Step(ent);
+		break;
+	case MOVETYPE_TOSS:
+	case MOVETYPE_BOUNCE:
+	case MOVETYPE_FLY:
+	case MOVETYPE_FLYMISSILE:
+		SV_Physics_Toss(ent);
+		break;
+	default:
+		gi.error("SV_Physics: bad movetype %i", (int)ent->movetype);
 	}
 }

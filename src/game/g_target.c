@@ -32,8 +32,7 @@
  *
  *  "style"	type byte
  */
-void
-Use_Target_Tent(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
+void Use_Target_Tent(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
 {
 	if (!ent)
 	{
@@ -46,8 +45,7 @@ Use_Target_Tent(edict_t *ent, edict_t *other /* unused */, edict_t *activator /*
 	gi.multicast(ent->s.origin, MULTICAST_PVS);
 }
 
-void
-SP_target_temp_entity(edict_t *ent)
+void SP_target_temp_entity(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -78,8 +76,7 @@ SP_target_temp_entity(edict_t *ent)
  * Looped sounds are always atten 3 / vol 1, and the use function toggles it on/off.
  * Multiple identical looping sounds will just increase volume without any speed cost.
  */
-void
-Use_Target_Speaker(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
+void Use_Target_Speaker(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
 {
 	int chan;
 
@@ -115,12 +112,11 @@ Use_Target_Speaker(edict_t *ent, edict_t *other /* unused */, edict_t *activator
 		/* use a positioned_sound, because this entity won't
 		   normally be sent to any clients because it is invisible */
 		gi.positioned_sound(ent->s.origin, ent, chan, ent->noise_index,
-				ent->volume, ent->attenuation, 0);
+							ent->volume, ent->attenuation, 0);
 	}
 }
 
-void
-SP_target_speaker(edict_t *ent)
+void SP_target_speaker(edict_t *ent)
 {
 	char buffer[MAX_QPATH];
 
@@ -132,7 +128,7 @@ SP_target_speaker(edict_t *ent)
 	if (!st.noise)
 	{
 		gi.dprintf("target_speaker with no noise set at %s\n",
-				vtos(ent->s.origin));
+				   vtos(ent->s.origin));
 		return;
 	}
 
@@ -176,8 +172,7 @@ SP_target_speaker(edict_t *ent)
 
 /* ========================================================== */
 
-void
-Use_Target_Help(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
+void Use_Target_Help(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
 {
 	/* ... */
 }
@@ -188,8 +183,7 @@ Use_Target_Help(edict_t *ent, edict_t *other /* unused */, edict_t *activator /*
  * When fired, the "message" key becomes the current personal computer string,
  * and the message light will be set on all clients status bars.
  */
-void
-SP_target_help(edict_t *ent)
+void SP_target_help(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -206,8 +200,7 @@ SP_target_help(edict_t *ent)
  * QUAKED target_secret (1 0 1) (-8 -8 -8) (8 8 8)
  * Counts a secret found. These are single use targets.
  */
-void
-use_target_secret(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* acticator */)
+void use_target_secret(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* acticator */)
 {
 	if (!ent)
 	{
@@ -222,8 +215,7 @@ use_target_secret(edict_t *ent, edict_t *other /* unused */, edict_t *activator 
 	G_FreeEdict(ent);
 }
 
-void
-SP_target_secret(edict_t *ent)
+void SP_target_secret(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -262,8 +254,7 @@ SP_target_secret(edict_t *ent)
  * QUAKED target_goal (1 0 1) (-8 -8 -8) (8 8 8)
  * Counts a goal completed. These are single use targets.
  */
-void
-use_target_goal(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
+void use_target_goal(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
 {
 	if (!ent)
 	{
@@ -283,8 +274,7 @@ use_target_goal(edict_t *ent, edict_t *other /* unused */, edict_t *activator /*
 	G_FreeEdict(ent);
 }
 
-void
-SP_target_goal(edict_t *ent)
+void SP_target_goal(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -319,8 +309,7 @@ SP_target_goal(edict_t *ent)
  * "delay"		wait this long before going off
  * "dmg"		how much radius damage should be done, defaults to 0
  */
-void
-target_explosion_explode(edict_t *self)
+void target_explosion_explode(edict_t *self)
 {
 	float save;
 
@@ -335,7 +324,7 @@ target_explosion_explode(edict_t *self)
 	gi.multicast(self->s.origin, MULTICAST_PHS);
 
 	T_RadiusDamage(self, self->activator, self->dmg, NULL,
-			self->dmg + 40, MOD_EXPLOSIVE);
+				   self->dmg + 40, MOD_EXPLOSIVE);
 
 	save = self->delay;
 	self->delay = 0;
@@ -343,12 +332,11 @@ target_explosion_explode(edict_t *self)
 	self->delay = save;
 }
 
-void
-use_target_explosion(edict_t *self, edict_t *other /* unused */, edict_t *activator)
+void use_target_explosion(edict_t *self, edict_t *other /* unused */, edict_t *activator)
 {
 	if (!self)
 	{
-	    return;
+		return;
 	}
 	self->activator = activator;
 
@@ -367,8 +355,7 @@ use_target_explosion(edict_t *self, edict_t *other /* unused */, edict_t *activa
 	self->nextthink = level.time + self->delay;
 }
 
-void
-SP_target_explosion(edict_t *ent)
+void SP_target_explosion(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -385,15 +372,14 @@ SP_target_explosion(edict_t *ent)
  * QUAKED target_changelevel (1 0 0) (-8 -8 -8) (8 8 8)
  * Changes level to "map" when fired
  */
-void
-use_target_changelevel(edict_t *self, edict_t *other, edict_t *activator)
+void use_target_changelevel(edict_t *self, edict_t *other, edict_t *activator)
 {
 	edict_t *ent;
 	float radius;
 	int i;
 	vec3_t v;
 
-	if (!self || !other  || !activator)
+	if (!self || !other || !activator)
 	{
 		return;
 	}
@@ -417,7 +403,7 @@ use_target_changelevel(edict_t *self, edict_t *other, edict_t *activator)
 		for (i = 0; i < maxclients->value; i++)
 		{
 			ent = g_edicts + 1 + i;
-			
+
 			if (!ent->inuse || !ent->client)
 			{
 				continue;
@@ -437,8 +423,8 @@ use_target_changelevel(edict_t *self, edict_t *other, edict_t *activator)
 		(other != world))
 	{
 		T_Damage(other, self, self, vec3_origin, other->s.origin,
-				vec3_origin, 10 * other->max_health, 1000,
-				0, MOD_EXIT);
+				 vec3_origin, 10 * other->max_health, 1000,
+				 0, MOD_EXIT);
 		return;
 	}
 
@@ -448,7 +434,7 @@ use_target_changelevel(edict_t *self, edict_t *other, edict_t *activator)
 		if (activator && activator->client)
 		{
 			gi.bprintf(PRINT_HIGH, "%s exited the level.\n",
-					activator->client->pers.netname);
+					   activator->client->pers.netname);
 		}
 	}
 
@@ -461,8 +447,7 @@ use_target_changelevel(edict_t *self, edict_t *other, edict_t *activator)
 	BeginIntermission(self);
 }
 
-void
-SP_target_changelevel(edict_t *ent)
+void SP_target_changelevel(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -498,8 +483,7 @@ SP_target_changelevel(edict_t *ent)
  * "dmg"	if set, does a radius damage at this location when it splashes
  *          useful for lava/sparks
  */
-void
-use_target_splash(edict_t *self, edict_t *other /* unused */, edict_t *activator)
+void use_target_splash(edict_t *self, edict_t *other /* unused */, edict_t *activator)
 {
 	if (!self || !activator)
 	{
@@ -517,12 +501,11 @@ use_target_splash(edict_t *self, edict_t *other /* unused */, edict_t *activator
 	if (self->dmg)
 	{
 		T_RadiusDamage(self, activator, self->dmg, NULL,
-				self->dmg + 40, MOD_SPLASH);
+					   self->dmg + 40, MOD_SPLASH);
 	}
 }
 
-void
-SP_target_splash(edict_t *self)
+void SP_target_splash(edict_t *self)
 {
 	if (!self)
 	{
@@ -557,8 +540,7 @@ SP_target_splash(edict_t *self)
  */
 void ED_CallSpawn(edict_t *ent);
 
-void
-use_target_spawner(edict_t *self, edict_t *other /* unused */, edict_t *activator /* unused */)
+void use_target_spawner(edict_t *self, edict_t *other /* unused */, edict_t *activator /* unused */)
 {
 	edict_t *ent;
 
@@ -582,8 +564,7 @@ use_target_spawner(edict_t *self, edict_t *other /* unused */, edict_t *activato
 	}
 }
 
-void
-SP_target_spawner(edict_t *self)
+void SP_target_spawner(edict_t *self)
 {
 	if (!self)
 	{
@@ -610,8 +591,7 @@ SP_target_spawner(edict_t *self)
  * speed	default is 1000
  */
 
-void
-use_target_blaster(edict_t *self, edict_t *other /* unused */, edict_t *activator /* unused */)
+void use_target_blaster(edict_t *self, edict_t *other /* unused */, edict_t *activator /* unused */)
 {
 	if (!self)
 	{
@@ -619,12 +599,11 @@ use_target_blaster(edict_t *self, edict_t *other /* unused */, edict_t *activato
 	}
 
 	fire_blaster(self, self->s.origin, self->movedir, self->dmg,
-			self->speed, EF_BLASTER, MOD_TARGET_BLASTER);
+				 self->speed, EF_BLASTER, MOD_TARGET_BLASTER);
 	gi.sound(self, CHAN_VOICE, self->noise_index, 1, ATTN_NORM, 0);
 }
 
-void
-SP_target_blaster(edict_t *self)
+void SP_target_blaster(edict_t *self)
 {
 	if (!self)
 	{
@@ -657,9 +636,8 @@ SP_target_blaster(edict_t *self)
  * within the same unit.  It is OK to check multiple triggers. Message,
  * delay, target, and killtarget also work.
  */
-void
-trigger_crosslevel_trigger_use(edict_t *self, edict_t *other /* unused */,
-		edict_t *activator)
+void trigger_crosslevel_trigger_use(edict_t *self, edict_t *other /* unused */,
+									edict_t *activator)
 {
 	if (!self || !activator)
 	{
@@ -667,12 +645,11 @@ trigger_crosslevel_trigger_use(edict_t *self, edict_t *other /* unused */,
 	}
 
 	game.serverflags |= self->spawnflags;
-	G_UseTargets (self, activator);
+	G_UseTargets(self, activator);
 	G_FreeEdict(self);
 }
 
-void
-SP_target_crosslevel_trigger(edict_t *self)
+void SP_target_crosslevel_trigger(edict_t *self)
 {
 	if (!self)
 	{
@@ -692,8 +669,7 @@ SP_target_crosslevel_trigger(edict_t *self)
  * "delay" delay before using targets if the trigger has been
  *         activated (default 1)
  */
-void
-target_crosslevel_target_think(edict_t *self)
+void target_crosslevel_target_think(edict_t *self)
 {
 	if (!self)
 	{
@@ -708,8 +684,7 @@ target_crosslevel_target_think(edict_t *self)
 	}
 }
 
-void
-SP_target_crosslevel_target(edict_t *self)
+void SP_target_crosslevel_target(edict_t *self)
 {
 	if (!self)
 	{
@@ -734,8 +709,7 @@ SP_target_crosslevel_target(edict_t *self)
  * When triggered, fires a laser.  You can either set a target
  * or a direction.
  */
-void
-target_laser_think(edict_t *self)
+void target_laser_think(edict_t *self)
 {
 	edict_t *ignore;
 	vec3_t start;
@@ -779,7 +753,7 @@ target_laser_think(edict_t *self)
 	while (1)
 	{
 		tr = gi.trace(start, NULL, NULL, end, ignore,
-				CONTENTS_SOLID | CONTENTS_MONSTER | CONTENTS_DEADMONSTER);
+					  CONTENTS_SOLID | CONTENTS_MONSTER | CONTENTS_DEADMONSTER);
 
 		if (!tr.ent)
 		{
@@ -790,15 +764,15 @@ target_laser_think(edict_t *self)
 		if ((tr.ent->takedamage) && !(tr.ent->flags & FL_IMMUNE_LASER))
 		{
 			T_Damage(tr.ent,
-					self,
-					self->activator,
-					self->movedir,
-					tr.endpos,
-					vec3_origin,
-					self->dmg,
-					1,
-					DAMAGE_ENERGY,
-					MOD_TARGET_LASER);
+					 self,
+					 self->activator,
+					 self->movedir,
+					 tr.endpos,
+					 vec3_origin,
+					 self->dmg,
+					 1,
+					 DAMAGE_ENERGY,
+					 MOD_TARGET_LASER);
 		}
 
 		/* if we hit something that's not a monster
@@ -829,8 +803,7 @@ target_laser_think(edict_t *self)
 	self->nextthink = level.time + FRAMETIME;
 }
 
-void
-target_laser_on(edict_t *self)
+void target_laser_on(edict_t *self)
 {
 	if (!self)
 	{
@@ -847,8 +820,7 @@ target_laser_on(edict_t *self)
 	target_laser_think(self);
 }
 
-void
-target_laser_off(edict_t *self)
+void target_laser_off(edict_t *self)
 {
 	if (!self)
 	{
@@ -860,8 +832,7 @@ target_laser_off(edict_t *self)
 	self->nextthink = 0;
 }
 
-void
-target_laser_use(edict_t *self, edict_t *other /* unused */, edict_t *activator)
+void target_laser_use(edict_t *self, edict_t *other /* unused */, edict_t *activator)
 {
 	if (!self || !activator)
 	{
@@ -880,8 +851,7 @@ target_laser_use(edict_t *self, edict_t *other /* unused */, edict_t *activator)
 	}
 }
 
-void
-target_laser_start(edict_t *self)
+void target_laser_start(edict_t *self)
 {
 	edict_t *ent;
 
@@ -936,8 +906,8 @@ target_laser_start(edict_t *self)
 			if (!ent)
 			{
 				gi.dprintf("%s at %s: %s is a bad target\n",
-						self->classname, vtos(self->s.origin),
-						self->target);
+						   self->classname, vtos(self->s.origin),
+						   self->target);
 			}
 
 			self->enemy = ent;
@@ -970,8 +940,7 @@ target_laser_start(edict_t *self)
 	}
 }
 
-void
-SP_target_laser(edict_t *self)
+void SP_target_laser(edict_t *self)
 {
 	if (!self)
 	{
@@ -990,8 +959,7 @@ SP_target_laser(edict_t *self)
  *  speed		How many seconds the ramping will take
  *  message		two letters; starting lightlevel and ending lightlevel
  */
-void
-target_lightramp_think(edict_t *self)
+void target_lightramp_think(edict_t *self)
 {
 	char style[2];
 
@@ -1020,8 +988,7 @@ target_lightramp_think(edict_t *self)
 	}
 }
 
-void
-target_lightramp_use(edict_t *self, edict_t *other /* unused */, edict_t *activator /* unused */)
+void target_lightramp_use(edict_t *self, edict_t *other /* unused */, edict_t *activator /* unused */)
 {
 	if (!self)
 	{
@@ -1048,7 +1015,7 @@ target_lightramp_use(edict_t *self, edict_t *other /* unused */, edict_t *activa
 			{
 				gi.dprintf("%s at %s ", self->classname, vtos(self->s.origin));
 				gi.dprintf("target %s (%s at %s) is not a light\n",
-						self->target, e->classname, vtos(e->s.origin));
+						   self->target, e->classname, vtos(e->s.origin));
 			}
 			else
 			{
@@ -1059,8 +1026,8 @@ target_lightramp_use(edict_t *self, edict_t *other /* unused */, edict_t *activa
 		if (!self->enemy)
 		{
 			gi.dprintf("%s target %s not found at %s\n",
-					self->classname, self->target,
-					vtos(self->s.origin));
+					   self->classname, self->target,
+					   vtos(self->s.origin));
 			G_FreeEdict(self);
 			return;
 		}
@@ -1070,8 +1037,7 @@ target_lightramp_use(edict_t *self, edict_t *other /* unused */, edict_t *activa
 	target_lightramp_think(self);
 }
 
-void
-SP_target_lightramp(edict_t *self)
+void SP_target_lightramp(edict_t *self)
 {
 	if (!self)
 	{
@@ -1084,7 +1050,7 @@ SP_target_lightramp(edict_t *self)
 		(self->message[0] == self->message[1]))
 	{
 		gi.dprintf("target_lightramp has bad ramp (%s) at %s\n",
-				self->message, vtos(self->s.origin));
+				   self->message, vtos(self->s.origin));
 		G_FreeEdict(self);
 		return;
 	}
@@ -1098,7 +1064,7 @@ SP_target_lightramp(edict_t *self)
 	if (!self->target)
 	{
 		gi.dprintf("%s with no target at %s\n", self->classname,
-				vtos(self->s.origin));
+				   vtos(self->s.origin));
 		G_FreeEdict(self);
 		return;
 	}
@@ -1122,8 +1088,7 @@ SP_target_lightramp(edict_t *self)
  *  "speed"		severity of the quake (default:200)
  *  "count"		duration of the quake (default:5)
  */
-void
-target_earthquake_think(edict_t *self)
+void target_earthquake_think(edict_t *self)
 {
 	int i;
 	edict_t *e;
@@ -1136,7 +1101,7 @@ target_earthquake_think(edict_t *self)
 	if (self->last_move_time < level.time)
 	{
 		gi.positioned_sound(self->s.origin, self, CHAN_AUTO,
-				self->noise_index, 1.0, ATTN_NONE, 0);
+							self->noise_index, 1.0, ATTN_NONE, 0);
 		self->last_move_time = level.time + 0.5;
 	}
 
@@ -1169,8 +1134,7 @@ target_earthquake_think(edict_t *self)
 	}
 }
 
-void
-target_earthquake_use(edict_t *self, edict_t *other /* unused */, edict_t *activator)
+void target_earthquake_use(edict_t *self, edict_t *other /* unused */, edict_t *activator)
 {
 	if (!self || !activator)
 	{
@@ -1183,8 +1147,7 @@ target_earthquake_use(edict_t *self, edict_t *other /* unused */, edict_t *activ
 	self->last_move_time = 0;
 }
 
-void
-SP_target_earthquake(edict_t *self)
+void SP_target_earthquake(edict_t *self)
 {
 	if (!self)
 	{
@@ -1194,7 +1157,7 @@ SP_target_earthquake(edict_t *self)
 	if (!self->targetname)
 	{
 		gi.dprintf("untargeted %s at %s\n", self->classname,
-				vtos(self->s.origin));
+				   vtos(self->s.origin));
 	}
 
 	if (!self->count)
