@@ -72,7 +72,6 @@
 
 {"actor_bartender", SP_actor_bartender},
 
-{"misc_actor", SP_misc_actor},
 {"misc_explobox", SP_misc_explobox},
 {"misc_banner", SP_misc_banner},
 {"misc_satellite_dish", SP_misc_satellite_dish},

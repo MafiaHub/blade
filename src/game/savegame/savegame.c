@@ -67,7 +67,7 @@
 #include "../header/local.h"
 
 /*
- * When ever the savegame version is changed, q2 will refuse to
+ * When ever the savegame version is changed, bde will refuse to
  * load older savegames. This should be bumped if the files
  * in tables/ are changed, otherwise strange things may happen.
  */
@@ -80,7 +80,7 @@
 /*
  * This macros are used to prohibit loading of savegames
  * created on other systems or architectures. This will
- * crash q2 in spectacular ways
+ * crash bde in spectacular ways
  */
 #ifndef BDEOSTYPE
 #error BDEOSTYPE should be defined by the build system

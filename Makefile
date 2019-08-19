@@ -578,7 +578,6 @@ GAME_OBJS_ = \
 	src/game/g_utils.o \
 	src/game/g_weapon.o \
 	src/game/monster/actor/bartender.o \
-	src/game/monster/misc/actor.o \
 	src/game/monster/misc/move.o \
 	src/game/g_quest.o \
 	src/game/player/client.o \

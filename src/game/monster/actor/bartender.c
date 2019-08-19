@@ -77,7 +77,7 @@ static mframe_t actor_frames_stand [] =
 	ai_stand, 0, NULL
 };
 
-static mmove_t actor_move_stand = {FRAME_stand101, FRAME_stand140, actor_frames_stand, NULL};
+mmove_t actor_move_stand = {FRAME_stand101, FRAME_stand140, actor_frames_stand, NULL};
 
 static void actor_stand (edict_t *self)
 {
@@ -97,7 +97,7 @@ void bartender_use (edict_t *self, edict_t *other, edict_t *activator)
 
 	gi.cprintf(other, PRINT_HIGH, "\"It just works!\" - Todd Howard\n");
 
-	/* 
+	/*
 	VectorSubtract (self->goalentity->s.origin, self->s.origin, v);
 	self->ideal_yaw = self->s.angles[YAW] = vectoyaw(v);
 	self->monsterinfo.walk (self);

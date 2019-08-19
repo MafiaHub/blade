@@ -657,7 +657,6 @@ extern qboolean Quest_Setstage(int questid, int stage, int depends, edict_t *act
 extern void quest_setstage_use(edict_t *self, edict_t *other /* unused */, edict_t *activator);
 extern void SP_quest_setstage(edict_t *self);
 extern void SP_target_actor(edict_t *ent);
-extern void SP_misc_actor(edict_t *self);
 extern void target_actor_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf);
 extern void actor_use (edict_t *self, edict_t *other, edict_t *activator);
 extern void actor_attack(edict_t *self);
