@@ -133,8 +133,7 @@ FindItem(char *pickup_name)
 
 /* ====================================================================== */
 
-void
-DoRespawn(edict_t *ent)
+void DoRespawn(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -168,8 +167,7 @@ DoRespawn(edict_t *ent)
 	ent->s.event = EV_ITEM_RESPAWN;
 }
 
-void
-SetRespawn(edict_t *ent, float delay)
+void SetRespawn(edict_t *ent, float delay)
 {
 	if (!ent)
 	{
@@ -199,7 +197,8 @@ Pickup_Powerup(edict_t *ent, edict_t *other)
 	quantity = other->client->pers.inventory[ITEM_INDEX(ent->item)];
 
 	if (((skill->value == 1) &&
-		 (quantity >= 2)) || ((skill->value >= 2) && (quantity >= 1)))
+		 (quantity >= 2)) ||
+		((skill->value >= 2) && (quantity >= 1)))
 	{
 		return false;
 	}
@@ -236,8 +235,7 @@ Pickup_Powerup(edict_t *ent, edict_t *other)
 	return true;
 }
 
-void
-Drop_General(edict_t *ent, gitem_t *item)
+void Drop_General(edict_t *ent, gitem_t *item)
 {
 	Drop_Item(ent, item);
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
@@ -500,8 +498,7 @@ Pickup_Pack(edict_t *ent, edict_t *other)
 
 /* ====================================================================== */
 
-void
-Use_Quad(edict_t *ent, gitem_t *item)
+void Use_Quad(edict_t *ent, gitem_t *item)
 {
 	int timeout;
 
@@ -537,8 +534,7 @@ Use_Quad(edict_t *ent, gitem_t *item)
 
 /* ====================================================================== */
 
-void
-Use_Breather(edict_t *ent, gitem_t *item)
+void Use_Breather(edict_t *ent, gitem_t *item)
 {
 	if (!ent || !item)
 	{
@@ -560,8 +556,7 @@ Use_Breather(edict_t *ent, gitem_t *item)
 
 /* ====================================================================== */
 
-void
-Use_Envirosuit(edict_t *ent, gitem_t *item)
+void Use_Envirosuit(edict_t *ent, gitem_t *item)
 {
 	if (!ent || !item)
 	{
@@ -583,8 +578,7 @@ Use_Envirosuit(edict_t *ent, gitem_t *item)
 
 /* ====================================================================== */
 
-void
-Use_Invulnerability(edict_t *ent, gitem_t *item)
+void Use_Invulnerability(edict_t *ent, gitem_t *item)
 {
 	if (!ent || !item)
 	{
@@ -603,13 +597,12 @@ Use_Invulnerability(edict_t *ent, gitem_t *item)
 		ent->client->invincible_framenum = level.framenum + 300;
 	}
 
-	gi.sound(ent, CHAN_ITEM, gi.soundindex( "items/protect.wav"), 1, ATTN_NORM, 0);
+	gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect.wav"), 1, ATTN_NORM, 0);
 }
 
 /* ====================================================================== */
 
-void
-Use_Silencer(edict_t *ent, gitem_t *item)
+void Use_Silencer(edict_t *ent, gitem_t *item)
 {
 	if (!ent || !item)
 	{
@@ -779,8 +772,7 @@ Pickup_Ammo(edict_t *ent, edict_t *other)
 	return true;
 }
 
-void
-Drop_Ammo(edict_t *ent, gitem_t *item)
+void Drop_Ammo(edict_t *ent, gitem_t *item)
 {
 	edict_t *dropped;
 	int index;
@@ -818,8 +810,7 @@ Drop_Ammo(edict_t *ent, gitem_t *item)
 
 /* ====================================================================== */
 
-void
-MegaHealth_think(edict_t *self)
+void MegaHealth_think(edict_t *self)
 {
 	if (!self)
 	{
@@ -891,8 +882,7 @@ Pickup_Health(edict_t *ent, edict_t *other)
 
 /* ====================================================================== */
 
-int
-ArmorIndex(edict_t *ent)
+int ArmorIndex(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -1028,8 +1018,7 @@ Pickup_Armor(edict_t *ent, edict_t *other)
 
 /* ====================================================================== */
 
-int
-PowerArmorType(edict_t *ent)
+int PowerArmorType(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -1059,8 +1048,7 @@ PowerArmorType(edict_t *ent)
 	return POWER_ARMOR_NONE;
 }
 
-void
-Use_PowerArmor(edict_t *ent, gitem_t *item)
+void Use_PowerArmor(edict_t *ent, gitem_t *item)
 {
 	int index;
 
@@ -1072,8 +1060,7 @@ Use_PowerArmor(edict_t *ent, gitem_t *item)
 	if (ent->flags & FL_POWER_ARMOR)
 	{
 		ent->flags &= ~FL_POWER_ARMOR;
-		gi.sound(ent, CHAN_AUTO, gi.soundindex(
-						"misc/power2.wav"), 1, ATTN_NORM, 0);
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("misc/power2.wav"), 1, ATTN_NORM, 0);
 	}
 	else
 	{
@@ -1086,8 +1073,7 @@ Use_PowerArmor(edict_t *ent, gitem_t *item)
 		}
 
 		ent->flags |= FL_POWER_ARMOR;
-		gi.sound(ent, CHAN_AUTO, gi.soundindex(
-						"misc/power1.wav"), 1, ATTN_NORM, 0);
+		gi.sound(ent, CHAN_AUTO, gi.soundindex("misc/power1.wav"), 1, ATTN_NORM, 0);
 	}
 }
 
@@ -1122,8 +1108,7 @@ Pickup_PowerArmor(edict_t *ent, edict_t *other)
 	return true;
 }
 
-void
-Drop_PowerArmor(edict_t *ent, gitem_t *item)
+void Drop_PowerArmor(edict_t *ent, gitem_t *item)
 {
 	if (!ent || !item)
 	{
@@ -1141,8 +1126,7 @@ Drop_PowerArmor(edict_t *ent, gitem_t *item)
 
 /* ====================================================================== */
 
-void
-Touch_Item(edict_t *ent, edict_t *other, cplane_t *plane /* unused */, csurface_t *surf /* unused */)
+void Touch_Item(edict_t *ent, edict_t *other, cplane_t *plane /* unused */, csurface_t *surf /* unused */)
 {
 	qboolean taken;
 
@@ -1175,9 +1159,9 @@ Touch_Item(edict_t *ent, edict_t *other, cplane_t *plane /* unused */, csurface_
 
 		/* show icon and name on status bar */
 		other->client->ps.stats[STAT_PICKUP_ICON] =
-			gi.imageindex( ent->item->icon);
+			gi.imageindex(ent->item->icon);
 		other->client->ps.stats[STAT_PICKUP_STRING] =
-		   	CS_ITEMS + ITEM_INDEX( ent->item);
+			CS_ITEMS + ITEM_INDEX(ent->item);
 		other->client->pickup_msg_time = level.time + 3.0;
 
 		/* change selected item */
@@ -1185,36 +1169,31 @@ Touch_Item(edict_t *ent, edict_t *other, cplane_t *plane /* unused */, csurface_
 		{
 			other->client->pers.selected_item =
 				other->client->ps.stats[STAT_SELECTED_ITEM] =
-			   	ITEM_INDEX( ent->item);
+					ITEM_INDEX(ent->item);
 		}
 
 		if (ent->item->pickup == Pickup_Health)
 		{
 			if (ent->count == 2)
 			{
-				gi.sound(other, CHAN_ITEM, gi.soundindex(
-								"items/s_health.wav"), 1, ATTN_NORM, 0);
+				gi.sound(other, CHAN_ITEM, gi.soundindex("items/s_health.wav"), 1, ATTN_NORM, 0);
 			}
 			else if (ent->count == 10)
 			{
-				gi.sound(other, CHAN_ITEM, gi.soundindex(
-								"items/n_health.wav"), 1, ATTN_NORM, 0);
+				gi.sound(other, CHAN_ITEM, gi.soundindex("items/n_health.wav"), 1, ATTN_NORM, 0);
 			}
 			else if (ent->count == 25)
 			{
-				gi.sound(other, CHAN_ITEM, gi.soundindex(
-								"items/l_health.wav"), 1, ATTN_NORM, 0);
+				gi.sound(other, CHAN_ITEM, gi.soundindex("items/l_health.wav"), 1, ATTN_NORM, 0);
 			}
 			else /* (ent->count == 100) */
 			{
-				gi.sound(other, CHAN_ITEM, gi.soundindex(
-								"items/m_health.wav"), 1, ATTN_NORM, 0);
+				gi.sound(other, CHAN_ITEM, gi.soundindex("items/m_health.wav"), 1, ATTN_NORM, 0);
 			}
 		}
 		else if (ent->item->pickup_sound)
 		{
-			gi.sound(other, CHAN_ITEM, gi.soundindex(
-							ent->item->pickup_sound), 1, ATTN_NORM, 0);
+			gi.sound(other, CHAN_ITEM, gi.soundindex(ent->item->pickup_sound), 1, ATTN_NORM, 0);
 		}
 	}
 
@@ -1246,8 +1225,7 @@ Touch_Item(edict_t *ent, edict_t *other, cplane_t *plane /* unused */, csurface_
 
 /* ====================================================================== */
 
-void
-drop_temp_touch(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+void drop_temp_touch(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
 	if (!ent || !other)
 	{
@@ -1266,8 +1244,7 @@ drop_temp_touch(edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 	Touch_Item(ent, other, plane, surf);
 }
 
-void
-drop_make_touchable(edict_t *ent)
+void drop_make_touchable(edict_t *ent)
 {
 	if (!ent)
 	{
@@ -1305,15 +1282,15 @@ Drop_Item(edict_t *ent, gitem_t *item)
 
 	if (randk() > 0.5)
 	{
-		dropped->s.angles[1] += randk()*45;
+		dropped->s.angles[1] += randk() * 45;
 	}
 	else
 	{
-		dropped->s.angles[1] -= randk()*45;
+		dropped->s.angles[1] -= randk() * 45;
 	}
 
-	VectorSet (dropped->mins, -16, -16, -16);
-	VectorSet (dropped->maxs, 16, 16, 16);
+	VectorSet(dropped->mins, -16, -16, -16);
+	VectorSet(dropped->maxs, 16, 16, 16);
 	gi.setmodel(dropped, dropped->item->world_model);
 	dropped->solid = SOLID_TRIGGER;
 	dropped->movetype = MOVETYPE_TOSS;
@@ -1327,9 +1304,9 @@ Drop_Item(edict_t *ent, gitem_t *item)
 		AngleVectors(ent->client->v_angle, forward, right, NULL);
 		VectorSet(offset, 24, 0, -16);
 		G_ProjectSource(ent->s.origin, offset, forward, right,
-				dropped->s.origin);
+						dropped->s.origin);
 		trace = gi.trace(ent->s.origin, dropped->mins, dropped->maxs,
-				dropped->s.origin, ent, CONTENTS_SOLID);
+						 dropped->s.origin, ent, CONTENTS_SOLID);
 		VectorCopy(trace.endpos, dropped->s.origin);
 	}
 	else
@@ -1349,8 +1326,7 @@ Drop_Item(edict_t *ent, gitem_t *item)
 	return dropped;
 }
 
-void
-Use_Item(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
+void Use_Item(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused */)
 {
 	if (!ent)
 	{
@@ -1376,8 +1352,7 @@ Use_Item(edict_t *ent, edict_t *other /* unused */, edict_t *activator /* unused
 
 /* ====================================================================== */
 
-void
-droptofloor(edict_t *ent)
+void droptofloor(edict_t *ent)
 {
 	trace_t tr;
 	vec3_t dest;
@@ -1414,7 +1389,7 @@ droptofloor(edict_t *ent)
 	if (tr.startsolid)
 	{
 		gi.dprintf("droptofloor: %s startsolid at %s\n", ent->classname,
-				vtos(ent->s.origin));
+				   vtos(ent->s.origin));
 		G_FreeEdict(ent);
 		return;
 	}
@@ -1460,8 +1435,7 @@ droptofloor(edict_t *ent)
  * This will be called for each item spawned in a level,
  * and for each item in each client's inventory.
  */
-void
-PrecacheItem(gitem_t *it)
+void PrecacheItem(gitem_t *it)
 {
 	char *s, *start;
 	char data[MAX_QPATH];
@@ -1567,8 +1541,7 @@ PrecacheItem(gitem_t *it)
  * an entity that hasn't spawned yet.
  * ============
  */
-void
-SpawnItem(edict_t *ent, gitem_t *item)
+void SpawnItem(edict_t *ent, gitem_t *item)
 {
 	if (!ent || !item)
 	{
@@ -1576,16 +1549,6 @@ SpawnItem(edict_t *ent, gitem_t *item)
 	}
 
 	PrecacheItem(item);
-
-	if (ent->spawnflags)
-	{
-		if (strcmp(ent->classname, "key_power_cube") != 0)
-		{
-			ent->spawnflags = 0;
-			gi.dprintf("%s at %s has invalid spawnflags set\n",
-					ent->classname, vtos(ent->s.origin));
-		}
-	}
 
 	/* some items will be prevented in deathmatch */
 	if (deathmatch->value)
@@ -1658,23 +1621,19 @@ SpawnItem(edict_t *ent, gitem_t *item)
 /* ====================================================================== */
 
 static const gitem_t gameitemlist[] = {
-	{
-		NULL
-	}, /* leave index 0 alone */
+	{NULL}, /* leave index 0 alone */
 
-	#include "g_itemlist.c"
-	
+#include "g_itemlist.c"
+
 	/* end of list marker */
-	{NULL}
-};
+	{NULL}};
 
 gitem_t itemlist[MAX_ITEMS];
 
 /*
  * QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16)
  */
-void
-SP_item_health(edict_t *self)
+void SP_item_health(edict_t *self)
 {
 	if (!self)
 	{
@@ -1696,8 +1655,7 @@ SP_item_health(edict_t *self)
 /*
  * QUAKED item_health_small (.3 .3 1) (-16 -16 -16) (16 16 16)
  */
-void
-SP_item_health_small(edict_t *self)
+void SP_item_health_small(edict_t *self)
 {
 	if (!self)
 	{
@@ -1720,8 +1678,7 @@ SP_item_health_small(edict_t *self)
 /*
  * QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16)
  */
-void
-SP_item_health_large(edict_t *self)
+void SP_item_health_large(edict_t *self)
 {
 	if (!self)
 	{
@@ -1743,8 +1700,7 @@ SP_item_health_large(edict_t *self)
 /*
  * QUAKED item_health_mega (.3 .3 1) (-16 -16 -16) (16 16 16)
  */
-void
-SP_item_health_mega(edict_t *self)
+void SP_item_health_mega(edict_t *self)
 {
 	if (!self)
 	{
@@ -1764,8 +1720,7 @@ SP_item_health_mega(edict_t *self)
 	self->style = HEALTH_IGNORE_MAX | HEALTH_TIMED;
 }
 
-void
-InitItems(void)
+void InitItems(void)
 {
 	memset(itemlist, 0, sizeof(itemlist));
 	memcpy(itemlist, gameitemlist, sizeof(gameitemlist));
@@ -1780,8 +1735,7 @@ InitItems(void)
 /*
  * Called by worldspawn
  */
-void
-SetItemNames(void)
+void SetItemNames(void)
 {
 	int i;
 	gitem_t *it;

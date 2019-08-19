@@ -694,7 +694,7 @@ RaycastFromClient(edict_t *ent, float dist, int flags)
 {
 	vec3_t start, end, offset;
     vec3_t fwd, right, up;
-	
+
     AngleVectors(ent->client->v_angle, fwd, right, up);
 
     VectorSet(offset, 0, 0, ent->viewheight - 7);

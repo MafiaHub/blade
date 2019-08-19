@@ -79,9 +79,19 @@ P_ProjectSource(gclient_t *client, vec3_t point, vec3_t distance,
 void
 PlayerNoise(edict_t *who, vec3_t where, int type)
 {
-	edict_t *noise;
+	edict_t *noise = NULL;
 
 	if (!who)
+	{
+		return;
+	}
+
+	if ((type == PNOISE_WEAPON || type == PNOISE_SELF)
+		&& level.framenum <= (level.sound_entity_framenum + 3))
+	{
+		return;
+	}
+	else if (level.framenum <= (level.sound2_entity_framenum + 3))
 	{
 		return;
 	}
@@ -175,13 +185,13 @@ Pickup_Weapon(edict_t *ent, edict_t *other)
 		 (other->client->pers.weapon == FindItem("blaster"))))
 	{
 		other->client->newweapon = ent->item;
-		
+
 		if (*itemcount == 1)
 		{
 			AssignFirstSlot(other, ent->item->pickup_name);
 		}
 	}
-	
+
 
 	return true;
 }
@@ -277,8 +287,8 @@ HolsterWeapon(edict_t *ent)
 		return;
 	}
 
-	if (ent->client->newweapon != WEAPON_HOLSTERED && 
-		ent->client->pers.weapon == NULL && 
+	if (ent->client->newweapon != WEAPON_HOLSTERED &&
+		ent->client->pers.weapon == NULL &&
 		ent->client->pers.lastweapon != NULL)
 	{
 		ent->client->newweapon = ent->client->pers.lastweapon;
@@ -475,7 +485,7 @@ ReloadWeapon(edict_t *ent)
 		return;
 	}
 
-	if (mag->cur_mag_size 
+	if (mag->cur_mag_size
 		== mag->max_mag_size)
 	{
 		/* ... */
@@ -504,7 +514,7 @@ ReloadWeapon(edict_t *ent)
  */
 void
 Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
-		int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, 
+		int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST,
 		int FRAME_RELOAD_LAST, int FRAME_LASTRD_LAST,
 		int *pause_frames,
 		int *fire_frames, void (*fire)(edict_t *ent))
@@ -524,19 +534,19 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 	if (ent->client->weaponstate == WEAPON_RELOADING)
 	{
 		ammo_mag_t *mag = &ent->client->pers.mags[ent->client->pers.weapon->weapmodel];
-		
+
 		if(ent->client->ps.gunframe < FRAME_RELOAD_FIRST || ent->client->ps.gunframe > FRAME_RELOAD_LAST)
 			ent->client->ps.gunframe = FRAME_RELOAD_FIRST;
-		
+
 		else if(ent->client->ps.gunframe < FRAME_RELOAD_LAST)
 		{
 			ent->client->ps.gunframe++;
 			if(ent->client->ps.gunframe == mag->eject_frame_index)
 				gi.sound(ent, CHAN_WEAPON, mag->eject_frame_sound_index, 1, ATTN_NORM, 0);
 			else if(ent->client->ps.gunframe == mag->insert_frame_index)
-				gi.sound(ent, CHAN_WEAPON, mag->insert_frame_sound_index, 1, ATTN_NORM, 0);				
+				gi.sound(ent, CHAN_WEAPON, mag->insert_frame_sound_index, 1, ATTN_NORM, 0);
 		}
-		
+
 		else
 		{
 			ent->client->ps.gunframe = FRAME_IDLE_FIRST;
@@ -595,12 +605,12 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 	{
 		ent->client->weaponstate = WEAPON_DROPPING;
 		ent->client->ps.gunframe = FRAME_DEACTIVATE_FIRST;
-		
+
 		if (ent->client->newweapon == WEAPON_HOLSTERED)
 		{
 			ent->client->newweapon = NULL;
 		}
-		
+
 		if ((FRAME_DEACTIVATE_LAST - FRAME_DEACTIVATE_FIRST) < 4)
 		{
 			ent->client->anim_priority = ANIM_REVERSE;
@@ -738,7 +748,7 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 
 					mag->cur_mag_size--;
 				}
-				
+
 				if (ent->client->quad_framenum > level.framenum)
 				{
 					gi.sound(ent, CHAN_ITEM, gi.soundindex(
@@ -751,12 +761,12 @@ Weapon_Generic(edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST,
 					{
 						ent->client->ps.gunskin = 2;
 					}
-					
+
 					else
 					{
 						ent->client->ps.gunskin = 1;
 					}
-					
+
 				}
 
 				fire(ent);
@@ -1924,7 +1934,7 @@ void Pistol_Fire(edict_t *ent)
 
 	ent->client->ps.gunframe++;
 
-	if (!(ent->client->buttons & BUTTON_ATTACK)) 
+	if (!(ent->client->buttons & BUTTON_ATTACK))
 	{
 		return;
 	}

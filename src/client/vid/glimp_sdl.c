@@ -600,6 +600,14 @@ void GLimp_ShutdownGraphics(void)
 	ShutdownGraphics();
 }
 
+/* 
+ * Show/hide the mouse cursor.
+ */
+void GLimp_ShowCursor(int state)
+{
+	SDL_ShowCursor(state);
+}
+
 /*
  * (Un)grab Input
  */

@@ -87,21 +87,19 @@ Qcommon_Buildstring(void)
 {
 	int i;
 	int verLen;
-	const char* versionString;
-
+	const char *versionString;
 
 	versionString = va("Blade Engine v%s", BDEVERSION);
 	verLen = strlen(versionString);
 
 	printf("\n%s\n", versionString);
 
-	for( i = 0; i < verLen; ++i)
+	for (i = 0; i < verLen; ++i)
 	{
 		printf("=");
 	}
 
 	printf("\n");
-
 
 #ifndef DEDICATED_ONLY
 	printf("Client build options:\n");
@@ -123,8 +121,7 @@ Qcommon_Buildstring(void)
 #define FRAMEDELAY 850
 #endif
 
-void
-Qcommon_Mainloop(void)
+void Qcommon_Mainloop(void)
 {
 	long long newtime;
 	long long oldtime = Sys_Microseconds();
@@ -139,7 +136,7 @@ Qcommon_Mainloop(void)
 
 			while (1)
 			{
-#if defined (__GNUC__) && (__i386 || __x86_64__)
+#if defined(__GNUC__) && (__i386 || __x86_64__)
 				/* Give the CPU a hint that this is a very tight
 				   spinloop. One PAUSE instruction each loop is
 				   enough to reduce power consumption and head
@@ -170,7 +167,7 @@ void Qcommon_ExecConfigs(qboolean gameStartUp)
 	Cbuf_AddText("exec default.cfg\n");
 	Cbuf_AddText("exec BDE.cfg\n");
 	Cbuf_AddText("exec config.cfg\n");
-	if(gameStartUp)
+	if (gameStartUp)
 	{
 		// only when the game is first started we execute autoexec.cfg and set the cvars from commandline
 		Cbuf_AddText("exec autoexec.cfg\n");
@@ -181,14 +178,14 @@ void Qcommon_ExecConfigs(qboolean gameStartUp)
 
 static qboolean checkForHelp(int argc, char **argv)
 {
-	const char* helpArgs[] = { "--help", "-h", "-help", "-?", "/?" };
-	const int numHelpArgs = sizeof(helpArgs)/sizeof(helpArgs[0]);
+	const char *helpArgs[] = {"--help", "-h", "-help", "-?", "/?"};
+	const int numHelpArgs = sizeof(helpArgs) / sizeof(helpArgs[0]);
 
-	for (int i=1; i<argc; ++i)
+	for (int i = 1; i < argc; ++i)
 	{
-		const char* arg = argv[i];
+		const char *arg = argv[i];
 
-		for (int h=0; h<numHelpArgs; ++h)
+		for (int h = 0; h < numHelpArgs; ++h)
 		{
 			if (Q_stricmp(arg, helpArgs[h]) == 0)
 			{
@@ -196,7 +193,7 @@ static qboolean checkForHelp(int argc, char **argv)
 				printf("Most interesting commandline arguments:\n");
 				printf("-h or --help: Show this help\n");
 				printf("-datadir <path>\n");
-				printf("  set path to your Quake2 game data (the directory baseq2/ is in)\n");
+				printf("  set path to your Blade game data (the directory baseb/ is in)\n");
 				printf("-portable\n");
 				printf("  Write (savegames, configs, ...) in the binary directory\n");
 				printf("+exec <config>\n");
@@ -218,13 +215,7 @@ static qboolean checkForHelp(int argc, char **argv)
 				printf("+set r_customheight <size in pixels>\n");
 				printf("  if r_mode is set to -1, these cvars allow you to specify the\n");
 				printf("  width/height of your custom resolution\n");
-				printf("+set vid_renderer <renderer>\n");
-				printf("  Selects the render backend. Currently available:\n");
-				printf("    'gl1'  (old OpenGL 1.x renderer),\n");
-				printf("    'gl3'  (the shiny new OpenGL 3.2 renderer),\n");
-				printf("    'soft' (the experimental software renderer)\n");
 #endif // DEDICATED_ONLY
-				printf("\nSee https://github.com/yquake2/yquake2/blob/master/doc/04_cvarlist.md\nfor some more cvars\n");
 
 				return true;
 			}
@@ -234,8 +225,7 @@ static qboolean checkForHelp(int argc, char **argv)
 	return false;
 }
 
-void
-Qcommon_Init(int argc, char **argv)
+void Qcommon_Init(int argc, char **argv)
 {
 	// Jump point used in emergency situations.
 	if (setjmp(abortframe))
@@ -279,10 +269,10 @@ Qcommon_Init(int argc, char **argv)
 
 	// remember the initial game name that might have been set on commandline
 	{
-		cvar_t* gameCvar = Cvar_Get("game", "", CVAR_LATCH | CVAR_SERVERINFO);
-		const char* game = "";
+		cvar_t *gameCvar = Cvar_Get("game", "", CVAR_LATCH | CVAR_SERVERINFO);
+		const char *game = "";
 
-		if(gameCvar->string && gameCvar->string[0])
+		if (gameCvar->string && gameCvar->string[0])
 		{
 			game = gameCvar->string;
 		}
@@ -375,8 +365,7 @@ Qcommon_Init(int argc, char **argv)
 }
 
 #ifndef DEDICATED_ONLY
-void
-Qcommon_Frame(int usec)
+void Qcommon_Frame(int usec)
 {
 	// Used for the dedicated server console.
 	char *s;
@@ -417,14 +406,12 @@ Qcommon_Frame(int usec)
 	   about 1000 microseconds. */
 	qboolean renderframe = true;
 
-
 	/* Tells the client to shutdown.
 	   Used by the signal handlers. */
 	if (quitnextframe)
 	{
 		Cbuf_AddText("quit");
 	}
-
 
 	/* In case of ERR_DROP we're jumping here. Don't know
 	   if that's really save but it seems to work. So leave
@@ -433,7 +420,6 @@ Qcommon_Frame(int usec)
 	{
 		return;
 	}
-
 
 	if (log_stats->modified)
 	{
@@ -464,7 +450,6 @@ Qcommon_Frame(int usec)
 		}
 	}
 
-
 	// Timing debug crap. Just for historical reasons.
 	if (fixedtime->value)
 	{
@@ -474,7 +459,6 @@ Qcommon_Frame(int usec)
 	{
 		usec *= timescale->value;
 	}
-
 
 	if (showtrace->value)
 	{
@@ -486,7 +470,6 @@ Qcommon_Frame(int usec)
 		c_brush_traces = 0;
 		c_pointcontents = 0;
 	}
-
 
 	/* We can render 1000 frames at maximum, because the minimum
 	   frametime of the client is 1 millisecond. And of course we
@@ -506,10 +489,8 @@ Qcommon_Frame(int usec)
 		Cvar_SetValue("cl_maxfps", 60);
 	}
 
-
 	// Save global time for network- und input code.
 	curtime = Sys_Milliseconds();
-
 
 	// Calculate target and renderframerate.
 	if (R_IsVSyncActive())
@@ -531,7 +512,6 @@ Qcommon_Frame(int usec)
 	   may give us a 1 or 2 frames too low display refresh rate.
 	   Add a security magin of 5%, e.g. 60fps * 0.95 = 57fps. */
 	pfps = (cl_maxfps->value > (rfps * 0.95)) ? floor(rfps * 0.95) : cl_maxfps->value;
-
 
 	// Calculate timings.
 	packetdelta += usec;
@@ -566,7 +546,7 @@ Qcommon_Frame(int usec)
 				}
 
 				// Render frames.
-				if (renderdelta < (1000000.0f ) / rfps)
+				if (renderdelta < (1000000.0f) / rfps)
 				{
 					renderframe = false;
 				}
@@ -575,7 +555,8 @@ Qcommon_Frame(int usec)
 		else
 		{
 			// Cap frames at target framerate.
-			if (renderdelta < (1000000.0f / rfps)) {
+			if (renderdelta < (1000000.0f / rfps))
+			{
 				renderframe = false;
 				packetframe = false;
 			}
@@ -586,44 +567,42 @@ Qcommon_Frame(int usec)
 		return;
 	}
 
-
 	// Dedicated server terminal console.
-	do {
+	do
+	{
 		s = Sys_ConsoleInput();
 
-		if (s) {
+		if (s)
+		{
 			Cbuf_AddText(va("%s\n", s));
 		}
 	} while (s);
 
 	Cbuf_Execute();
 
-
 	if (host_speeds->value)
 	{
 		time_before = Sys_Milliseconds();
 	}
 
-
 	// Run the serverframe.
-	if (packetframe) {
+	if (packetframe)
+	{
 		SV_Frame(servertimedelta);
 		servertimedelta = 0;
 	}
-
 
 	if (host_speeds->value)
 	{
 		time_between = Sys_Milliseconds();
 	}
 
-
 	// Run the client frame.
-	if (packetframe || renderframe) {
+	if (packetframe || renderframe)
+	{
 		CL_Frame(packetdelta, renderdelta, clienttimedelta, packetframe, renderframe);
 		clienttimedelta = 0;
 	}
-
 
 	if (host_speeds->value)
 	{
@@ -640,19 +619,19 @@ Qcommon_Frame(int usec)
 		Com_Printf("all:%3i sv:%3i gm:%3i cl:%3i rf:%3i\n", all, sv, gm, cl, rf);
 	}
 
-
 	// Reset deltas and mark frame.
-	if (packetframe) {
+	if (packetframe)
+	{
 		packetdelta = 0;
 	}
 
-	if (renderframe) {
+	if (renderframe)
+	{
 		renderdelta = 0;
 	}
 }
 #else
-void
-Qcommon_Frame(int usec)
+void Qcommon_Frame(int usec)
 {
 	// For the dedicated server terminal console.
 	char *s;
@@ -674,14 +653,12 @@ Qcommon_Frame(int usec)
 	   125hz bug. */
 	qboolean packetframe = true;
 
-
 	/* Tells the client to shutdown.
 	   Used by the signal handlers. */
 	if (quitnextframe)
 	{
 		Cbuf_AddText("quit");
 	}
-
 
 	/* In case of ERR_DROP we're jumping here. Don't know
 	   if that' really save but it seems to work. So leave
@@ -690,7 +667,6 @@ Qcommon_Frame(int usec)
 	{
 		return;
 	}
-
 
 	// Timing debug crap. Just for historical reasons.
 	if (fixedtime->value)
@@ -702,54 +678,51 @@ Qcommon_Frame(int usec)
 		usec *= timescale->value;
 	}
 
-
 	// Save global time for network- und input code.
 	curtime = Sys_Milliseconds();
 
-
 	// Target framerate.
 	pfps = (int)cl_maxfps->value;
-
 
 	// Calculate timings.
 	packetdelta += usec;
 	servertimedelta += usec;
 
-
 	// Network frame time.
-	if (packetdelta < (1000000.0f / pfps)) {
+	if (packetdelta < (1000000.0f / pfps))
+	{
 		packetframe = false;
 	}
 
-
 	// Dedicated server terminal console.
-	do {
+	do
+	{
 		s = Sys_ConsoleInput();
 
-		if (s) {
+		if (s)
+		{
 			Cbuf_AddText(va("%s\n", s));
 		}
 	} while (s);
 
 	Cbuf_Execute();
 
-
 	// Run the serverframe.
-	if (packetframe) {
+	if (packetframe)
+	{
 		SV_Frame(servertimedelta);
 		servertimedelta = 0;
 	}
 
-
 	// Reset deltas if necessary.
-	if (packetframe) {
+	if (packetframe)
+	{
 		packetdelta = 0;
 	}
 }
 #endif
 
-void
-Qcommon_Shutdown(void)
+void Qcommon_Shutdown(void)
 {
 	Cvar_Fini();
 }
