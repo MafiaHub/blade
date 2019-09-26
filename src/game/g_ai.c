@@ -955,7 +955,7 @@ ai_checkattack(edict_t *self)
 	vec3_t temp;
 	qboolean hesDeadJim;
 
-	if (!self || !self->enemy || !self->enemy->inuse)
+	if (!self)
 	{
 		enemy_vis = false;
 
@@ -1175,8 +1175,7 @@ ai_run(edict_t *self, float dist)
 
 		if (VectorLength(v) < 64)
 		{
-			self->monsterinfo.aiflags |=
-				(AI_STAND_GROUND | AI_TEMP_STAND_GROUND);
+			self->monsterinfo.aiflags |= (AI_STAND_GROUND | AI_TEMP_STAND_GROUND);
 			self->monsterinfo.stand(self);
 			return;
 		}

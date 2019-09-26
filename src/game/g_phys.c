@@ -1072,6 +1072,8 @@ void SV_Physics_Step(edict_t *ent)
 	float friction;
 	edict_t *groundentity;
 	int mask;
+	vec3_t oldorig;
+	trace_t tr;
 
 	if (!ent)
 	{
@@ -1197,7 +1199,23 @@ void SV_Physics_Step(edict_t *ent)
 			mask = MASK_SOLID;
 		}
 
+		VectorCopy(ent->s.origin, oldorig);
 		SV_FlyMove(ent, FRAMETIME, mask);
+
+		/* Evil hack to work around dead parasites (and maybe other monster)
+		   falling through the worldmodel into the void. We copy the current
+		   origin (see above) and after the SV_FlyMove() was performend we
+		   check if we're stuck in the world model. If yes we're undoing the
+		   move. */
+		if (!VectorCompare(ent->s.origin, oldorig))
+		{
+			tr = gi.trace(ent->s.origin, ent->mins, ent->maxs, ent->s.origin, ent, mask);
+
+			if (tr.startsolid)
+			{
+				VectorCopy(oldorig, ent->s.origin);
+			}
+		}
 
 		gi.linkentity(ent);
 		G_TouchTriggers(ent);

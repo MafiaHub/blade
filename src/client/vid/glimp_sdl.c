@@ -262,12 +262,12 @@ InitDisplayIndices()
 static void
 PrintDisplayModes(void)
 {
-	int curdisplay = SDL_GetWindowDisplayIndex(window);
+	int curdisplay = window ? SDL_GetWindowDisplayIndex(window) : 0;
 
 	// On X11 (at least for me)
 	// curdisplay is always -1.
-	if (curdisplay < 0)
-	{
+	// DG: probably because window was NULL?
+	if (curdisplay < 0) {
 		curdisplay = 0;
 	}
 
